@@ -29,7 +29,7 @@ var Buildings = {  //if addWorker property key is "free", it will actually add f
 	mill:	{count:0, buildWorkers:3, buildTime:10,  unlocked:false, addstorage:{lumber:300}, 		addworker:{lumber:3},	cost:{wood:300, rock:50},	unlock:"lumber",costratio:2.5,	needsStuffJobs:true,	buildOnce:false,	statement:"Process the wood into boards at the sawmill"},
 	workshop:{count:0,buildWorkers:3, buildTime:12,  unlocked:false, addstorage:{stone:200},		addworker:{stone:3},	cost:{lumber:200,rock:200},	unlock:"stone",	costratio:2.5,	needsStuffJobs:true,	buildOnce:false,	statement:"Workshops will allow masons to cut raw rock into stone"},
 	hut:	{count:0, buildWorkers:3, buildTime:8,  unlocked:false, 					addworker:{free:1},	cost:{lumber:200,stone:100},	unlock:"free",	costratio:1.2,	needsStuffJobs:false,	buildOnce:false,	statement:"With the boards from the mill and cut stones you can build new housing structures"},
-	studio: {count:0, buildWorkers:4, buildTime:20,  unlocked:false, 			addworker:{research:1},		 cost:{wood:100,lumber:300,stone:200},	unlock:"research",costratio:1.3,needsStuffJobs:true,	buildOnce:false,	statement:"During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research."
+	studio: {count:0, buildWorkers:4, buildTime:20,  unlocked:false, 			addworker:{research:1},		 cost:{wood:100,lumber:300,stone:200},	unlock:"research",costratio:1.3,needsStuffJobs:true,	buildOnce:false,	statement:"During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research."},
 
 
 	councilhall:{count:0,buildWorkers:1, buildTime:50,  unlocked:false,					cost:{wood:200, rock:200, lumber:400, stone:300}, 	unlock:"free", 	costratio:1,	needsStuffJobs:false,	buildOnce:true,	statement:"The Council Hall has been constructed. The first meeting will be held soon."},
@@ -327,7 +327,7 @@ console.log("BuildCouncil() run");
 	if(addBuilding("councilhall")){
 		Buildings.councilhall.unlocked = true;
 		document.getElementById("buildCounc").style.display = "none";
-		document.getElementById("statement").innerHTML = "During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research."
+		document.getElementById("statement").innerHTML = "During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research.";
 		document.getElementById("butt3").style.display = "inline";
 		unlock("studio")
 	}
