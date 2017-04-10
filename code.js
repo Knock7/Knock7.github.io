@@ -79,22 +79,23 @@ function populate(){
 //sections about adding and removing workers from wood, rock, food, etc.
 //*****
 
+var num = 1;
+function moveworker(workkey,num){
 
-function moveworker(workkey){
-	if (Stuff[workkey]["workers"]<Stuff[workkey]["maxworkers"]&&Stuff.free.workers>0){
-		Stuff[workkey]["workers"]++;
-		Stuff["free"]["workers"]--;
+
+	if (Stuff[workkey]["workers"]+num <= Stuff[workkey]["maxworkers"] && Stuff.free.workers >= num){
+		Stuff[workkey]["workers"]+=num;
+		Stuff["free"]["workers"]-=num;
 
 		document.getElementById(workkey+"workers").innerHTML = Stuff[workkey]["workers"];
 		document.getElementById("freeworkers").innerHTML = Stuff["free"]["workers"];
 	}
 }
 
-
-function removeworker(lessworkkey){
-	if (Stuff[lessworkkey]["workers"]>0){
-		Stuff[lessworkkey]["workers"]--;
-		Stuff["free"]["workers"]++;
+function removeworker(lessworkkey,num){
+	if (Stuff[lessworkkey]["workers"]-num>=0){
+		Stuff[lessworkkey]["workers"]-=num;
+		Stuff["free"]["workers"]+=num;
 
 		document.getElementById(lessworkkey+"workers").innerHTML = Stuff[lessworkkey]["workers"];
 		document.getElementById("freeworkers").innerHTML = Stuff["free"]["workers"];
@@ -115,6 +116,12 @@ function addBuilding(buildkey){
 	canbuild = 0; //can build it if canbuild is still 0
 	txtNotEnough = " ";
 
+	//enough free worekers to build?     buildWorkers:1, buildTime:5
+	if(Buildings[buildkey]["buildWorkers"]>Stuff["free"]["workers"]){
+		canbuild++;
+		txtNotEnough+= "free workers at camp,&nbsp"
+	}
+
 	//can we build it?
 	for(var key in Buildings[buildkey]["cost"]){
 
@@ -129,7 +136,10 @@ function addBuilding(buildkey){
 		}
 	
 	}
-	txtNotEnough = txtNotEnough.slice(0,-6);
+	txtNotEnough = txtNotEnough.slice(0,-6);//remove the comma and space after the last entry
+
+
+
 
 
 	//yes we can!
@@ -138,9 +148,7 @@ function addBuilding(buildkey){
 		//pay for the building
 		for(var keyy in Buildings[buildkey]["cost"]){
 
-
 			actualcost = Math.round(Buildings[buildkey]["cost"][keyy]*Math.pow(Buildings[buildkey]["costratio"],Buildings[buildkey]["count"]));   //consider making function actualcost(buildkey,key) which returns value calculated value
-
 
 			Stuff[keyy]["stored"]-=actualcost;
 			document.getElementById(keyy).innerHTML = Stuff[keyy]["stored"];
@@ -277,7 +285,7 @@ function researchIncr(resUp){ //somewhy research progresses even though no resea
 		}
 
 		if(make) {
-console.log("researching...");
+			console.log("researching...");
 			for(var incrKey in Research[resUp]["resCost"]){
 
 				Stuff[incrKey]["stored"]-= Research[resUp]["resCost"][resKey]*Stuff["research"]["workers"]*Stuff["research"]["workbonus"];
@@ -323,7 +331,7 @@ function doBonus(resUp){
 }
 
 function BuildCouncil(){
-console.log("BuildCouncil() run");
+	console.log("BuildCouncil() run");
 	if(addBuilding("councilhall")){
 		Buildings.councilhall.unlocked = true;
 		document.getElementById("buildCounc").style.display = "none";
@@ -345,85 +353,85 @@ console.log("BuildCouncil() run");
 function run(){ //not recessed for this main function
 
 
-//clear the message to player after ~some seconds
-if(document.getElementById("statement").innerHTML!="&nbsp"){
-	counter1++;
-	if(counter1>14) {
-		document.getElementById("statement").innerHTML = "&nbsp";
-		counter1 = 0;
+	//clear the message to player after ~some seconds
+	if(document.getElementById("statement").innerHTML!="&nbsp"){
+		counter1++;
+		if(counter1>14) {
+			document.getElementById("statement").innerHTML = "&nbsp";
+			counter1 = 0;
+		}
 	}
-}
 
-//*******************************************
-//check for events met to unlock new content
-//*******************************************
+	//*******************************************
+	//check for events met to unlock new content
+	//*******************************************
 
-if(Buildings.shack.count==2&&shackToken1==0){
-	document.getElementById("statement").innerHTML = "Soon another wanderer joins you in your work. More will surely come and stay if you have space to house them."; counter1 = 0;
-	shackToken1 = 1;
-}
+	if(Buildings.shack.count==2&&shackToken1==0){
+		document.getElementById("statement").innerHTML = "Soon another wanderer joins you in your work. More will surely come and stay if you have space to house them."; counter1 = 0;
+		shackToken1 = 1;
+	}
 
-if(Buildings.shack.count==3&&shackToken3==0){
-	document.getElementById("forrest").style.display = "block";
-	document.getElementById("woodStuff").style.visibility = "visible";
-	Stuff.wood.unlocked=true;
-	document.getElementById("statement").innerHTML = "You should cut more wood to continue building"; counter1 = 0;
-	shackToken3 = 1;
-}
+	if(Buildings.shack.count==3&&shackToken3==0){
+		document.getElementById("forrest").style.display = "block";
+		document.getElementById("woodStuff").style.visibility = "visible";
+		Stuff.wood.unlocked=true;
+		document.getElementById("statement").innerHTML = "You should cut more wood to continue building"; counter1 = 0;
+		shackToken3 = 1;
+	}
 
-if(Buildings.shack.count==4&&shackToken2==0){
-	document.getElementById("statement").innerHTML = "As you build more buildings they will require more resources. Why? Because that's what we do in this genre."; counter1 = 0;
-	shackToken2 = 1;
-}
+	if(Buildings.shack.count==4&&shackToken2==0){
+		document.getElementById("statement").innerHTML = "As you build more buildings they will require more resources. Why? Because that's what we do in this genre."; counter1 = 0;
+		shackToken2 = 1;
+	}
 
 
-if(Buildings.shack.count>5&& shackToken4==0){
-	document.getElementById("quarry").style.display = "block";
-	document.getElementById("rockStuff").style.visibility = "visible";
-	Stuff.rock.unlocked=true;
-	document.getElementById("statement").innerHTML = "One of the workers finds a rocky area that can be turned into a quarry"; counter1 = 0;
-	shackToken4 = 1;
-}
+	if(Buildings.shack.count>5&& shackToken4==0){
+		document.getElementById("quarry").style.display = "block";
+		document.getElementById("rockStuff").style.visibility = "visible";
+		Stuff.rock.unlocked=true;
+		document.getElementById("statement").innerHTML = "One of the workers finds a rocky area that can be turned into a quarry"; counter1 = 0;
+		shackToken4 = 1;
+	}
 
-if(Buildings.shack.count>7){
-	unlock("shed");
-}
+	if(Buildings.shack.count>7){
+		unlock("shed");
+	}
 
-if(Buildings.shed.count>0 && Stuff.rock.stored>30) {
-	unlock("mine");
-}
+	if(Buildings.shed.count>0 && Stuff.rock.stored>30) {
+		unlock("mine");
+	}
 
-if(Buildings.mine.count>0){
-	unlock("farm");
-}
+	if(Buildings.mine.count>0){
+		unlock("farm");
+	}
 
-if(Buildings.shed.count>2 && Buildings.mine.count>1){
-	unlock("barn");
-}
+	if(Buildings.shed.count>2 && Buildings.mine.count>1){
+		unlock("barn");
+	}
 
-if(Buildings.shack.count>8 && Buildings.shed.count>3 && Buildings.barn.count>0){
-	unlock("mill");
-}
+	if(Buildings.shack.count>8 && Buildings.shed.count>3 && Buildings.barn.count>0){
+		unlock("mill");
+	}
 
-if(Buildings.shack.count>8 && Buildings.mine.count>2){
-	unlock("workshop");
-}
+	if(Buildings.shack.count>8 && Buildings.mine.count>2){
+		unlock("workshop");
+	}
 
-if(!Buildings.hut.unlocked && Buildings.mill.count>0 && Buildings.workshop.count>0){
-	unlock("hut");
-}
+	if(!Buildings.hut.unlocked && Buildings.mill.count>0 && Buildings.workshop.count>0){
+		unlock("hut");
+	}
 
-if(Buildings.shack.count + Buildings.hut.count>14 && shackToken5==0){
-	document.getElementById("statement").innerHTML = "Your little camp has grown into a shanty town. You decide to form a council to govern and make decisions."; counter1 = 0;
-	document.getElementById("title").innerHTML = "Camp Carlyhead";
-	shackToken5 = 1;
+	if(Buildings.shack.count + Buildings.hut.count>14 && shackToken5==0){
+		document.getElementById("statement").innerHTML = "Your little camp has grown into a shanty town. You decide to form a council to govern and make decisions."; counter1 = 0;
+		document.getElementById("title").innerHTML = "Camp Carlyhead";
+		shackToken5 = 1;
 
-	document.getElementById("butt1").style.display = "inline";
-	document.getElementById("butt2").style.display = "inline";
-	document.getElementById("butt4").style.display = "inline";
-}
+		document.getElementById("butt1").style.display = "inline";
+		document.getElementById("butt2").style.display = "inline";
+		document.getElementById("butt4").style.display = "inline";
+	}
 
-//phase 1 done?//
+	//phase 1 done?//
 
 
 
@@ -434,84 +442,84 @@ if(Buildings.shack.count + Buildings.hut.count>14 && shackToken5==0){
 
 //////increment research///////////////////
 
-if(ActiveRes != " " && !Research[ActiveRes]["done"]){
-	console.log("trying to research");
-	researchIncr(ActiveRes);
-}
+	if(ActiveRes != " " && !Research[ActiveRes]["done"]){
+		console.log("trying to research");
+		researchIncr(ActiveRes);
+	}
 
 
 
 
 //////increment resources///////////////////  (could be it's own funtion but whatever) /////NEED TO ADD IN CHECK if lumber is full, don't use wood to make it
 
-for(var x in Stuff){
+	for(var x in Stuff){
 
-	if (Stuff[x]["unlocked"] && x!="free"){ //don't add anthing for free workers
+		if (Stuff[x]["unlocked"] && x!="free"){ //don't add anthing for free workers
 
-		var make = true;
+			var make = true;
 
-		for(var u in Stuff[x]["make"]){		
+			for(var u in Stuff[x]["make"]){		
 
-			incr = Stuff[x]["make"][u]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
+				incr = Stuff[x]["make"][u]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
 
-			if(Stuff[u]["stored"]+incr<0){
-				make = false;
+				if(Stuff[u]["stored"]+incr<0){
+					make = false;
+				}
 			}
-		}
 
-		if(make) {
+			if(make) {
 
-			for(var incrKey in Stuff[x]["make"]){
+				for(var incrKey in Stuff[x]["make"]){
 
 			
-				incr = Stuff[x]["make"][incrKey]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
-				max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
+					incr = Stuff[x]["make"][incrKey]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
+					max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
 
-				if(Stuff[incrKey]["stored"]+incr>max){
-					Stuff[incrKey]["stored"] = max;
-				} else {
-					Stuff[incrKey]["stored"]+=incr;
+					if(Stuff[incrKey]["stored"]+incr>max){
+						Stuff[incrKey]["stored"] = max;
+					} else {
+						Stuff[incrKey]["stored"]+=incr;
+					}
+				document.getElementById(incrKey).innerHTML = Math.round(Stuff[incrKey]["stored"]*10)/10;
 				}
-			document.getElementById(incrKey).innerHTML = Math.round(Stuff[incrKey]["stored"]*10)/10;
 			}
 		}
 	}
-}
 
 
 
 
 //add up workers
-wrks = 0;
-for(var key in Stuff){
+	wrks = 0;
+	for(var key in Stuff){
 
-	wrks += Stuff[key]["workers"];
+		wrks += Stuff[key]["workers"];
 
-}
+	}
 
 //consume food
-Stuff.food.stored=(Stuff.food.stored*10-(wrks*6))/10;
+	Stuff.food.stored=(Stuff.food.stored*10-(wrks*6))/10;
 
-if(Stuff.food.stored<1){
+	if(Stuff.food.stored<1){
 
-	document.getElementById("statement").innerHTML = "In a food-shortage panic all workers take to hunting";
-	counter1=0;
+		document.getElementById("statement").innerHTML = "In a food-shortage panic all workers take to hunting";
+		counter1=0;
 	
-	tempFood = 0; 
+		tempFood = 0; 
 	
 
-	for(var i in Stuff){
-		if(Stuff[i]["unlocked"] == 1){
-			tempFood+=Stuff[i]["workers"];
-			Stuff[i]["workers"] = 0;
-			document.getElementById(i + "workers").innerHTML = Stuff[i]["workers"];
+		for(var i in Stuff){
+			if(Stuff[i]["unlocked"] == 1){
+				tempFood+=Stuff[i]["workers"];
+				Stuff[i]["workers"] = 0;
+				document.getElementById(i + "workers").innerHTML = Stuff[i]["workers"];
+			}
 		}
-	}
-	Stuff.food.workers = tempFood;
+		Stuff.food.workers = tempFood;
 
-	document.getElementById("foodworkers").innerHTML = Stuff.food.workers;
+		document.getElementById("foodworkers").innerHTML = Stuff.food.workers;
 
-} 
+	} 
 
 
 
@@ -533,8 +541,8 @@ function testFunc(){
 		Stuff[x]["stored"] = Stuff[x]["maxstored"];
 		console.log("inner part");
 	
-}
-console.log("clicked");
+	}
+	console.log("clicked");
 }
 
 
