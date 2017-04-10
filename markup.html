@@ -313,15 +313,15 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspFIELDS&nbsp</b></span><br>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("food")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("food,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers" style="background: rgba(255, 255, 255, .6)"><b>&nbspHunters: <span id="foodworkers">0</span> / <span id="foodworkersMax">100</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("food")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("food,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 
 <div id="farmJob" class="none">
-<div class="userAdd"><button onclick='moveworker("farm")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("farm,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspFarmers: <span id="farmworkers">0</span> / <span id="farmworkersMax">100</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("farm")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("farm,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p></div>
 
 </div>
@@ -333,9 +333,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .8)"><b>&nbspFORREST&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("wood")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("wood,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers" style="background: rgba(255, 255, 255, .8)"><b>&nbspWoodcutters: <span id="woodworkers">0</span> / <span id="woodworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("wood")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("wood,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -346,9 +346,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspQUARRY&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("rock")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("rock,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspRockcutters: <span id="rockworkers">0</span> / <span id="rockworkersMax">1</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("rock")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("rock,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -359,9 +359,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspSAWMILLS&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("lumber")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("lumber,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspMill Workers: <span id="lumberworkers">0</span> / <span id="lumberworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("lumber")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("lumber,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -372,9 +372,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspWORKSHOPS&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("stone")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("stone,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspMasons: <span id="stoneworkers">0</span> / <span id="stoneworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("stone")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("stone,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -385,9 +385,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspSTUDIO&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("research")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("research,1")'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspResearhcers: <span id="researchworkers">0</span> / <span id="researchworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("research")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("research,1")'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
