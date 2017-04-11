@@ -43,7 +43,7 @@ var Buildings = {  //if addWorker property key is "free", it will actually add f
 
 };
 
-	
+var wrks = 0;		//total number of workers - only updated on TotalWorkers() call	
 var counter1 = 0;	//timer for removing "statement" messages
 var incr = 0; 		//to add resources each step
 var max = 0;  		//to find max storable
@@ -65,7 +65,7 @@ var unlockStuff = "";	//to set new materials to unlocked when a certain building
 var ActiveRes = " ";	//to set active research
 var make = true;	//to tell whether to make a research or resource increment (no if would be < 0 )
 var strg = "";
-
+var num = 1;			//to tell how many workers to add or remove
 
 function populate(){
 	
@@ -75,11 +75,6 @@ function populate(){
 }
 
 //////////////////////////////////////////////////////////////////////////add and remove workers///////////////////////////////////////////////////////////////////////////////////
-//*****
-//sections about adding and removing workers from wood, rock, food, etc.
-//*****
-
-var num = 1;
 function moveworker(workkey,num){
 
 
@@ -102,15 +97,12 @@ function removeworker(lessworkkey,num){
 	}
 }
 
+var buildBuild = true; //keep making the building
+function buildUp(time, interval){
 
-//*****
-//end section for adding and removing workers from wood, rock, food
-//*****
+}
+
 //////////////////////////////////////////////////////////////////////////add buildings////////////////////////////////////////////////////////////////////////////////
-//*****
-//start section for adding buildings
-//*****
-
 function addBuilding(buildkey){
 
 	canbuild = 0; //can build it if canbuild is still 0
@@ -125,26 +117,19 @@ function addBuilding(buildkey){
 	//can we build it?
 	for(var key in Buildings[buildkey]["cost"]){
 
-		costTxt = " ";
-
 		actualcost = Math.round(Buildings[buildkey]["cost"][key]*Math.pow(Buildings[buildkey]["costratio"],Buildings[buildkey]["count"]));
-
 
 		if(actualcost>Stuff[key]["stored"]){
 			canbuild++;
 			txtNotEnough+=(key+",&nbsp");
-		}
-	
+		}	
 	}
 	txtNotEnough = txtNotEnough.slice(0,-6);//remove the comma and space after the last entry
 
-
-
-
-
 	//yes we can!
 	if(canbuild == 0){
- 
+
+ 		costTxt = " ";
 		//pay for the building
 		for(var keyy in Buildings[buildkey]["cost"]){
 
@@ -156,6 +141,15 @@ function addBuilding(buildkey){
 			costTxt += Math.round(actualcost*Buildings[buildkey]["costratio"]) + "&nbsp" + keyy + ",&nbsp";
 		}
 		costTxt = costTxt.slice(0,-6);
+
+
+		var time = Building[buildkey]["buildTime"];
+		var interval = 100 / time;
+		while(buildBuild){
+			setTimeout(buildUp(time, interval), 500);
+		}
+		
+
 
 		if (!Buildings[buildkey]["buildOnce"]){
 			document.getElementById(buildkey+"Costs").innerHTML = costTxt;	 
@@ -172,7 +166,7 @@ function addBuilding(buildkey){
 
 			if(key4 == "free"){
 				Stuff.free.workers+=Buildings[buildkey]["addworker"]["free"];
-				document.getElementById(key4 + "workers").innerHTML = Stuff[key4]["workers"];
+				document.getElementById("freeworkers").innerHTML = Stuff["free"]["workers"];
 			} else {
 			Stuff[key4]["maxworkers"]+=Buildings[buildkey]["addworker"][key4];
 			document.getElementById(key4 + "workersMax").innerHTML = Stuff[key4]["maxworkers"];
@@ -196,22 +190,14 @@ function addBuilding(buildkey){
 	return(canbuild == 0);
 }
 
-//*****
-//end section for adding buildings
-//*****
 /////////////////////////////////////////////////////////////////////////////unlocking buildings, resources//////////////////////////////////////////////////////////////////////////////////
-//*****
-//start section for unlocking: making buildings, stuff, new jobs visible and setting "unlocked" true
-//*****
-
-
 function unlock(unlockkey){
 
 	if(!Buildings[unlockkey]["unlocked"]){
 		document.getElementById(unlockkey + "Build").style.visibility = "visible";
 
 		if(Buildings[unlockkey]["needsStuffJobs"]){
-			console.log(unlockkey);
+			console.log("unlocked " + unlockkey);
 			document.getElementById(unlockkey + "Job").style.display = "inline-block";
 			document.getElementById(unlockkey + "Stuff").style.visibility = "visible";
 
@@ -241,21 +227,11 @@ function unlock(unlockkey){
 	}
 }
 
-//*****
-//end section for making new buildings visible
-//*****
 ////////////////////////////////////////////////////////////////////////////research////////////////////////////////////////////////////////////////////////////////////
-//*****
-//start section for research
-//*****
-
 function SwapActiveRes(x){
 	
 	ActiveRes = x;
 }//this probably is not needed? need to make buttons and stuff
-
-
-
 
 var Research = {
 	FarmEquip:	{prize:0, resCost:{wood:2,lumber:1}, 	completion:0, done:false},
@@ -264,9 +240,6 @@ var Research = {
 	Metalwork:	{prize:3, resCost:{metal:1},		completion:0, done:false},
 
 }
-
-
-
 
 function researchIncr(resUp){ //somewhy research progresses even though no researcher workers
 
@@ -302,7 +275,6 @@ function researchIncr(resUp){ //somewhy research progresses even though no resea
 		}
 	}
 }
-
 
 function doBonus(resUp){
 	switch (Research[resUp]["prize"]) {
@@ -341,22 +313,62 @@ function BuildCouncil(){
 	}
 }
 
+function TotalWorkers(){//add up workers
+	wrks = 0;
+	for(var key in Stuff){
+		wrks += Stuff[key]["workers"];
+	}
+	return(wrks);
+}
 
+function incrRes(){ //increments resources (need to fix that it trys to make crafted stuff even when full)
+	for(var x in Stuff){
 
+		if (Stuff[x]["unlocked"] && x!="free"){ //don't add anthing for free workers
 
+			var make = true;
+
+			for(var u in Stuff[x]["make"]){		
+
+				incr = Stuff[x]["make"][u]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
+
+				if(Stuff[u]["stored"]+incr<0 || Stuff[u]["stored"]>=Stuff[u]["maxstored"]*Stuff[u]["storebonus"]){
+					make = false; //don't make if it would be less than 0 or is already full
+				}
+			}
+
+			if(make) {
+
+				for(var incrKey in Stuff[x]["make"]){
+
+			
+					incr = Stuff[x]["make"][incrKey]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
+					max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
+
+					if(Stuff[incrKey]["stored"]+incr>max){
+						Stuff[incrKey]["stored"] = max;
+					} else {
+						Stuff[incrKey]["stored"]+=incr;
+					}
+				document.getElementById(incrKey).innerHTML = Math.round(Stuff[incrKey]["stored"]*10)/10;
+				}
+			}
+		}
+	}
+}
 
 
 
 ////////////////////////////////////////////////////////////////game loop////////////////////////////////////////////////////////////////////////////////////////
 
 
-function run(){ //not recessed for this main function
+function run(){ 
 
 
 	//clear the message to player after ~some seconds
 	if(document.getElementById("statement").innerHTML!="&nbsp"){
 		counter1++;
-		if(counter1>14) {
+		if(counter1>35) {
 			document.getElementById("statement").innerHTML = "&nbsp";
 			counter1 = 0;
 		}
@@ -383,7 +395,6 @@ function run(){ //not recessed for this main function
 		document.getElementById("statement").innerHTML = "As you build more buildings they will require more resources. Why? Because that's what we do in this genre."; counter1 = 0;
 		shackToken2 = 1;
 	}
-
 
 	if(Buildings.shack.count>5&& shackToken4==0){
 		document.getElementById("quarry").style.display = "block";
@@ -434,13 +445,12 @@ function run(){ //not recessed for this main function
 	//phase 1 done?//
 
 
+	if (buildBuild){
+		buildUp();
+	}
 
 
-
-
-
-
-//////increment research///////////////////
+	//////increment research///////////////////
 
 	if(ActiveRes != " " && !Research[ActiveRes]["done"]){
 		console.log("trying to research");
@@ -450,54 +460,16 @@ function run(){ //not recessed for this main function
 
 
 
-//////increment resources///////////////////  (could be it's own funtion but whatever) /////NEED TO ADD IN CHECK if lumber is full, don't use wood to make it
+	//////increment resources///////////////////  (could be it's own funtion but whatever) /////NEED TO ADD IN CHECK if lumber is full, don't use wood to make it
 
-	for(var x in Stuff){
-
-		if (Stuff[x]["unlocked"] && x!="free"){ //don't add anthing for free workers
-
-			var make = true;
-
-			for(var u in Stuff[x]["make"]){		
-
-				incr = Stuff[x]["make"][u]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
-
-				if(Stuff[u]["stored"]+incr<0){
-					make = false;
-				}
-			}
-
-			if(make) {
-
-				for(var incrKey in Stuff[x]["make"]){
-
-			
-					incr = Stuff[x]["make"][incrKey]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
-					max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
-
-					if(Stuff[incrKey]["stored"]+incr>max){
-						Stuff[incrKey]["stored"] = max;
-					} else {
-						Stuff[incrKey]["stored"]+=incr;
-					}
-				document.getElementById(incrKey).innerHTML = Math.round(Stuff[incrKey]["stored"]*10)/10;
-				}
-			}
-		}
-	}
+	incrRes()
 
 
 
 
-//add up workers
-	wrks = 0;
-	for(var key in Stuff){
 
-		wrks += Stuff[key]["workers"];
 
-	}
-
-//consume food
+	//consume food
 	Stuff.food.stored=(Stuff.food.stored*10-(wrks*6))/10;
 
 	if(Stuff.food.stored<1){
