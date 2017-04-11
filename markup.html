@@ -5,17 +5,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <style>
-
 * {
    box-sizing:border-box;
 }
-
 container {
 	width:100%;
 	height: 100%;
 }
-
-
 header {
 	padding:.2em;
 	color: lightgrey;
@@ -38,7 +34,6 @@ footer {
 	min-width:1000px;
 	float:center;
 }
-
 .hide {
 	visibility: hidden;
 }
@@ -48,8 +43,6 @@ footer {
 .none {
 	display:none;
 }
-
-
 .butt {
 	width:500px;
 	color:black;
@@ -63,8 +56,6 @@ footer {
 	background-color:grey;
 	cursor:pointer;
 }
-
-
 resources {
 	float:left;
 	width: 20%;
@@ -75,8 +66,6 @@ resources {
 	border-right:3px solid black;
 	border-left:3px solid black;
 }
-
-
 buttons {
 	display:inline-block;
 	height:100%;
@@ -86,7 +75,6 @@ buttons {
 	text-align:center;
 	padding:17px;
 }
-
 tabs {
 	display:inline-block;
 	outline:pink;
@@ -95,12 +83,8 @@ tabs {
 	min-width:305px;
 	float:right;
 	text-align:center;
-
-
 }
-
 .researchButton{
-
 	display:inline-block;
 	width:150px;
 	height:70px;
@@ -110,7 +94,6 @@ tabs {
 	padding:0;
 	position:relative;
 }
-
 .researchButton:hover {
 	color:white;
 	background-color:rgba(100, 100, 100, .5);
@@ -129,8 +112,6 @@ tabs {
 	background-color:rgba(98, 161, 113, .5);
 	width:0%;
 }
-
-
 div.JobBox { 
 	width:250px;
 	text-align:center;
@@ -140,13 +121,11 @@ div.JobBox {
 	margin-top:10px;
 	height:100%;
 	background-size:cover;
-
 }
-
 div.userAdd {
 	float:left; 
 	position: relative; 
-	left: 20px; 
+	left: 2px; 
 	display: inline-block;
 }
 span.workers {
@@ -165,13 +144,11 @@ span.bkgrn {
 	margin: 0;
 	padding:0;
 }
-
 div.userRemove {
 	float:right;
 	position: relative;
-	right: 20px;
+	right: 2px;
 	display: inline-block;
-
 }
 .council {
 	margin:auto;
@@ -189,18 +166,16 @@ div.userRemove {
 	background-color:grey;
 	cursor:pointer;
 }
-
 body { 
 	background-image:linear-gradient(rgba(225,250,250,0.8),rgba(255,200,200,0.8)),  url(mountains2.jpg);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: center; 
 	background-size:cover;
-
 }
 .closebtn {
     margin-left: 15px;
-    color: blue;
+    color: white;
     font-weight: bold;
     float: right;
     font-size: 40pt;
@@ -215,9 +190,16 @@ body {
     font-size:1.5em;
 }
 
+.buildingButton{
+	background-color:rgba(225,250,250,0.8);
+	border:2px solid black;
+	margin:2px;
+}
+
+
 </style>
 
-<script src="code 0.6.js"></script> <!-----------------------------------------------------------------change version number---------->
+<script src="code.js"></script> <!-----------------------------------------------------------------change version number---------->
 
 </head>
 
@@ -229,35 +211,28 @@ var select = " "; //to pick the destination panel
 var Tabs = ["first", "second", "third", "fourth", "fifth"];
 var mark1 = "first";
 var mark2 = "second";
-
 function Panel(select){
-
 if(!(mark1 == select || mark2 == select)){
 mark2 = mark1;
 mark1 = select;
-
 	for(i=0;i<Tabs.length; i++) { 
-
 		if(mark1 == Tabs[i] || mark2 == Tabs[i]){
 			document.getElementById(select).style.display = "block";
 			
-
 		} else {
 			document.getElementById(Tabs[i]).style.display = "none";
 		}
 	}
 }
 }
-
 function ShowPanel(show){
 	document.getElementById("show").style.visibility = "visible";
 }
-
 </script>
 
 <header id="closeMe" class="alert">
 	<h1 class="closebtn" onclick="this.parentElement.style.display='none';populate()">&times;</h1>
-	<h2>Like many others, the turmoil of the War has driven you to start a new life in the unknown and unpopulated lands outside the walls of the Great City. After several years of wandering and living off the land you decide to settle down in a quiet valley.<br><br>You set up camp at the edge of the forrest near a stream and a field with wild animals you can hunt, and begin work on a more permanent residence.</h2>
+	<h2>Like many others, the turmoil of the War has driven you to start a new life in the unknown and unpopulated lands outside the walls of the Great City. After several years of wandering and living off the land you decide to settle down in a quiet valley.<br><br>You set up camp at the edge of the forest near a stream and a field with wild animals you can hunt, and begin work on a more permanent residence.</h2>
 </header>
 
 <header>
@@ -328,9 +303,9 @@ function ShowPanel(show){
 
 
 
-<div id="forrest" class="JobBox none" style="background-image: linear-gradient(rgba(250,250,250,0.7),rgba(255,250,250,0.7)), url(forrest.jpg);">
+<div id="forest" class="JobBox none" style="background-image: linear-gradient(rgba(250,250,250,0.7),rgba(255,250,250,0.7)), url(forest.jpg);">
 <p style="font-size:4pt;"> </p>
-<span class="bkgrn" style="background: rgba(255, 255, 255, .8)"><b>&nbspFORREST&nbsp</b></span>
+<span class="bkgrn" style="background: rgba(255, 255, 255, .8)"><b>&nbspFOREST&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
 <div class="userAdd"><button onclick='moveworker("wood,1")'><i class="fa fa-user"></i></button></div>
@@ -391,6 +366,20 @@ function ShowPanel(show){
 <p style="font-size:4pt;"> </p>
 </div>
 
+
+
+<div id="blank" class="JobBox" style="background-color: rgba(250,250,250,0); border-width: 0; display:inline-block;">
+<p style="font-size:4pt;"> </p>
+<span class="bkgrn" style="background: rgba(255, 255, 255, 0); border-width: 0;"><b>&nbsp&nbsp</b></span>
+<p style="font-size:25pt;"> </p>
+
+<div class="userAdd"></div>
+<span class="workers" style="background-color: rgba(250,250,250,0); border-width: 0;"><b>&nbsp</b></span>
+<div class="userRemove"></div>
+<p style="font-size:4pt;"> </p>
+</div>
+
+
 </tabs>
 
 
@@ -404,7 +393,11 @@ function ShowPanel(show){
 <tabs id="second">
 <h2>Buildings</h2>
 
-<p id="shackBuild">		Shack: <span id="shack">1</span> &nbsp <button onclick='addBuilding("shack")'>Build</button>&nbsp Cost:<span id="shackCosts">30 wood</span> </p>
+
+<div id="shackBuild" class="buildingButton" onclick='addBuilding("shack")'> Shack: <span id="shack">1</span> &nbsp&nbsp Cost:<span id="shackCosts">30 wood</span> 
+<p id="shackprogress">shack progress</p>
+</div>
+
 
 <p id="shedBuild" class="hide"> Woodsheds: <span id="shed">0</span> &nbsp <button onclick='addBuilding("shed")'>Build</button>&nbsp Cost:<span id="shedCosts">30 wood</span> </p>
 

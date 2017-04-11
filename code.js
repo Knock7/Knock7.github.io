@@ -3,10 +3,10 @@ var Stuff = { //the production of materials of all kinds
 	free:{workers:1, 	unlocked:1},
 	food:{workers:0, 	buildingwork:0, 	maxworkers:100, stored:100, 	maxstored:100, 	workbonus:1, storebonus:1, unlocked:1, make:{food:1}		},
 	wood:{workers:0, 	buildingwork:0, 	maxworkers:3, 	stored:100, 	maxstored:100, 	workbonus:1, storebonus:1, unlocked:0, make:{wood:1}		},
-	rock:{workers:0, 	buildingwork:0, 	maxworkers:1, 	stored:20, 	maxstored:100, 	workbonus:1, storebonus:1, unlocked:0, make:{rock:1}		},
-	farm:{workers:0,	buildingwork:0.1,	maxworkers:0,					workbonus:1,		   unlocked:0, make:{food:3}		},
-	lumber:{workers:0, 	buildingwork:0, 	maxworkers:0, 	stored:0, 	maxstored:100, 	workbonus:1, storebonus:1, unlocked:0, make:{lumber:1,wood:-.5}	},
-	stone:{workers:0, 	buildingwork:0, 	maxworkers:0, 	stored:0, 	maxstored:0, 	workbonus:1, storebonus:1, unlocked:0, make:{stone:1,rock:-1}	},
+	rock:{workers:0, 	buildingwork:0, 	maxworkers:1, 	stored:20, 		maxstored:100, 	workbonus:1, storebonus:1, unlocked:0, make:{rock:1}		},
+	farm:{workers:0,	buildingwork:0.1,	maxworkers:0,									workbonus:1,			   unlocked:0, make:{food:3}		},
+	lumber:{workers:0, 	buildingwork:0, 	maxworkers:0, 	stored:0, 		maxstored:100, 	workbonus:1, storebonus:1, unlocked:0, make:{lumber:1,wood:-.5}	},
+	stone:{workers:0, 	buildingwork:0, 	maxworkers:0, 	stored:0, 		maxstored:0, 	workbonus:1, storebonus:1, unlocked:0, make:{stone:1,rock:-1}	},
 
 	
 	research:{workers:0,	buildingwork:0,		maxworkers:0,					workbonus:1,		   unlocked:0},
@@ -15,24 +15,23 @@ var Stuff = { //the production of materials of all kinds
 	cattle(special increment)
 	gold:{workers:0, buildingwork:0, maxworkers:3, stored:0, maxstored:100, workbonus:1, storebonus:1, unlocked:0},
 	marbles:{workers:0, buildingwork:0, maxworkers:0, stored:0, maxstored:100, workbonus:1, storebonus:1, unlocked:0},
-
 */
 
 };
 
 var Buildings = {  //if addWorker property key is "free", it will actually add free workers and not space for them     can remove the buildOnce property because just make buy button invis for "true" buildings
-	shack:	{count:1, buildWorkers:1, buildTime:5, unlocked:true, 					addworker:{free:1}, 	cost:{wood:25}, 		unlock:"free",	costratio:1.2,	needsStuffJobs:false,	buildOnce:false,		},
-	farm:	{count:0, buildWorkers:3, buildTime:8,  unlocked:false, 					addworker:{farm:2},	cost:{wood:100, rock:75},	unlock:"farm",	costratio:2.5, 	needsStuffJobs:true,	buildOnce:false,	statement:"To free up workers from hunting duties you decided to try farming"},
-	shed:	{count:0, buildWorkers:2, buildTime:5,  unlocked:false, addstorage:{wood:50}, 		addworker:{wood:1}, 	cost:{wood:30},			unlock:"free",	costratio:1.5,	needsStuffJobs:false,	buildOnce:false,	statement:"It looks like you could use a place to chop and store more wood"},
-	mine:	{count:0, buildWorkers:3, buildTime:8,  unlocked:false, addstorage:{rock:50},			addworker:{rock:1}, 	cost:{wood:30, rock:50},	unlock:"free",	costratio:1.5,	needsStuffJobs:false,	buildOnce:false,	statement:"Adding a shaft to the mine allows for rock collection and storage"},
-	barn:	{count:0, buildWorkers:3, buildTime:8,  unlocked:false, addstorage:{wood:100,rock:100,food:100}, 			cost:{wood:300,rock:100},	unlock:"free",	costratio:1.5,	needsStuffJobs:false,	buildOnce:false,	statement:"Even more storage"},
-	mill:	{count:0, buildWorkers:3, buildTime:10,  unlocked:false, addstorage:{lumber:300}, 		addworker:{lumber:3},	cost:{wood:300, rock:50},	unlock:"lumber",costratio:2.5,	needsStuffJobs:true,	buildOnce:false,	statement:"Process the wood into boards at the sawmill"},
-	workshop:{count:0,buildWorkers:3, buildTime:12,  unlocked:false, addstorage:{stone:200},		addworker:{stone:3},	cost:{lumber:200,rock:200},	unlock:"stone",	costratio:2.5,	needsStuffJobs:true,	buildOnce:false,	statement:"Workshops will allow masons to cut raw rock into stone"},
-	hut:	{count:0, buildWorkers:3, buildTime:8,  unlocked:false, 					addworker:{free:1},	cost:{lumber:200,stone:100},	unlock:"free",	costratio:1.2,	needsStuffJobs:false,	buildOnce:false,	statement:"With the boards from the mill and cut stones you can build new housing structures"},
-	studio: {count:0, buildWorkers:4, buildTime:20,  unlocked:false, 			addworker:{research:1},		 cost:{wood:100,lumber:300,stone:200},	unlock:"research",costratio:1.3,needsStuffJobs:true,	buildOnce:false,	statement:"During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research."},
+	shack:	{count:1, buildWorkers:1, buildTime:5, unlocked:true, 								addworker:{free:1}, 	cost:{wood:25}, 			unlock:"free",	costratio:1.2,	needsStuffJobs:false,	buildOnce:false,		},
+	farm:	{count:0, buildWorkers:3, buildTime:8, unlocked:false, 								addworker:{farm:2},		cost:{wood:100, rock:75},	unlock:"farm",	costratio:2.5, 	needsStuffJobs:true,	buildOnce:false,	statement:"To free up workers from hunting duties you decided to try farming"},
+	shed:	{count:0, buildWorkers:2, buildTime:5, unlocked:false, addstorage:{wood:50}, 		addworker:{wood:1}, 	cost:{wood:30},				unlock:"free",	costratio:1.5,	needsStuffJobs:false,	buildOnce:false,	statement:"It looks like you could use a place to chop and store more wood"},
+	mine:	{count:0, buildWorkers:3, buildTime:8, unlocked:false, addstorage:{rock:50},		addworker:{rock:1}, 	cost:{wood:30, rock:50},	unlock:"free",	costratio:1.5,	needsStuffJobs:false,	buildOnce:false,	statement:"Adding a shaft to the mine allows for rock collection and storage"},
+	barn:	{count:0, buildWorkers:3, buildTime:8, unlocked:false, addstorage:{wood:100,rock:100,food:100}, 			cost:{wood:300,rock:100},	unlock:"free",	costratio:1.5,	needsStuffJobs:false,	buildOnce:false,	statement:"Even more storage"},
+	mill:	{count:0, buildWorkers:3, buildTime:10,unlocked:false, addstorage:{lumber:300}, 	addworker:{lumber:3},	cost:{wood:300, rock:50},	unlock:"lumber",costratio:2.5,	needsStuffJobs:true,	buildOnce:false,	statement:"Process the wood into boards at the sawmill"},
+	workshop:{count:0,buildWorkers:3, buildTime:12,unlocked:false, addstorage:{stone:200},		addworker:{stone:3},	cost:{lumber:200,rock:200},	unlock:"stone",	costratio:2.5,	needsStuffJobs:true,	buildOnce:false,	statement:"Workshops will allow masons to cut raw rock into stone"},
+	hut:	{count:0, buildWorkers:3, buildTime:8, unlocked:false, 								addworker:{free:1},		cost:{lumber:200,stone:100},unlock:"free",	costratio:1.2,	needsStuffJobs:false,	buildOnce:false,	statement:"With the boards from the mill and cut stones you can build new housing structures"},
+	studio: {count:0, buildWorkers:4, buildTime:20,unlocked:false, 			addworker:{research:1},		 cost:{wood:100,lumber:300,stone:200},		unlock:"research",costratio:1.3,needsStuffJobs:true,	buildOnce:false,	statement:"During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research."},
 
 
-	councilhall:{count:0,buildWorkers:1, buildTime:50,  unlocked:false,					cost:{wood:200, rock:200, lumber:400, stone:300}, 	unlock:"free", 	costratio:1,	needsStuffJobs:false,	buildOnce:true,	statement:"The Council Hall has been constructed. The first meeting will be held soon."},
+	councilhall:{count:0,buildWorkers:10, buildTime:50,  unlocked:false,						cost:{wood:200, rock:200, lumber:400, stone:300}, 	unlock:"free", 	costratio:1,	needsStuffJobs:false,	buildOnce:true,	statement:"The Council Hall has been constructed. The first meeting will be held soon."},
 
 /* Ideas for stuff to add
 	ranch:	{unlock:cattle}
@@ -66,10 +65,15 @@ var ActiveRes = " ";	//to set active research
 var make = true;	//to tell whether to make a research or resource increment (no if would be < 0 )
 var strg = "";
 var num = 1;			//to tell how many workers to add or remove
+var buildBuild = "no"	//if no, not building, otherwise building whatever is in the string
+var buildWorkers = 0;	//number of free workers to hold for construction
+var time = 1000;		//time to construct a building
+var interval = 10;		//ammount of construction to do each run() cycle
+var construction = 0; 	//completion from 0 to 100 of the current building
 
 function populate(){
 	
-	//alert("Like many others, the turmoil of the War has driven you to start a new life in the unknown and unpopulated lands outside the walls of the Great City. After several years of wandering and living off the land you decide to settle down in a quiet valley.\n\nYou set up camp at the edge of the forrest near a stream and a field with wild animals you can hunt, and begin work on a more permanent residence.");
+	//alert("Like many others, the turmoil of the War has driven you to start a new life in the unknown and unpopulated lands outside the walls of the Great City. After several years of wandering and living off the land you decide to settle down in a quiet valley.\n\nYou set up camp at the edge of the forest near a stream and a field with wild animals you can hunt, and begin work on a more permanent residence.");
 	document.getElementById("statement").innerHTML = "You have built a shack and gathered some supplies. Now your attention turns to bigger plans."; counter1 = 0;	
 
 }
@@ -102,6 +106,7 @@ function buildUp(time, interval){
 
 }
 
+
 //////////////////////////////////////////////////////////////////////////add buildings////////////////////////////////////////////////////////////////////////////////
 function addBuilding(buildkey){
 
@@ -127,7 +132,15 @@ function addBuilding(buildkey){
 	txtNotEnough = txtNotEnough.slice(0,-6);//remove the comma and space after the last entry
 
 	//yes we can!
-	if(canbuild == 0){
+	if(canbuild == 0 && buildBuild == "no"){
+
+		//set everything up for construction function
+		buildBuild = buildkey;
+		buildWorkers =  Stuff[buildkey]["buildWorkers"];
+		document.getElementById("freeworkers").innerHTML = Stuff.free.workers;
+		Stuff.free.workers -= buildWorkers;
+		time = Building[buildBuild]["buildTime"];
+		interval = 100 / time;
 
  		costTxt = " ";
 		//pay for the building
@@ -141,14 +154,6 @@ function addBuilding(buildkey){
 			costTxt += Math.round(actualcost*Buildings[buildkey]["costratio"]) + "&nbsp" + keyy + ",&nbsp";
 		}
 		costTxt = costTxt.slice(0,-6);
-
-
-		var time = Building[buildkey]["buildTime"];
-		var interval = 100 / time;
-		while(buildBuild){
-			setTimeout(buildUp(time, interval), 500);
-		}
-		
 
 
 		if (!Buildings[buildkey]["buildOnce"]){
@@ -189,6 +194,24 @@ function addBuilding(buildkey){
 	}
 	return(canbuild == 0);
 }
+
+function buildUp(){
+
+
+	if (construction<100){
+
+
+		construction+=interval;
+		document.getElementById(buildBuild + "progress").style.width = construction.toString() + "%"; //add html + css for the progress bars
+	} else {
+		Stuff.free.workers += buildWorkers;
+		document.getElementById("freeworkers").innerHTML = Stuff.free.workers;
+		buildBuild = "no";
+		construction = 0;
+		document.getElementById(buildBuild = "progress").style.width = "0%";
+	}
+}
+
 
 /////////////////////////////////////////////////////////////////////////////unlocking buildings, resources//////////////////////////////////////////////////////////////////////////////////
 function unlock(unlockkey){
@@ -302,6 +325,8 @@ function doBonus(resUp){
 	}
 }
 
+
+////////////////////////////////////////////////////////////////////////////miscilanious functions working on////////////////////////////////////////////////////////////////////////////////////
 function BuildCouncil(){
 	console.log("BuildCouncil() run");
 	if(addBuilding("councilhall")){
@@ -321,6 +346,7 @@ function TotalWorkers(){//add up workers
 	return(wrks);
 }
 
+////////////////////////////////////////////////////////////////////////////increment resources////////////////////////////////////////////////////////////////////////////////////
 function incrRes(){ //increments resources (need to fix that it trys to make crafted stuff even when full)
 	for(var x in Stuff){
 
@@ -359,6 +385,7 @@ function incrRes(){ //increments resources (need to fix that it trys to make cra
 
 
 
+
 ////////////////////////////////////////////////////////////////game loop////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -384,7 +411,7 @@ function run(){
 	}
 
 	if(Buildings.shack.count==3&&shackToken3==0){
-		document.getElementById("forrest").style.display = "block";
+		document.getElementById("forest").style.display = "inline-block";
 		document.getElementById("woodStuff").style.visibility = "visible";
 		Stuff.wood.unlocked=true;
 		document.getElementById("statement").innerHTML = "You should cut more wood to continue building"; counter1 = 0;
@@ -445,8 +472,10 @@ function run(){
 	//phase 1 done?//
 
 
-	if (buildBuild){
-		buildUp();
+
+	//start the construction of new building
+	if (buildBuild != "no"){
+		buildUp()
 	}
 
 
@@ -529,24 +558,6 @@ function testFunc(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* another way to create the new buildings and jobs - maybe try later
 function createMansions() {
 	var p1 = document.createElement("p");
@@ -556,7 +567,6 @@ function createMansions() {
 	s1.appendChild(document.createTextNode("0"));
 	var b1 = document.createElement("button")
 	b1.appendChild(document.createTextNode("Build"));
-
 	
 	p1.appendChild(t1);
 	p1.appendChild(s1);
@@ -569,25 +579,15 @@ function createMansions() {
 */
 
 /* Story ideas
+"You are currently overseeing construction of another building"
 
 Once you build up enough, barbarians attack you (must maintain troops and improve their armor/weapons - later can build walls or other fortifications to reduce number of soldiers needed for protection)
-
 Once the city is very large whoever started the Great War comes for you
-
 Say that you grow old and you pick a new leader after some time - could be related to prestige 
-
 Some sort of exploring/making contact with the Great City or other civilizations
-
 Electrical power
-
 Add a hint button? - na, this can be handled in a subreddit thread
-
-
 Add in that it take free workers in the camp to build buildings (a certain number for a type of building) maybe it takes longer the more you have built? time*fnc(count,ratio)
-
 Add in one researcher - in council hall make a buildings for "add space in the hall for reseachers" to increase the numer of researchers max
-
 Mkae it take random time for new workers to join up
-
-
 */
