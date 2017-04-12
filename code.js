@@ -46,9 +46,8 @@ var wrks = 0;		//total number of workers - only updated on TotalWorkers() call
 var counter1 = 0;	//timer for removing "statement" messages
 var incr = 0; 		//to add resources each step
 var max = 0;  		//to find max storable
-var canbuild = 0;	//to check resources
 var txtNotEnough = " "; //to say which resources are missing to build a new building
-var wrks = 0;		//to count up the workers and subtract food consumption
+var allworkers = 1;		//to count up the workers and subtract food consumption
 var tempFood = 0;	//to count workers transfered to hunting in food shortage
 var actualcost = 0;	//to calculate the cost of a purchase from the base cost, "cost," and the cost ratio
 var nextcost = 0;	//to give how much the next building will cost (to display on the webpage)
@@ -101,21 +100,16 @@ function removeworker(lessworkkey,num){
 	}
 }
 
-var buildBuild = true; //keep making the building
-function buildUp(time, interval){
-
-}
-
 
 //////////////////////////////////////////////////////////////////////////add buildings////////////////////////////////////////////////////////////////////////////////
 function addBuilding(buildkey){
 
-	canbuild = 0; //can build it if canbuild is still 0
+	var canbuild = true; 
 	txtNotEnough = " ";
 
-	//enough free worekers to build?     buildWorkers:1, buildTime:5
+	//enough free worekers to build?    
 	if(Buildings[buildkey]["buildWorkers"]>Stuff["free"]["workers"]){
-		canbuild++;
+		canbuild = false;
 		txtNotEnough+= "free workers at camp,&nbsp"
 	}
 
@@ -125,21 +119,22 @@ function addBuilding(buildkey){
 		actualcost = Math.round(Buildings[buildkey]["cost"][key]*Math.pow(Buildings[buildkey]["costratio"],Buildings[buildkey]["count"]));
 
 		if(actualcost>Stuff[key]["stored"]){
-			canbuild++;
+			canbuild = false;
 			txtNotEnough+=(key+",&nbsp");
 		}	
 	}
 	txtNotEnough = txtNotEnough.slice(0,-6);//remove the comma and space after the last entry
 
 	//yes we can!
-	if(canbuild == 0 && buildBuild == "no"){
+	if(canbuild && buildBuild == "no"){
 
 		//set everything up for construction function
 		buildBuild = buildkey;
-		buildWorkers =  Stuff[buildkey]["buildWorkers"];
-		document.getElementById("freeworkers").innerHTML = Stuff.free.workers;
+		buildWorkers =  Buildings[buildkey]["buildWorkers"];
 		Stuff.free.workers -= buildWorkers;
-		time = Building[buildBuild]["buildTime"];
+		document.getElementById("freeworkers").innerHTML = Stuff.free.workers;
+
+		time = Buildings[buildBuild]["buildTime"];
 		interval = 100 / time;
 
  		costTxt = " ";
@@ -171,6 +166,7 @@ function addBuilding(buildkey){
 
 			if(key4 == "free"){
 				Stuff.free.workers+=Buildings[buildkey]["addworker"]["free"];
+				allworkers+=Buildings[buildkey]["addworker"]["free"];
 				document.getElementById("freeworkers").innerHTML = Stuff["free"]["workers"];
 			} else {
 			Stuff[key4]["maxworkers"]+=Buildings[buildkey]["addworker"][key4];
@@ -188,27 +184,27 @@ function addBuilding(buildkey){
 		}
 
 		//no we can't :(
-		} else {
+	} else if (buildBuild != "no"){
+		document.getElementById("statement").innerHTML = "You are busy overseeing construction already"; counter1 = 20;
+	} else {
 
-		document.getElementById("statement").innerHTML = "Not enough "+ txtNotEnough +" to build " + buildkey; counter1 = 0;
+		document.getElementById("statement").innerHTML = "Not enough "+ txtNotEnough +" to build " + buildkey; counter1 = 20;
 	}
-	return(canbuild == 0);
+	return(canbuild);
 }
 
 function buildUp(){
 
 
 	if (construction<100){
-
-
 		construction+=interval;
 		document.getElementById(buildBuild + "progress").style.width = construction.toString() + "%"; //add html + css for the progress bars
 	} else {
 		Stuff.free.workers += buildWorkers;
 		document.getElementById("freeworkers").innerHTML = Stuff.free.workers;
-		buildBuild = "no";
 		construction = 0;
-		document.getElementById(buildBuild = "progress").style.width = "0%";
+		document.getElementById(buildBuild + "progress").style.width = "0%";
+		buildBuild = "no";
 	}
 }
 
@@ -220,7 +216,6 @@ function unlock(unlockkey){
 		document.getElementById(unlockkey + "Build").style.visibility = "visible";
 
 		if(Buildings[unlockkey]["needsStuffJobs"]){
-			console.log("unlocked " + unlockkey);
 			document.getElementById(unlockkey + "Job").style.display = "inline-block";
 			document.getElementById(unlockkey + "Stuff").style.visibility = "visible";
 
@@ -338,18 +333,10 @@ function BuildCouncil(){
 	}
 }
 
-function TotalWorkers(){//add up workers
-	wrks = 0;
-	for(var key in Stuff){
-		wrks += Stuff[key]["workers"];
-	}
-	return(wrks);
-}
 
 ////////////////////////////////////////////////////////////////////////////increment resources////////////////////////////////////////////////////////////////////////////////////
 function incrRes(){ //increments resources (need to fix that it trys to make crafted stuff even when full)
 	for(var x in Stuff){
-
 		if (Stuff[x]["unlocked"] && x!="free"){ //don't add anthing for free workers
 
 			var make = true;
@@ -358,8 +345,8 @@ function incrRes(){ //increments resources (need to fix that it trys to make cra
 
 				incr = Stuff[x]["make"][u]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
 
-				if(Stuff[u]["stored"]+incr<0 || Stuff[u]["stored"]>=Stuff[u]["maxstored"]*Stuff[u]["storebonus"]){
-					make = false; //don't make if it would be less than 0 or is already full
+				if(Stuff[u]["stored"]+incr<0){
+					make = false; //don't make if it would be less than 0
 				}
 			}
 
@@ -371,12 +358,13 @@ function incrRes(){ //increments resources (need to fix that it trys to make cra
 					incr = Stuff[x]["make"][incrKey]*(Stuff[x]["workers"]*Stuff[x]["workbonus"] + Stuff[x]["buildingwork"]);
 					max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
 
+
 					if(Stuff[incrKey]["stored"]+incr>max){
 						Stuff[incrKey]["stored"] = max;
 					} else {
 						Stuff[incrKey]["stored"]+=incr;
 					}
-				document.getElementById(incrKey).innerHTML = Math.round(Stuff[incrKey]["stored"]*10)/10;
+					document.getElementById(incrKey).innerHTML = Math.round(Stuff[incrKey]["stored"]*10)/10;
 				}
 			}
 		}
@@ -390,7 +378,6 @@ function incrRes(){ //increments resources (need to fix that it trys to make cra
 
 
 function run(){ 
-
 
 	//clear the message to player after ~some seconds
 	if(document.getElementById("statement").innerHTML!="&nbsp"){
@@ -424,7 +411,7 @@ function run(){
 	}
 
 	if(Buildings.shack.count>5&& shackToken4==0){
-		document.getElementById("quarry").style.display = "block";
+		document.getElementById("quarry").style.display = "inline-block";
 		document.getElementById("rockStuff").style.visibility = "visible";
 		Stuff.rock.unlocked=true;
 		document.getElementById("statement").innerHTML = "One of the workers finds a rocky area that can be turned into a quarry"; counter1 = 0;
@@ -491,7 +478,7 @@ function run(){
 
 	//////increment resources///////////////////  (could be it's own funtion but whatever) /////NEED TO ADD IN CHECK if lumber is full, don't use wood to make it
 
-	incrRes()
+	incrRes();
 
 
 
@@ -499,8 +486,7 @@ function run(){
 
 
 	//consume food
-	Stuff.food.stored=(Stuff.food.stored*10-(wrks*6))/10;
-
+	Stuff.food.stored=(Stuff.food.stored*10-(allworkers*6))/10;
 	if(Stuff.food.stored<1){
 
 		document.getElementById("statement").innerHTML = "In a food-shortage panic all workers take to hunting";
@@ -589,5 +575,5 @@ Electrical power
 Add a hint button? - na, this can be handled in a subreddit thread
 Add in that it take free workers in the camp to build buildings (a certain number for a type of building) maybe it takes longer the more you have built? time*fnc(count,ratio)
 Add in one researcher - in council hall make a buildings for "add space in the hall for reseachers" to increase the numer of researchers max
-Mkae it take random time for new workers to join up
+Mkae it take random time for new workers to join up?
 */
