@@ -190,10 +190,31 @@ body {
     font-size:1.5em;
 }
 
+.researchButton{
+	display:inline-block;
+	width:150px;
+	height:70px;
+	margin:15px;
+	border:3px double black;
+	background: rgba(255, 255, 255, .3);
+	padding:0;
+	position:relative;
+}
+
 .buildingButton{
-	background-color:rgba(225,250,250,0.8);
-	border:2px solid black;
-	margin:2px;
+	display:inline-block;
+	width:250px;
+	height:auto;
+	margin:15px;
+	border:3px solid black;
+	background: rgba(255, 255, 255, .3);
+	padding:0;
+	position:relative;
+}
+.buildingButton:hover {
+	color:white;
+	background-color:rgba(100, 100, 100, .5);
+	cursor:pointer;
 }
 
 
@@ -288,15 +309,15 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspFIELDS&nbsp</b></span><br>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("food,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("food",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers" style="background: rgba(255, 255, 255, .6)"><b>&nbspHunters: <span id="foodworkers">0</span> / <span id="foodworkersMax">100</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("food,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("food",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 
 <div id="farmJob" class="none">
-<div class="userAdd"><button onclick='moveworker("farm,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("farm",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspFarmers: <span id="farmworkers">0</span> / <span id="farmworkersMax">100</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("farm,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("farm",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p></div>
 
 </div>
@@ -308,9 +329,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .8)"><b>&nbspFOREST&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("wood,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("wood",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers" style="background: rgba(255, 255, 255, .8)"><b>&nbspWoodcutters: <span id="woodworkers">0</span> / <span id="woodworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("wood,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("wood",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -321,9 +342,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspQUARRY&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("rock,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("rock",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspRockcutters: <span id="rockworkers">0</span> / <span id="rockworkersMax">1</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("rock,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("rock",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -334,9 +355,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspSAWMILLS&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("lumber,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("lumber",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspMill Workers: <span id="lumberworkers">0</span> / <span id="lumberworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("lumber,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("lumber",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -347,9 +368,9 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspWORKSHOPS&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("stone,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("stone",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspMasons: <span id="stoneworkers">0</span> / <span id="stoneworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("stone,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("stone",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
@@ -360,15 +381,15 @@ function ShowPanel(show){
 <span class="bkgrn" style="background: rgba(255, 255, 255, .6)"><b>&nbspSTUDIO&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
 
-<div class="userAdd"><button onclick='moveworker("research,1")'><i class="fa fa-user"></i></button></div>
+<div class="userAdd"><button onclick='moveworker("research",1)'><i class="fa fa-user"></i></button></div>
 <span class="workers"><b>&nbspResearhcers: <span id="researchworkers">0</span> / <span id="researchworkersMax">3</span>&nbsp</b></span>
-<div class="userRemove"><button onclick='removeworker("research,1")'><i class="fa fa-user-times"></i></button></div>
+<div class="userRemove"><button onclick='removeworker("research",1)'><i class="fa fa-user-times"></i></button></div>
 <p style="font-size:4pt;"> </p>
 </div>
 
 
 
-<div id="blank" class="JobBox" style="background-color: rgba(250,250,250,0); border-width: 0; display:inline-block;">
+<div id="blank" class="JobBox" style="background-color: rgba(250,250,250,.5); border-width: 0; display:inline-block;">
 <p style="font-size:4pt;"> </p>
 <span class="bkgrn" style="background: rgba(255, 255, 255, 0); border-width: 0;"><b>&nbsp&nbsp</b></span>
 <p style="font-size:25pt;"> </p>
@@ -394,26 +415,50 @@ function ShowPanel(show){
 <h2>Buildings</h2>
 
 
-<div id="shackBuild" class="buildingButton" onclick='addBuilding("shack")'> Shack: <span id="shack">1</span> &nbsp&nbsp Cost:<span id="shackCosts">30 wood</span> 
-<p id="shackprogress">shack progress</p>
-</div>
+<div id="shackBuild" class="buildingButton" onclick='addBuilding("shack")'> 
+	<div id="shackprogress" class="resBar"><p class="resText">
+	  Shack: <span id="shack">1</span> &nbsp&nbsp Cost: <span id="shackCosts">30 wood</span>
+	</p></div></div>
 
+<div id="shedBuild" class="hide buildingButton" onclick='addBuilding("shed")'>
+	<div id="shedprogress" class="resBar"><p class="resText">
+	  Woodsheds: <span id="shed">0</span> &nbsp&nbsp Cost: <span id="shedCosts">30 wood</span>
+ 	</p></div></div>
 
-<p id="shedBuild" class="hide"> Woodsheds: <span id="shed">0</span> &nbsp <button onclick='addBuilding("shed")'>Build</button>&nbsp Cost:<span id="shedCosts">30 wood</span> </p>
+<div id="mineBuild" class="hide buildingButton" onclick='addBuilding("mine")'>
+	<div id="mineprogress" class="resBar"><p class="resText">
+	  Mineshafts: <span id="mine">0</span> &nbsp&nbsp Cost: <span id="mineCosts">" "</span>
+ 	</p></div></div>
 
-<p id="mineBuild" class="hide"> Mineshafts: <span id="mine">0</span> &nbsp <button onclick='addBuilding("mine")'>Build</button>&nbsp Cost:<span id="mineCosts">" "</span> </p>
+<div id="farmBuild" class="hide buildingButton" onclick='addBuilding("farm")'>
+	<div id="farmprogress" class="resBar"><p class="resText">
+	  Farms: <span id="farm">0</span> &nbsp&nbsp Cost: <span id="farmCosts">" "</span>
+	</p></div></div>
 
-<p id="farmBuild" class="hide"> Farms: <span id="farm">0</span> &nbsp <button onclick='addBuilding("farm")'>Build</button>&nbsp Cost:<span id="farmCosts">" "</span> </p>
+<div id="barnBuild" class="hide buildingButton" onclick='addBuilding("barn")'>
+	<div id="barnprogress" class="resBar"><p class="resText">
+	  Barns: 	<span id="barn">0</span> &nbsp&nbsp Cost: <span id="barnCosts">" "</span>
+	</p></div></div>
 
-<p id="barnBuild" class="hide"> Barns: 	<span id="barn">0</span> &nbsp <button onclick='addBuilding("barn")'>Build</button>&nbsp Cost:<span id="barnCosts">" "</span> </p>
+<div id="millBuild" class="hide buildingButton" onclick='addBuilding("mill")'>
+	<div id="millprogress" class="resBar"><p class="resText">	
+	  Sawmills: <span id="mill">0</span> &nbsp&nbsp Cost: <span id="millCosts">" "</span>
+	  </p></div></div>
 
-<p id="millBuild" class="hide"> Sawmills: <span id="mill">0</span> &nbsp <button onclick='addBuilding("mill")'>Build</button>&nbsp Cost:<span id="millCosts">" "</span> </p>
+<div id="workshopBuild" class="hide buildingButton" onclick='addBuilding("workshop")'>
+	<div id="workshopprogress" class="resBar"><p class="resText">
+	  Workshops: <span id="workshop">0</span> &nbsp&nbsp Cost: <span id="workshopCosts">" "</span>
+	  </p></div></div>
 
-<p id="workshopBuild" class="hide">  Workshops: <span id="workshop">0</span> &nbsp <button onclick='addBuilding("workshop")'>Build</button>&nbsp Cost:<span id="workshopCosts">" "</span> </p>
+<div id="hutBuild" class="hide buildingButton" onclick='addBuilding("hut")'>
+	<div id="hutprogress" class="resBar"><p class="resText">
+	  Huts: <span id="hut">0</span> &nbsp&nbsp Cost: <span id="hutCosts">" "</span>
+	  </p></div></div>
 
-<p id="hutBuild" class="hide">  Huts: <span id="hut">0</span> &nbsp <button onclick='addBuilding("hut")'>Build</button>&nbsp Cost:<span id="hutCosts">" "</span> </p>
-
-<p id="studioBuild" class="hide">  Studios: <span id="studio">0</span> &nbsp <button onclick='addBuilding("studio")'>Build</button>&nbsp Cost:<span id="studioCosts">" "</span> </p>
+<div id="studioBuild" class="hide buildingButton" onclick='addBuilding("studio")'>
+	<div id="studioprogress" class="resBar"><p class="resText">
+	  Studios: <span id="studio">0</span> &nbsp&nbsp Cost: <span id="studioCosts">" "</span>
+	  </p></div></div>
 
 </tabs>
 
