@@ -1,5 +1,12 @@
+/*Hello to anyone reading this! Yes I am new at this - please point out ways to do 
+  anything better. If you want to add something, feel free. I will look at pushes to github
+  and if I like them, I'll add them. Vanilla for now; I'll get to learing jquery at some point */
+
+
+
 var Stuff = { //the production of materials of all kinds
 
+//every job has a primary resouce for which they are named in the HTML. They may produce/consume other materials too.
 	free:{workers:1, 	unlocked:1},
 	food:{workers:0, 	buildingwork:0, 	maxworkers:100, stored:100, 	maxstored:100, 	workbonus:1, storebonus:1, unlocked:1, make:{food:1}		},
 	wood:{workers:0, 	buildingwork:0, 	maxworkers:3, 	stored:100, 	maxstored:100, 	workbonus:1, storebonus:1, unlocked:0, make:{wood:1}		},
@@ -11,7 +18,7 @@ var Stuff = { //the production of materials of all kinds
 	tin:{workers:0,		buildingwork:0,		maxworkers:0,	stored:0,		maxstored:0,	workbonus:1, storebonus:1, unlocked:0, make:{}},
 	bronze:{workers:0,	buildingwork:0,		maxworkers:0,	stored:0,		maxstored:0,	workbonus:1, storebonus:1, unlocked:0, make:{}},
 	gold:{workers:0,	buildingwork:0,		maxworkers:0,	stored:0,		maxstored:0,	workbonus:1, storebonus:1, unlocked:0, make:{}},
-	coal:{workers:0,		buildingwork:0,		maxworkers:0,	stored:0,		maxstored:0,	workbonus:1, storebonus:1, unlocked:0, make:{}},
+	coal:{workers:0,	buildingwork:0,		maxworkers:0,	stored:0,		maxstored:0,	workbonus:1, storebonus:1, unlocked:0, make:{}},
 	iron:{},
 	steel:{},
 	zinc:{},//unlock some metals as you make more mines - trade for others that you don't have in your area
@@ -83,11 +90,14 @@ var interval = 10;		//ammount of construction to do each run() cycle
 var construction = 0; 	//completion from 0 to 100 of the current building
 var jobIds = {field:"food",farmJob:"farm",forest:"wood",quarry:"rock",millJob:"lumber",workshopJob:"stone",labJob:"research"}; //add new ids to this list to have click listeners populated
 var container = {};//to store the elements on which we will set the eventListeners (because we can't make new variable names using variable strings)
-
+var bodyy 				//reference to the HTML node/element <body>
+var knowledge = 0;		//the prestige variable
 
 //variables to litsen to
 window.onload = function () {//add event listeners after DOM has laoded or you will get null instead of element
 	console.log("window has loaded");
+	bodyy = document.getElementsByTagName('body')[0];
+	bodyy.addEventListener("transitionend", updateTransition, true);
 
 	var closeStory = document.querySelector(".closebtn");
 	closeStory.addEventListener("click", function(){closeStory.parentElement.style.display="none";populate();});
@@ -129,26 +139,57 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	var buildCounc = document.getElementById("buildCounc");
 	buildCounc.addEventListener("click",function(){addBuilding("councilhall")});
 
+	var councilMessages = document.querySelectorAll(".councilMessage");
+	for (i=0;i<councilMessages.lengh;i++){
+		councilMessages[i].addEventListener("click",CouncilMessageEvent);
+	}
+
 }
 
 function populate(){
 	console.log("populated");
 	document.getElementById("statement").innerHTML = "You have built a shack and gathered some supplies. Now your attention turns to bigger plans."; counter1 = 0;	
+	load();
 }
 function panelEvent(e){
 	Panel("pan" + e.currentTarget.id.charAt(e.currentTarget.id.length-1)); //pan0, pan1 strings
 }
 function moveworkerEvent(e){
-	moveworker(jobIds[e.currentTarget.parentElement.id],1);//uses the ids as keys in jobIds object to get wood, food, etc strings
+	var num = 1;
+	if (e.shiftKey) {
+		num = 5;
+	}
+	if (e.ctrlKey) {
+		num = 10;
+	}
+	if(e.altKey) {
+		num = -1;
+	}
+	moveworker(jobIds[e.currentTarget.parentElement.id],num);//uses the ids as keys in jobIds object to get wood, food, etc strings
 }
 function removeworkerEvent(e){
-	removeworker(jobIds[e.currentTarget.parentElement.id],1);
+	var num = 1;
+	if (e.shiftKey) {
+		num = 5;
+	}
+	if (e.ctrlKey) {
+		num = 10;
+	}
+	if(e.altKey) {
+		num = -1;
+	}
+	removeworker(jobIds[e.currentTarget.parentElement.id],num);
 }
 function addBuildingEvent(e){
 	addBuilding(e.currentTarget.id.slice(0,-5));
 }
 function SwapResearchEvent(e){
 	SwapActiveRes(e.currentTarget.id);
+}
+function CouncilMessageEvent(e){
+	var num = 1 + e.currentTarget.id.charAt(e.currentTarget.id.length-1);
+	e.currentTarget.style.display = "none"
+	document.getElementById("council"+ num).style.display = "block";
 }
 
 //for switching active panels
@@ -172,6 +213,9 @@ function Panel(select){
 //////////////////////////////////////////////////////////////////////////add and remove workers///////////////////////////////////////////////////////////////////////////////////
 function moveworker(workkey,num){
 
+	if (num === -1){
+		num = Math.min(Stuff[workkey]["maxworkers"]-Stuff[workkey]["workers"],Stuff.free.workers);
+	}
 
 	if (Stuff[workkey]["workers"]+num <= Stuff[workkey]["maxworkers"] && Stuff.free.workers >= num){
 		Stuff[workkey]["workers"]+=num;
@@ -183,6 +227,9 @@ function moveworker(workkey,num){
 }
 
 function removeworker(lessworkkey,num){
+	if (num === -1){
+		num = Stuff[lessworkkey]["workers"];
+	}
 	if (Stuff[lessworkkey]["workers"]-num>=0){
 		Stuff[lessworkkey]["workers"]-=num;
 		Stuff["free"]["workers"]+=num;
@@ -195,7 +242,7 @@ function removeworker(lessworkkey,num){
 
 //////////////////////////////////////////////////////////////////////////add buildings////////////////////////////////////////////////////////////////////////////////
 function addBuilding(buildkey){
-console.log("building " + buildkey);
+
 	var canbuild = true; 
 	txtNotEnough = " ";
 
@@ -258,8 +305,6 @@ console.log("building " + buildkey);
 function buildUp(){
 
 	for(i=0;i<buildBuild.length;i++){
-console.log("buildup() " + buildBuild[i]);
-console.log("buildContruct: " + buildConstruct[i]);
 		if (buildConstruct[i]<100){
 			buildConstruct[i]+=(100/Buildings[buildBuild[i]]["buildTime"]); //need to loop through buildkeys in array 1
 			if(buildConstruct[i]>99){
@@ -273,7 +318,6 @@ console.log("buildContruct: " + buildConstruct[i]);
 }
 
 function finishBuilding(buildkey,index){
-console.log("finish building " + buildkey);
 	//re-direct to special building calls
 	if(buildkey == "councilhall"){
 		finishCouncil(index);
@@ -306,8 +350,8 @@ console.log("finish building " + buildkey);
 
 		//and reset freeworkers, construction bar, and buildBuild to "no"
 		Stuff.free.workers += Buildings[buildkey]["buildWorkers"];
-console.log(Buildings[buildkey]["buildWorkers"]);
-console.log(Stuff.free.workers + " free workers");
+
+
 		buildWorkers -= Buildings[buildkey]["buildWorkers"];
 		document.getElementById("freeworkers").innerHTML = Stuff.free.workers;
 		document.getElementById(buildkey + "progress").style.width = "0%";
@@ -434,7 +478,7 @@ function doBonus(resUp){
 function finishCouncil(index){
 	Buildings.councilhall.unlocked = true;
 	document.getElementById("buildCounc").style.display = "none";
-	document.getElementById("statement").innerHTML = "During the first meeting, the Council decideds to begin research and planning to recover lost technologies./nYou can now build additional space at the back for the Town Hall for research.";
+	document.getElementById("statement").innerHTML = "Council decree at Town Hall"; counter1 = 0;
 	document.getElementById("butt3").style.display = "inline";
 	unlock("lab");
 	document.getElementById("council1").style.visibility = "visible";
@@ -450,7 +494,10 @@ function isEmpty(object) {
 	}
 	return false;
 }
-
+function updateTransition(){
+	console.log("transition done");
+	bodyy.className = "normal";
+}
 ////////////////////////////////////////////////////////////////////////////increment resources////////////////////////////////////////////////////////////////////////////////////
 function incrRes(){ //increments resources (need to fix that it trys to make crafted stuff even when full - but! all positive crafted stuff must be full)
 	for(var x in Stuff){
@@ -593,8 +640,7 @@ function run(){
 
 
 
-	//////increment resources///////////////////  (could be it's own funtion but whatever) /////NEED TO ADD IN CHECK if lumber is full, don't use wood to make it
-
+	//////increment resources///////////////////
 	incrRes();
 
 
@@ -605,15 +651,17 @@ function run(){
 	//consume food
 	Stuff.food.stored=(Stuff.food.stored*10-(allworkers*6))/10;
 	if(Stuff.food.stored<1){
-
-		document.getElementById("statement").innerHTML = "In a food-shortage panic all workers take to hunting";
+		
+		bodyy.className = "alert2"; //gets set back to class="normal" by a transition listener
+		document.getElementById("statement").innerHTML = "In a food-shortage panic all available workers take to hunting";
 		counter1=0;
 	
 		tempFood = 0; 
+
 	
 
 		for(var i in Stuff){
-			if(Stuff[i]["unlocked"] == 1){
+			if(Stuff[i]["unlocked"] == 1 && i!=="farm"){
 				tempFood+=Stuff[i]["workers"];
 				Stuff[i]["workers"] = 0;
 				document.getElementById(i + "workers").innerHTML = Stuff[i]["workers"];
@@ -649,7 +697,81 @@ function testFunc(){
 }
 
 
+/////////////////////////////////////////local storage to save the game?///////////////
 
+function storageAvailable(type) {
+	try {
+		var storage = window[type],
+			x = '__storage_test__';
+		storage.setItem(x, x);
+		storage.removeItem(x);
+		return true;
+	}
+	catch(e) {
+		return false;
+	}
+}
+
+//taken from MDN tutorial on Storage
+function saveGame(){
+	if (storageAvailable('localStorage')) {
+		console.log('Yippee! We can use localStorage awesomeness');
+
+		data.set("Stuff", Stuff);
+		data.set("Buildings", Buildings);
+		data.set("Global variables", GlobVar);
+	}
+	else {
+		alert('Too bad, no localStorage for us');
+	}
+}
+
+function load(){
+	//oh gee this is going to be fun
+	Stuff = data.get("Stuff");
+	Buildings = data.get("Buildings");
+	GlobVar = data.get("Global variables");
+
+	//and oh gee, how do I even start this
+	/*
+	update to the stored values of all resources, maxes, buildings, costs  add refreshAmounts() function
+	show the values that have been unlocked
+	if there are more than X people show buttons up to butt3
+	if there is a councilhall then show butt4
+	*/
+
+}
+
+function prestige(){
+	knowledge += Stuff.free.maxworkers;
+	data.set("Knowledge",knowledge);
+	//do I save knowledge and reload the page or reset the stored amounts of everything to 0 and refreshAmounts()?
+	window.location.reload(false);//seems easiest
+}
+
+//taken from Alex Grande on stackoverflow, thanks
+var data = {
+  set: function(key, value) {
+    if (!key || !value) {return;}
+
+    if (typeof value === "object") {
+      value = JSON.stringify(value);
+    }
+    localStorage.setItem(key, value);
+  },
+  get: function(key) {
+    var value = localStorage.getItem(key);
+
+    if (!value) {return;}
+
+    // assume it is an object that has been stringified
+    if (value[0] === "{") {
+      value = JSON.parse(value);
+    }
+
+    return value;
+  }
+}
 
 
 
@@ -685,9 +807,9 @@ function createMansions() {
 Once you build up enough, barbarians attack you (must maintain troops and improve their armor/weapons - later can build walls or other fortifications to reduce number of soldiers needed for protection)
 Once the city is very large whoever started the Great War comes for you
 Say that you grow old and you pick a new leader after some time - could be related to prestige 
-Some sort of exploring/making contact with the Great City or other civilizations
+Some sort of exploring/making contact with the Great City or other civilizations (kittens?)
 Electrical power
-Add a hint button? - na, this can be handled in a subreddit thread
+Add a hint button? - this can be handled in a subreddit thread (need to indicate shift-click and control-click)
 Mkae it take random time for new workers to join up?
 
 "As the town grows in size and reputation, more skilled workers are attracted. They offer insight and specialty on increasingly complex opperations"
