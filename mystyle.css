@@ -262,7 +262,7 @@ body.normal{
 	color:white;
 	display:inline-block;
 	width:200px;
-	margin:3px;
+	margin:3px 6px;
 	border:3px solid black;
 	background:linear-gradient(rgba(10,10,10,0.5),rgba(10,10,10,0.5)),url(woodback.jpg);
 	padding:0;
@@ -308,6 +308,14 @@ body.normal{
     opacity: 0;
 	font-size:12pt;
 
+}
+.userAdd0:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+.userAdd:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
 .buildingButton:hover .tooltiptext {
     visibility: visible;
