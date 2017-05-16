@@ -16,13 +16,20 @@
 <body>
 
 <header id="closeMe" class="alert">
-	<h1 class="closebtn">&times;</h1>
 	<h2>Like many others, the turmoil of the War has driven you to start a new life in the unknown and unpopulated lands outside the walls of the Great City. After several years of wandering and living off the land you decide to settle down in a quiet valley.<br><br>You set up camp at the edge of the forest near a stream and a field with wild animals you can hunt, and begin work on a more permanent residence.</h2>
+	<h1 class="closebtn"><br><i> continue </i><br></h1>
 </header>
 
-<header>
+<header style="position:relative;">
 	<h1 id="title">A Lonely Beginning</h1>
 	<h3 id="statement">&nbsp;</h3>
+	<div id="statementLog" class="statementLog">
+		Log
+		<div class="logOut">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Event Log:<br><br>
+			<p id="logOut">text here</p>
+		</div>
+	</div>
 </header>
 
 
@@ -44,11 +51,11 @@
 </buttons>
 
 
-<!--/////////////////////////////////////////////////////////////////jobs tab//////////////////////////////////////////////////////////////////////////-->
-<tabs id="pan1" style="float:left;">
+<!--///////////////////////////////////jobs tab//////////////////////////////////////////////////////////////////////////-->
+<tabs id="pan1">
 	<h2>Jobs</h2>
 
-	<div id="camp" class="JobBox0" style="background-image:linear-gradient(rgba(225,250,250,0.1),rgba(255,200,200,0.1)),  url(camp.jpg); display:inline-block;">
+	<div id="camp" class="JobBox0" style="background-image:linear-gradient(rgba(225,250,250,0.1),rgba(255,200,200,0.1)),  url(images/camp.jpg); display:inline-block;">
 		<p style="font-size:4pt;"> </p>
 		<p><span class="bkgrn"><b>&nbsp;CAMP&nbsp;</b></span></p>
 		<p style="font-size:25pt;"> </p>
@@ -65,7 +72,7 @@
 		<p style="font-size:4pt;"> </p>
 	</div>
 
-	<div id="fields" class="JobBox0" style="background-image: linear-gradient(rgba(250,250,250,0.1),rgba(255,250,250,0.1)), url(fields.jpg); display:inline-block;">
+	<div id="fields" class="JobBox0" style="background-image: linear-gradient(rgba(250,250,250,0.1),rgba(255,250,250,0.1)), url(images/fields.jpg); display:inline-block;">
 		<p style="font-size:4pt;"> </p>
 		<p><span class="bkgrn"><b>&nbsp;FIELDS&nbsp;</b></span></p>
 		<p style="font-size:25pt;"> </p>
@@ -111,7 +118,7 @@
 </tabs>
 
 
-<!--/////////////////////////////////////////////////////////////////buildings tab//////////////////////////////////////////////////////////////////////////-->
+<!--//////////////////////////////////buildings tab//////////////////////////////////////////////////////////////////////////-->
 <tabs id="pan2">
 	<h2>Buildings</h2>
 
@@ -154,7 +161,7 @@
 </tabs>
 
 
-<!--/////////////////////////////////////////////////////////////////research tab//////////////////////////////////////////////////////////////////////////-->
+<!--/////////////////////////////////research tab//////////////////////////////////////////////////////////////////////////-->
 <tabs class="none" id="pan3">
 
 	<h2>Research</h2>
@@ -181,37 +188,11 @@
 		</div>
 	</div>
 
-	<div class="researchButton none" id="Smelting">
-		<div id="SmeltingresBar" class="resBar">
-			<p class="resText">Smelting</p>
-		</div>
-		<dvi class="tooltiptext">
-			<br>Takes 2000 research<br>
-			Uses 5 wood and 3 rock per research<br><br>
-			Unlocks metal resouces<br><br>
-		</div>
-	</div>
-
-	<div class="researchButton none" id="Metalwork">
-		<div id="MetalworkresBar" class="resBar">
-			<p class="resText">Metalworking</p>
-		</div>
-		<dvi class="tooltiptext">
-			<br>Takes 3500 research<br>
-			Uses 1 metal per research<br><br>
-			Allows something something metal?<br><br>
-		</div>	
-	</div>
-
-	<div class="researchButton none"><div id="ResTest" class="resBar"><p class="resText">research thing"</p></div></div>
-	<div class="researchButton none"><div id="ResTest" class="resBar"><p class="resText">text here</p></div></div>
-
-
 
 </tabs> 
 
 
-<!--/////////////////////////////////////////////////////////////////council tab//////////////////////////////////////////////////////////////////////////-->
+<!--/////////////////////////////////council tab//////////////////////////////////////////////////////////////////////////-->
 <tabs class="none" id="pan4">
 	<h2>Town Hall<h2>
 
@@ -230,7 +211,7 @@
 		</div>
 	</div>
 
-	<div class="hide councilMessage" id="council1"><i>During the first meeting, the Council decideds to begin research and planning to recover lost technologies. You can now build labspace at the back for the Town Hall for research.</i>
+	<div class="hide councilMessage" id="council1"><i>During the first meeting, the Council decideds to begin research and planning to recover lost technologies. You can now build labspace at the back of the Town Hall for research.</i>
 	</div>
 
 	<div class="hide councilMessage" id="councilDefault">The next meeting will be held after sufficient progress is made</div>
