@@ -7,29 +7,37 @@
 var Stuff = { //the production of materials of all kinds
 
 	//add that the buildingwork ammount only gets added if there is at least one worker? or x per worker, x=5 seems good. that is each farmer can collect the passive bonus for 5 farms - can have some buildings with low passive and high worker output and some with high passive and low added worker output (like factories and hydro dams - each added worker only provides a small additional bonus compared to the 'passive' effect of the building)
-	food:{ 	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  },
-	wood:{ 	stored:100, 	maxstored:100, 	storebonus:1, unlocked:false, },
-	rock:{ 	stored:20, 		maxstored:100, 	storebonus:1, unlocked:false, },
-	lumber:{stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, },
-	stone:{	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, },
-	ore:{	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
-	copper:{stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
-	tin: {	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
-	bronze:{stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
-	gold:{	stored:0,		maxstored:99999,storebonus:1, unlocked:false, },//no max on gold - don't display max and set arbitrarily high
-	coal:{	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
-	iron:{},
-	steel:{},
-	zinc:{},//unlock some metals as you make more mines - trade for others that you don't have in your area
-	brass:{},
+	food:{ name:"Food", 	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  color:"rgb(0,0,0)"},
+	wood:{ name:"Wodd",		stored:100, 	maxstored:100, 	storebonus:1, unlocked:false, },
+	rock:{ name:"Rock",		stored:20, 		maxstored:100, 	storebonus:1, unlocked:false, },
+	lumber:{name:"Lumber",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, },
+	stone:{	name:"Stone",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, },
+	clay:{  name:"Clay",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, },
+	brick:{ name:"Brick",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, },
+	cu_ore:{name:"Copper Ore",stored:0,		maxstored:50,	storebonus:1, unlocked:false, },//decide where to store this maybe make small storage and need to smelt quickly?
+	copper:{name:"Copper",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, },
+	tin: {	name:"Tin",		stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
+	lead:{  name:"Lead"},
+	fe_ore:{name:"Iron Ore"},//Iron ore and coal make steel
+	steel:{ name:"Steel"},
+	mercury:{name:"Mercury"},
+	silver:{name:"Silver"},
+	bronze:{name:"Bronze",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
+	gold:{	name:"Gold",	stored:0,		maxstored:99999,storebonus:1, unlocked:false, },//no max on gold - don't display max and set arbitrarily high
+	coal:{	name:"Coal",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },//use coal to improve smelting
+	steel:{	name:"Steel"},
+	zinc:{  name:"Zinc"},//unlock some metals as you make more mines - trade for others that you don't have in your area
+	brass:{ name:"Brass"},
 
+	research:{name:"Research",stored:0,		maxstored:0,	storebonus:1, unlocked:false, },//think about how this relates to the research object and maybe move it there? or make global variable?
 
-	research:{stored:0,		maxstored:99999,storebonus:1, unlocked:false, },//think about how this relates to the research object and maybe move it there? or make global variable?
+	spear:{name:"Spears",	stored:0,		maxstored:5,	storebonus:1, unlocked:false },
 
 	addResourceLine: function(res){
+		Stuff[res]["unlocked"]=true;
 		p = document.createElement("p");
 		p.id = res+"Stuff";
-		p.innerHTML = " "+ res.charAt(0).toUpperCase() + res.slice(1) + ": <span id='"+res+"'> 0 </span> / <span id='"+res+"Max' class='right'>"+Stuff[res]["maxstored"]+"</span></p>";
+		p.innerHTML = " "+ Stuff[res]["name"] + ": <span id='"+res+"'> "+ Stuff[res]["stored"] +" </span> / <span id='"+res+"Max' class='right'>"+Stuff[res]["maxstored"]+"</span></p>";
 		
 		document.getElementById("stuff").appendChild(p);
 
@@ -38,11 +46,31 @@ var Stuff = { //the production of materials of all kinds
 
 		if(res==="gold"||res==="research"){
 			document.getElementById(res+"Max").innerHTML = "NoMax";
+			console.log("research stored: "+Stuff[res]["stored"]);
 		} else {
 			document.getElementById(res+"Max").innnerHTML = Stuff[res]["maxstored"];
 		}
 
-	}	
+	},	
+
+	addSpecialLine: function(res){
+		p = document.createElement("p");
+		p.id = res+"Stuff";
+		p.innerHTML = " "+ res.charAt(0).toUpperCase() + res.slice(1) + ": <span id='"+res+"'> "+ Stuff[res]["stored"] +" </span> / <span id='"+res+"Max' class='right'>"+Stuff[res]["maxstored"]+"</span></p>";
+		
+		document.getElementById("stuffSpecial").appendChild(p);
+
+		document.getElementById(res).innnerHTML = Stuff[res]["stored"];
+		
+
+		if(res==="gold"||res==="research"){
+			document.getElementById(res+"Max").innerHTML = "NoMax";
+			console.log("research stored: "+Stuff[res]["stored"]);
+		} else {
+			document.getElementById(res+"Max").innnerHTML = Stuff[res]["maxstored"];
+		}
+
+	},
 	/* Ideas for stuff to add
 	cattle(special increment)
 	gold:{workers:0, buildingwork:0, maxworkers:3, stored:0, maxstored:100, workbonus:1, storebonus:1, unlocked:0},
@@ -57,11 +85,14 @@ var Jobs = {
 	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:1}},//this gets skipped too
 	hunter:		{box: "fields", 	workers:0, maxworkers:100, 		workbonus:1, unlocked:true,  make:{food:1}},
 	woodcutter:	{box: "forest", 	workers:0, maxworkers:3, 		workbonus:1, unlocked:false, make:{wood:1}},
-	rockcutter:	{box: "mountainside", workers:0, maxworkers:1, 		workbonus:1, unlocked:false, make:{rock:1}},
-	farmer:		{box: "fields", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{food:3}},
+	rockcutter:	{box: "hillside", 	workers:0, maxworkers:1, 		workbonus:1, unlocked:false, make:{rock:1}},
+	farmer:		{box: "fields", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{food:2}},
 	millworker:	{box: "riverbank", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{lumber:1,wood:-.5}},
 	mason:		{box: "workshops", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{stone:1,rock:-1.5}},
-	miner:		{box: "mine", 		workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{ore:.3}},//will add more metals (and lower copper output) with research
+	miner:		{box: "hillside", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{cu_ore:.3}},//will add more metals (and lower copper output) with research
+	kilnworker:	{box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{copper:.1,cu_ore:-.5}},//can treat kins specially later (dropdown menu to select which ore (or clay -> brick) and each kiln can do different thing)
+	clayworker: {box: "riverbank",  workers:0, maxworkers:5,		workbonus:1, unlocked:false, make:{clay:2}},
+	brickmaker: {box: "workshops",	workers:0, maxworkers:4,		workbonus:1, unlocked:false, make:{brick:1,clay:-1,wood:-2}},
 
 	//change the mine building to some kind of expanding quarry
 	//should there be different mines - how to organize? or one mine that makes many ores for starters - unlock more metals as you add mineshafts (rename current mineshaft)
@@ -131,7 +162,7 @@ var Jobs = {
 
 	},
 
-	addJobElement: function (jobName, boxName){//came move the check whether box exists up to here
+	addJobElement: function (jobName){//came move the check whether box exists up to here
 
 		Jobs[jobName]["unlocked"] = true;
 		makeStr = "";
@@ -161,7 +192,7 @@ var Jobs = {
 		indiv.querySelector(".userAdd").addEventListener("click",moveworkerEvent);
 		indiv.querySelector(".userRemove").addEventListener("click",removeworkerEvent);
 
-		document.getElementById(boxName).appendChild(indiv);
+		document.getElementById(Jobs[jobName]["box"]).appendChild(indiv);
 	},
 
 
@@ -179,9 +210,11 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 	workshop:{name:"Workshop",		count:0,buildWorkers:3, buildTime:60,unlocked:false,	buildingwork:{},		addstorage:{stone:200},		addworker:{mason:3},		cost:{lumber:200,rock:200},					unlockRes:["stone"],	unlockJob:["mason"],	costratio:2.5,		buildOnce:false,	tempCount:0,	addsText:["space for 3 masons", "200 stone storage"],	statement:"Workshops will allow masons to cut raw rock into stone"},
 	hut:	{name: "Hut",			count:0, buildWorkers:3, buildTime:40, unlocked:false, 	buildingwork:{},									addworker:{freeworker:1},	cost:{lumber:200,stone:100},				unlockRes:[],			unlockJob:[],			costratio:1.2,		buildOnce:false,	tempCount:0,	addsText:["space for 1 new settler"],					statement:"With the boards from the mill and cut stones you can build new housing structures"},
 	lab: 	{name: "Laboratory",	count:0, buildWorkers:4, buildTime:100,unlocked:false, 	buildingwork:{},									addworker:{researcher:1},	cost:{wood:100,lumber:300,stone:200},		unlockRes:["research"],	unlockJob:["researcher"],costratio:1.3,		buildOnce:false,	tempCount:0,	addsText:["space for 1 researcher"],					statement:"The Council Hall has been constructed. The first meeting will be held immediately."},
-	mine:	{name: "Mineshaft",		count:0, buildWorkers:5, buildTime:60, unlocked:false,	buildingwork:{},		addstorage:{},				addworker:{},				cost:{lumber:200},							unlockRes:[],			unlockJob:[],			costratio:2,		buildOnce:false,	tempCount:0,	addsText:["space for 2 miners"],						statement:"Adding a mineshaft will allow collection of ores."},
-
-	councilhall:{count:0,buildWorkers:10, buildTime:200,  unlocked:false, tempCount:0, 												cost:{wood:200, rock:200, lumber:400, stone:300}, 	unlockRes:[], 	unlockJob:[],			costratio:1,	buildOnce:true,	statement:"The Council Hall has been constructed. The first meeting will be held immediately."},
+	mine:	{name: "Mineshaft",		count:0, buildWorkers:5, buildTime:60, unlocked:false,	buildingwork:{},		addstorage:{},				addworker:{},				cost:{lumber:200},							unlockRes:[],			unlockJob:[],			costratio:1.2,		buildOnce:false,	tempCount:0,	addsText:["space for 2 miners"],						statement:"Adding a mineshaft will allow collection of ores."},
+	warehouse:{name:"Warehouse",	count:0, buildWorkers:5, buildTime:50, unlocked:false,	buildingwork:{},		addstorage:{wood:50,rock:50,lumber:50,stone:50,cu_ore:50,brick:50}, addworker:{},cost:{rock:100,lumber:500,stone:300},unlockRes:[],		unlockJob:[],			costratio:1.1,		buildOnce:false,	tempCount:0,	addsText:["50 wood storage","50 rock storage","50 lumber storage","50 stone storage","50 ore storage","50 clay storage"], statement:"More versitile than barns, your warehouses are designed to store many kinds of materials."},
+	kiln:	{name: "Kiln",			count:0, buildWorkers:3, buildTime:30, unlocked:false,	buildingwork:{},		addstorage:{},				addworker:{kilnworker:1},	cost:{brick:200,stone:50},					unlockRes:["copper"],	unlockJob:["kilnworker"],costratio:1.1,		buildOnce:false,	tempCount:0,	addsText:["space for one kilnworker"], statement:"Kilns will let us smelt ore and perhaps do other things later."},
+	//give kilns a drop-down menu for picking what to do - turn wood to charcoal, turn clay to brick, turn ore to metal - different recipe based on what is selected. keep track of number of kilns and kilnworkers but treat consumption/generation separately?
+	councilhall:{name: "Town Hall", count:0, buildWorkers:10, buildTime:200,  unlocked:false, tempCount:0, 												cost:{wood:200, rock:200, lumber:400, stone:300}, 	unlockRes:[], 	unlockJob:[],			costratio:1,	buildOnce:true,	statement:"The Council Hall has been constructed. The first meeting will be held immediately."},
 
 	incrRes: function(){//add passive resource production
 		for(var x in Buildings){
@@ -224,7 +257,7 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 		}
 		addsText = addsText.slice(0,-70);
 
-		newBuild.innerHTML = "<div class='tooltiptext'><p>Requires ("+ Buildings[buildingName]["buildWorkers"] +") workers to build<br>Cost:&nbsp;<span id='"+ buildingName +"Costs'> </span><br><br>Adds: "+ addsText +"</p></div><div id='"+ buildingName +"progress' class='buildBar'><p class='buildText'>"+ Buildings[buildingName]["name"] +" [<span id='"+ buildingName +"'>0</span>]</p></div>";
+		newBuild.innerHTML = "<div class='tooltiptext'><p>Requires ("+ Buildings[buildingName]["buildWorkers"] +") workers to build<br>Cost:&nbsp;<span id='"+ buildingName +"Costs'> </span><br><br>Adds: <span id='"+ buildingName +"Adds'>"+ addsText +"</span></p></div><div id='"+ buildingName +"progress' class='buildBar'><p class='buildText'>"+ Buildings[buildingName]["name"] +" [<span id='"+ buildingName +"'>0</span>]</p></div>";
 
 		newBuild.addEventListener("click",addBuildingEvent);
 
@@ -253,13 +286,6 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 	var actualcost = 0;	//to calculate the cost of a purchase from the base cost, "cost," and the cost ratio
 	var nextcost = 0;	//to give how much the next building will cost (to display on the webpage)
 	var tempKey = 0;	//to give farm and other food production to the "food" Stuff property
-	var shackToken1 = 0;	//to let the shack message play once
-	var shackToken2 = 0;	//to the the shack2 message play once
-	var shackToken3 = 0;
-	var shackToken4 = 0;
-	var shackToken5 = 0;
-	var shackToken6 = 0;
-	var shackToken7 = 0;
 	var unlockStuff = "";	//to set new materials to unlocked when a certain building is made
 	var ActiveRes = " ";	//to set active research
 	var make = true;	//to tell whether to make a research or resource increment (no if would be < 0 )
@@ -268,7 +294,7 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 	var buildBuild = [];	//if empty, not building, otherwise building whatever is in the array - can have multiple values of same building
 	var buildConstruct = [];//used to store completion of building with same index in buildBuild (0 to 100)
 	var buildWorkers = 0;	//number of free workers to currently used for construction
-	var time = 1000;		//time to construct a building
+	var time = 1;		//time to construct a building
 	var interval = 10;		//ammount of construction to do each run() cycle
 	var construction = 0; 	//completion from 0 to 100 of the current building
 	//check this object
@@ -279,8 +305,14 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 	var factor = 0.5 		//to alter the speed of resrouces collection (and food consumption). Higher numer collects more resources per tick.
 	var statementLog = "";	//to store the log of the game **can make a function to update and call doc.logOut that take the new string as a parameter
 	var exploreCount = 1;		//number of free workers to go on an exploring trip
-	var token6 = true;
-	var token7 = true;
+	var Token = [];
+	for (i=0;i<100;i++){
+		Token[i]=true;
+	}
+	var exploring = false;	//is there an active exploring party?
+	var exploreBar = 0;		//progress of the exploring party
+	var exploreStuff={food:30};//round stuff when deciding to use it
+	var cheating = false;
 
 //
 
@@ -509,8 +541,8 @@ function addBuilding(buildkey){
 function buildUp(){
 	for(i=0;i<buildBuild.length;i++){
 		if (buildConstruct[i]<100){
-			buildConstruct[i]+=(100/Buildings[buildBuild[i]]["buildTime"]); //need to loop through buildkeys in array 1
-			if(buildConstruct[i]>99){
+			buildConstruct[i]+=(100/Buildings[buildBuild[i]]["buildTime"]*time); //need to loop through buildkeys in array 1
+			if(buildConstruct[i]>=100){
 				buildConstruct[i] = 100;//so the bar doesn't go over if there is a rounding error
 			}
 			document.getElementById(buildBuild[i] + "progress").style.width = buildConstruct[i].toString() + "%"; //add html + css for the progress bars
@@ -592,7 +624,7 @@ function unlock(unlockkey){
 				JobBoxes.push(newBox);
 				Jobs.addJobBox(newBox);
 			}
-			Jobs.addJobElement(newJob,newBox);
+			Jobs.addJobElement(newJob);
 
 			
 			Jobs[newJob]["unlocked"]=true;
@@ -622,20 +654,25 @@ function SwapActiveRes(x){
 	ActiveRes = x;
 	document.getElementById("research").innerHTML = Research[x]["completion"];
 	document.getElementById("researchMax").innerHTML = Research[x]["totalRes"];
+
+	//change the tooltip for researchers
 	consumeStr = "";
 	for(var i in Research[x]["resCost"]){
 		consumeStr += Research[x]["resCost"][i]*5*factor + " " + i + " / sec<br>";
 	}
-	document.getElementById("researchersMake").innerHTML = Jobs.researcher.make.research*Jobs.researcher.workbonus*5*factor+" research / sec<br>and consume:<br>"+consumeStr;
+	document.getElementById("researchersMake").innerHTML = Jobs.researcher.make.research*Jobs.researcher.workbonus*5*factor+" research / sec<br>and consumes:<br>"+consumeStr;
 }
 
 var Research = {
 	FarmEquip:	{name:"Farm Equipment",		resCost:{wood:2,lumber:1}, 		totalRes:1000, 	completion:0, done:false, reward:"Farm equipment improves farmers' food output by 50%"},
-	StoneAxe:	{name:"Stone Axes",			resCost:{lumber:1,stone:3}, 	totalRes:1500, 	completion:0, done:false, reward:"Stone axes increase woodcutter production by 50%"},
-	StoneChisel:{name:"Stone Chisels",		resCost:{lumber:.5,rock:.5,stone:1},totalRes:1500,completion:0,done:false,reward:"Better tool design for cutting stone increases output of both masons and rockcutters by 20%"},
+	StoneAxe:	{name:"Stone Axes",			resCost:{lumber:1,stone:2}, 	totalRes:1500, 	completion:0, done:false, reward:"Stone axes increase woodcutter production by 50%"},
+	StoneChisel:{name:"Stone Chisels",		resCost:{lumber:.5,rock:.5,stone:1},totalRes:1000,completion:0,done:false,reward:"Better tool design for cutting stone increases<br>output of both masons and rockcutters by 20%"},
 	FindOre:	{name:"Ore Finding",		resCost:{food:1,lumber:1},		totalRes:500, 	completion:0, done:false, reward:"Some workers learn how to look for potential mining sites"},
-	Smelting:	{name:"Smelting",			resCost:{wood:5,rock:3},		totalRes:2000, 	completion:0, done:false},
 	Metalwork:	{name:"Metalworking",		resCost:{metal:1},				totalRes:3500, 	completion:0, done:false},
+	Roads:		{name:"Roadbuilding",		resCost:{wood:1,stone:3},		totalRes:5000,	completion:0, done:false},
+	Barns1:		{name:"Improve Barns",		resCost:{wood:1,lumber:1,rock:1},totalRes:2000,	completion:0, done:false, reward:"Update plans for barns to increase storage by 20%. Improves current barns and future barns will now require lumber."},
+	Smelting:	{name:"Smelting",			resCost:{brick:1,lumber:1,stone:1,wood:1},totalRes:2700,completion:0, done:false, reward:"Figure out a way to smelt metal ore into usable metal."},
+	Brickmaking:{name:"Brickmaking",		resCost:{wood:1,clay:1},		totalRes:1000,	completion:0, done:false, reward:"Learn how to fire the clay into bricks over wood fires."},
 
 	addResearchButton: function(research){
 		div = document.createElement("div");
@@ -664,7 +701,7 @@ function researchIncr(resUp){
 
 			incr = Research[resUp]["resCost"][resKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"];
 
-			if(Stuff[resKey]["stored"]-incr<0){//need to check all the required resources before consuming any
+			if(Stuff[resKey]["stored"]-incr<0 || !Stuff[resKey]["unlocked"]){//need to check all the required resources before consuming any
 				make = false;
 			}
 		}
@@ -675,7 +712,7 @@ function researchIncr(resUp){
 				Stuff[incrKey]["stored"]-= Research[resUp]["resCost"][incrKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"];//dont need to look up Jobs[]*Jobs[] every time this loops
 				document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"];
 			}
-			Research[resUp]["completion"]+= Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]; //can add research to efficiency which increase researcher output% but doesn't increase materials cost - need to add a new resEfficiency variable
+			Research[resUp]["completion"]+= time*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]; //can add research to efficiency which increase researcher output% but doesn't increase materials cost - need to add a new resEfficiency variable
 
 			document.getElementById(resUp + "resBar").style.width = Research[resUp]["completion"]/Research[resUp]["totalRes"]*100 + "%";
 			if(Research[resUp]["completion"]>=Research[resUp]["totalRes"]){
@@ -694,27 +731,70 @@ function researchIncr(resUp){
 	}
 }
 
+//what to do when research is completed
 //the 'finished' statements get handled in the researchIncr() function so don't have new statements here
 function doBonus(resUp){
 	switch (resUp) {
 	    case "FarmEquip":			
 			console.log("research case 0");
 	        Jobs.farmer.workbonus = Jobs.farmer.workbonus*1.5;
+
+			makeStr = "";
+			consumeStr = "";
+		
+			for (var i in Jobs.farmer.make){
+				if(Jobs["farmer"]["make"][i]>0){
+					makeStr += Jobs["farmer"]["make"][i]*Jobs.farmer.workbonus*factor*5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				} else {
+					consumeStr += Jobs["farmer"]["make"][i]*Jobs.farmer.workbonus*factor*-5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				}
+
+				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
+			}
+
+			if(consumeStr!==""){
+				consumeStr = "<br>and consumes:<br>" + consumeStr;	
+			}
+
+			makeStr = makeStr.slice(0,-4);
+
+			document.getElementById("farmersMake").innerHTML = makeStr+consumeStr;
 			//some action to close the button but this below isn't doing anything
 	        break;
 	    case "StoneAxe":
 			console.log("research case 1");
 	        Stuff.wood.workbonus = Jobs.woodcutter.workbonus*1.5;
+
+			//update the tooltips to show new production values
+			makeStr = "";
+			consumeStr = "";
+		
+			for (var i in Jobs.woodcutter.make){
+				if(Jobs["woodcutter"]["make"][i]>0){
+					makeStr += Jobs["woodcutter"]["make"][i]*Jobs.woodcutter.workbonus*factor*5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				} else {
+					consumeStr += Jobs["woodcutter"]["make"][i]*Jobs.woodcutter.workbonus*factor*-5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				}
+
+				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
+			}
+
+			if(consumeStr!==""){
+				consumeStr = "<br>and consumes:<br>" + consumeStr;	
+			}
+
+			makeStr = makeStr.slice(0,-4);
+
+			document.getElementById("woodcuttersMake").innerHTML = makeStr+consumeStr;
+
 			//make this show up in town hall instaed of as it does here? need to add a 'add town hall message' sort of function
 			stoneStr = "One of the newest wanderers to join your camp used to supervise mining opperations for the Great City. He offers to teach the group how to find ore and smelt it."
 			statementLog = stoneStr + "<br><br>" + statementLog;
-			document.getElementById("logOut").innerHTML = statementLog;
+			document.getElementById("logOut").innerHTML = statementLog;//some statements are logged and displayed in the town hall annoucement instead of the normal statement line
 			//sets the council message
 			document.getElementById("council1").textContent = stoneStr;//need the <i>s?
 			//give the town hall button a red color
-			if(mark1!=="pan4"&&mark2!=="pan4"){
-				document.getElementById("butt4").className = "buttAttn";
-			}
+			alertPanel("pan4");
 			Research.addResearchButton("FindOre");
 			Research.addResearchButton("Smelting");
 
@@ -722,6 +802,49 @@ function doBonus(resUp){
 		case "StoneChisel":
 			Jobs.rockcutter.workbonus*=1.2;
 			Jobs.mason.workbonus*=1.2;
+
+			makeStr = "";
+			consumeStr = "";
+		
+			for (var i in Jobs.rockcutter.make){
+				if(Jobs["rockcutter"]["make"][i]>0){
+					makeStr += Jobs["rockcutter"]["make"][i]*Jobs.rockcutter.workbonus*factor*5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				} else {
+					consumeStr += Jobs["rockcutter"]["make"][i]*Jobs.rockcutter.workbonus*factor*-5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				}
+
+				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
+			}
+
+			if(consumeStr!==""){
+				consumeStr = "<br>and consumes:<br>" + consumeStr;	
+			}
+
+			makeStr = makeStr.slice(0,-4);
+
+			document.getElementById("rockcuttersMake").innerHTML = makeStr+consumeStr;
+
+			makeStr = "";
+			consumeStr = "";
+		
+			for (var i in Jobs.mason.make){
+				if(Jobs["mason"]["make"][i]>0){
+					makeStr += Jobs["mason"]["make"][i]*factor*Jobs.mason.workbonus*5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				} else {
+					consumeStr += Jobs["mason"]["make"][i]*Jobs.mason.workbonus*factor*-5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				}
+
+				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
+			}
+
+			if(consumeStr!==""){
+				consumeStr = "<br>and consumes:<br>" + consumeStr;	
+			}
+
+			makeStr = makeStr.slice(0,-4);
+
+			document.getElementById("masonsMake").innerHTML = makeStr+consumeStr;
+
 			break;
 		case "FindOre":
 			console.log("research case 2");
@@ -729,25 +852,49 @@ function doBonus(resUp){
 			div = document.createElement("div");
 			div.id = "exploreButton";
 			div.className = "exploreButton";
-			div.innerHTML = "Send a party to explore and<br> map the surrounding area";
+			div.innerHTML = "<div class='tooltiptext' id='exploreTip'><p>Requires (<span id ='exploreWorkers'>1</span>) workers for the exploration party<br>The trip will need <span id='exploreCosts'>30 food</span></p></div><div id='exploreBar' class='buildBar'><p class='buildText' style='padding-top:15px'>Send a party to explore and<br> map the surrounding area</p></div>";
 			div.addEventListener("click",exploreGo);
 			document.getElementById("pan4").appendChild(div);
 
-			if(mark1!=="pan4"&&mark2!=="pan4"){
-				document.getElementById("butt4").className = "buttAttn";
-			}
-
+			alertPanel("pan4");
+			break;
 	    case "Smelting":
+			unlock("kiln");
 			//need to add a newResearchButton() function;
 	        console.log("case 2");
 	        break;
 	    case "Metalwork":
 	        console.log("case 3");
 	       	break;
-	    case 4:
+	    case "Barns1":
+			Buildings.barn.cost.lumber = 50;
+
+			addsStr = "";
+			for(var i in Buildings.barn.addstorage){
+				Stuff[i]["maxstored"] += Buildings["barn"]["addstorage"][i]*.2*Buildings.barn.count;
+				Buildings["barn"]["addstorage"][i] *=1.2;
+				document.getElementById(i+"Max").innerHTML = Stuff[i]["maxstored"];
+				addsStr += Buildings["barn"]["addstorage"][i]+ " " + i+ " storage";
+				addsStr +="<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			}
+			addsStr = addsText.slice(0,-70);
+			document.getElementById("barnAdds").innerHTML = addsStr;
+
+			costStr = "";
+			for(var i in Buildings.barn.cost){
+				costStr += Buildings["barn"]["cost"][i] + " " + i + "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			}
+			//update tooltip for barn
+			costStr = costStr.slice(0,-70);
+			document.getElementById("barnCosts").innerHTML = costStr;
+			
+			
 	        console.log("case 4");
 	        break;
-	    case 5:
+	    case "Brickmaking":
+			Jobs.addJobElement("brickmaker");
+			Stuff.addResourceLine("brick");
+			Buildings.workshop.addworker.brickmaker = 2;
 	        console.log("case 5");
 	        break;
 	    case 6:
@@ -757,6 +904,13 @@ function doBonus(resUp){
 
 
 ////////////////////////////////////////////////////////////////////////////miscilanious functions working on////////////////////////////////////////////////////////////////////////////////////
+//makes the panel select button turn red if it is not active
+function alertPanel(pan){
+	if(mark1!==pan&&mark2!==pan){
+		document.getElementById("butt"+pan.slice(-1)).className = "buttAttn";
+	}
+}
+
 function councilListen(){
 	addBuilding("councilhall")
 }
@@ -767,9 +921,7 @@ function finishCouncil(index){//some of this can be run in finishBuilding() and 
 	document.getElementById("statement").innerHTML = decreeStr; counter1 = 0;
 
 	document.getElementById("butt3").style.display = "inline";	
-	if(mark1!=="pan3"&&mark2!=="pan3"){
-		document.getElementById("butt3").className = "buttAttn";
-	}
+	alertPanel("pan3");
 	unlock("lab");
 	document.getElementById("council1").style.visibility = "visible";
 	Jobs.freeworker.workers += Buildings.councilhall.buildWorkers;
@@ -794,40 +946,95 @@ function logStatement(string){
 	document.getElementById("logOut").innerHTML = statementLog;
 	document.getElementById("statement").innerHTML = string; counter1 = 0;
 }
+
+///////////////////////////////////////////////////////////////////////////exploring the land////////////////////////////////////////////////////////////////////////////////////
 function exploreGo(){
-	exploreNum = Math.ceil(Math.sqrt(exploreCount));
-	console.log("exploring...");
-	//need certain number of free workers and food for them to carry
-	var go = true;	
-	if(Jobs.freeworker.workers<exploreNum){
-		document.getElementById("statement").innerHTML = "Not enough free workers to go exploring";
-		go = false;
-	} else if(Stuff.food.stored<exploreNum*15){
-		document.getElementById("statement").innerHTML = "Not enough food for expedition";
-		go = false;
-	} 
-	if(go){
-		Stuff.food.stored -= exploreNum*15;
-		//add in an exploring bar and temporarilly remove the workers from camp
-		exploreCount++;
-		console.log("exploreCount: "+exploreCount);
-		if(exploreCount===4){
-			console.log("explore event1")
-			logStatement("The exploring party discovers a potential mining site. You can build a shaft to extract ore");
-			Buildings.addBuildingButton("mine");
-		} else if(exploreCount===7) {
-			console.log("explore event2");
-			document.getElementById("mineBuild").style.display = "inline-block";
-			document.getElementById("statement").innerHTML = "The exploring party discovers a potential mining site. You can build a shaft to extract ore"; counter1=0;
-			Buildings.mine.addResourceLine("ore");
-			Jobs.addJobElement("miner","quarry");
+	if(exploring){
+		document.getElementById("statement").innerHTML = "We should wait until the last scouting party returns";
+	} else {
+		exploreNum = (exploreCount);
+		exploreNumNext = (exploreCount+1);
+		console.log("exploring...");
 
-		} else {
-			document.getElementById("statement").innerHTML = "Your explorers map some areas but find nothing of use";
+		//need certain number of free workers and food for them to carry
+		var go = true;	
+		noGoStr = "Not enough ";
+		if(Jobs.freeworker.workers<exploreNum){
+			noGoStr += "free workers, "
+			go = false;
 		}
-		
+		for(var i in exploreStuff){
+			if(Math.round(exploreStuff[i]*exploreNum) > Stuff[i]["stored"]){
+				go = false;
+				noGoStr += i+", ";
+			}
+		}
+		noGoStr = noGoStr.slice(0,-2);
+		noGoStr += " for expedition"
+ 
+		if(go){
+			tooltipStr = "";
+			for (var i in exploreStuff){
+				Stuff[i]["stored"]-=Math.round(exploreStuff[i]*exploreNum);
+				tooltipStr += Math.round(exploreStuff[i]*exploreNumNext) + " " + i + "<br>";
+				//need to add in an update for the tooltip on sending an explore party - don't feel like it right now
+			}
+			document.getElementById("exploreWorkers").innerHTML = exploreNumNext;
+			document.getElementById("exploreCosts").innerHTML = tooltipStr;
+			Jobs.freeworker.workers -= exploreNum;
+			document.getElementById("freeworkers").innerHTML = Jobs.freeworker.workers;
+			exploreBar = 0;
+			
+			console.log("exploreCount: "+exploreCount);		
+			exploring = true;
+		} else {
+			document.getElementById("statement").innerHTML = noGoStr;
+		}
 	}
-
+}
+function exploreUp(){
+	exploreBar += time*20/(exploreCount);
+	if(exploreBar>=100){
+		exploreBar = 0;
+		exploreEnd();
+	}
+	document.getElementById("exploreBar").style.width = exploreBar+"%";
+}
+function exploreEnd(){
+	Jobs.freeworker.workers += exploreNum;
+	document.getElementById("freeworkers").innerHTML = Jobs.freeworker.workers;
+	exploreCount++;
+	if(exploreCount===4){
+		console.log("explore event1")
+		logStatement("The exploring party discovered a potential mining site. You can build a shaft to extract ore");
+		Buildings.addBuildingButton("mine");
+		Jobs.addJobElement("miner");
+	} else if(exploreCount===7) {
+		console.log("explore event2");
+		Token[10]=false;
+		document.getElementById("mineBuild").className = "buildingButton";
+		document.getElementById("mineBuild").addEventListener("click",addBuildingEvent);
+		document.getElementById("statement").innerHTML = "The exploring party discovered another potential mining site. You can build a shaft to extract ore"; counter1=0;
+		Buildings.mine.addworker.miner = 1;
+	} else if(exploreCount===10){
+		logStatement("The exploring party found a site by the river to extract clay.");
+		Stuff.addResourceLine("clay");
+		Jobs.addJobElement("clayworker");
+		Research.addResearchButton("Brickmaking");
+		
+	} else if(exploreCount===14){
+		logStatement("All the the immediate area around the base camp has been mapped. The next expeditions will need to venture futher along the valley or up the foothills.");
+	} else if(exploreCount===15) {
+		logStatement("The last group of explorers barely scared off a wild bearling. They advise that all future exploring missions be armed.");
+		//need to add a place and mechanic for making and storing weapons (need a few expensive items - should have a making... bar in the armory and only whole numbered items)
+		//spears should be in the Stuff object by the resource line should appear somewhere else (different tab or below a line break in resource pannel)
+		//also need a way to return some of the special items (and lose some of them each trip). for now just lose all of them
+		exploreStuff.spear = 1;
+	} else {
+		document.getElementById("statement").innerHTML = "Your explorers map some areas but find nothing of use"; counter1=10;
+	}
+	//add in an ungrade or building with a small penalty to auto-explore if you have enough stuff?
+	exploring = false;
 }
 
 ////////////////////////////////////////////////////////////////game loop////////////////////////////////////////////////////////////////////////////////////////
@@ -846,42 +1053,45 @@ function run(){
 
 
 //check for events met to unlock new content
-	if(Buildings.shack.count==2&&shackToken1==0){
+
+	//win the game for now
+	if(Stuff.copper.stored<5){
+		alert("That's it for now - check back later for more content. Thanks for playing!");
+	}
+
+	if(Buildings.shack.count==2&& Token[1]){
 		wandererStr = "Soon another wanderer joins you in your work. More will surely come and stay if you have space to house them.";
 		statementLog = wandererStr + "<br><br>" + statementLog;
 		document.getElementById("logOut").innerHTML = statementLog;
 		document.getElementById("statement").innerHTML = wandererStr; counter1 = 0;
-		shackToken1 = 1;
+		Token[1] = false;
 	}
-
 	//add forest box and woodcutter job
-	if(Buildings.shack.count==3&&shackToken3==0){
+	if(Buildings.shack.count==3&& Token[2]){
 		
 		Stuff.wood.unlocked=true;
 
 		Jobs.addJobBox("forest");
-		Jobs.addJobElement("woodcutter","forest");
+		Jobs.addJobElement("woodcutter");
 		woodcutStr = "You should head back into the forest and cut more wood to continue building";
 		statementLog = woodcutStr + "<br><br>" + statementLog;
 		document.getElementById("logOut").innerHTML = statementLog;
 		document.getElementById("statement").innerHTML = woodcutStr; counter1 = 0;
-		shackToken3 = 1;
+		Token[2] = false;
 	}
-
 	//statement - buildings cost more as you build them
-	if(Buildings.shack.count==4&&shackToken2==0){
+	if(Buildings.shack.count==4&& Token[3]){
 		morebuildStr = "As you build more buildings they will require more resources. Why? Because that's what we do in this genre.";
 		statementLog = morebuildStr + "<br><br>" + statementLog;
 		document.getElementById("logOut").innerHTML = statementLog;
 		document.getElementById("statement").innerHTML = morebuildStr; counter1 = 0;
-		shackToken2 = 1;
+		Token[3] = false;
 	}
+	//adds hillside box and rockcutter job
+	if(Buildings.shack.count>5&& Token[4]){
 
-	//adds quarry box and rockcutter job
-	if(Buildings.shack.count>5&& shackToken4==0){
-
-		Jobs.addJobBox("quarry");
-		Jobs.addJobElement("rockcutter","quarry");
+		Jobs.addJobBox("hillside");
+		Jobs.addJobElement("rockcutter");
 
 		//change to addResourceLine() call
 		Stuff.addResourceLine("rock");
@@ -891,75 +1101,83 @@ function run(){
 		statementLog = quarryStr + "<br><br>" + statementLog;
 		document.getElementById("logOut").innerHTML = statementLog;
 		document.getElementById("statement").innerHTML = quarryStr; counter1 = 0;
-		shackToken4 = 1;
+		Token[4] = false;
 	}
-
 	//unlocks shed (Woodshed)
 	if(Buildings.shack.count>7){
 		unlock("shed");
 	}
-
 	//unlocks expandQ (Expand Quarry)
 	if(Buildings.shed.count>0 && Stuff.rock.stored>30) {
 		unlock("expandQ");
 	}
-
 	//unlocks farm
 	if(Buildings.expandQ.count>0){
 		unlock("farm");
 	}
-
 	//unlocks barn
 	if(Buildings.shed.count>2 && Buildings.expandQ.count>1){
 		unlock("barn");
 	}
-
 	//unlocks mill
 	if(Buildings.shack.count>8 && Buildings.shed.count>3 && Buildings.barn.count>0){
 		unlock("mill");
 	}
-
 	//unlocks workshop
 	if(Buildings.shack.count>8 && Buildings.expandQ.count>2 && Buildings.mill.count>0){
 		unlock("workshop");
 	}
-
 	//unlocks hut
 	if(!Buildings.hut.unlocked && Buildings.mill.count>0 && Buildings.workshop.count>0){
 		unlock("hut");
 	}
-
 	//makes panel/tabs buttons visible (inline)
-	if(Buildings.shack.count + Buildings.hut.count>15 && shackToken5==0){
+	if(Buildings.shack.count + Buildings.hut.count>=20 && Token[5]){
 		shantyStr = "Your little camp has grown into a shanty town. You decide to form a council to govern and make decisions.";
 		statementLog = shantyStr + "<br><br>" + statementLog;
 		document.getElementById("logOut").innerHTML = statementLog;
 		document.getElementById("statement").innerHTML = shantyStr; counter1 = 0;
 		document.getElementById("title").innerHTML = "Camp Carlyhead";
-		shackToken5 = 1;
+		Token[5] = false;
 
 		//give the town hall button a red color
-		if(mark1!=="pan4"&&mark2!=="pan4"){
-			document.getElementById("butt4").className = "buttAttn";
-		}
+		alertPanel("pan4");
 
 		document.getElementById("butt1").style.display = "inline";
 		document.getElementById("butt2").style.display = "inline";
 		document.getElementById("butt4").style.display = "inline";
 	}
-
 	//increase rock and stone production 
-	if(Research.StoneAxe.completion>700&&token6){
-		token6=false;
+	if(Research.StoneAxe.completion>350&&Token[6]){
+		Token[6]=false;
 		logStatement("Stone production is low. Maybe better mason tools would help.");
-		Research.addResearchButton("StoneChisel")
+		Research.addResearchButton("StoneChisel");
+		alertPanel("pan3");
 	}
-
 	//remove the first mine as useless
-	if(Buildings.mine.count===1&&token7){
-		token7=false;
-		logStatement("The first mine yielded no usable resources. Another site must be located.")
-		document.getElementById("mineBuild").style.display = none;
+	if(Buildings.mine.tempCount===1&&Token[7]){
+		Token[7] = false;
+		if(Token[10]){
+			document.getElementById("mineBuild").removeEventListener("click",addBuildingEvent);
+		}
+	}
+	if(Buildings.mine.count===1&&Token[8]){
+		Token[8]=false;
+		if(Token[10]){
+			logStatement("The first mine yielded no usable resources. Another site must be located.")
+			document.getElementById("mineBuild").className = "deadBuilding";
+		} else {
+			logStatement("The first mine yielded no usable resources. You can try building a mineshaft at the second location.")
+		}
+	}
+	if(Buildings.mine.count===2&&Token[9]){
+		Token[9]=false;
+		logStatement("This mine produces copper ore which can be smelted into copper.")
+		Stuff.addResourceLine("cu_ore");
+	}
+	//unlocks warehouse
+	if(Stuff.clay.unlocked&&Stuff.cu_ore.stored>10&&Stuff.clay.stored>10){
+		unlock("warehouse");
 	}
 
 //phase 1 done? - phase 2 unlocks from research - more phase 3 unlocks below?//
@@ -976,9 +1194,19 @@ function run(){
 		researchIncr(ActiveRes);
 	}
 
+	//continue exploring
+	if(exploring){
+		exploreUp();
+	}
+
 	//////increment resources///////////////////
 	Jobs.incrRes();
 	Buildings.incrRes();
+	if(cheating){
+		for(var i in Stuff){
+			Stuff[i]["stored"]=Stuff[i]["maxstored"];
+		}
+	}
 
 	///////consume food/////////////////////////
 	document.getElementById("food").innerHTML = Stuff["food"]["stored"].toFixed(1);
