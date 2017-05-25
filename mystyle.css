@@ -271,6 +271,22 @@ div.userRemove:hover{
 	cursor:pointer;
 	border-color:grey;
 }
+.statementOn{
+	height:30px;
+	transition-timing-function: linear;
+	transition:color 1.5s;
+	color:white;
+}
+.orange{
+	height:30px;
+	color:orange;
+}
+.statementOff{
+	height:30px;
+	transition-timing-function: linear;
+	transition:color 5s;
+	color:black;
+}
 body{ 
 	
 	background-repeat: no-repeat;
