@@ -97,7 +97,6 @@ var Jobs = {
 
 	//after enough advancement, rename the jobBox and change image: camp -> settlement; workshops -> industrial zone
 	
-	nextCol:1,
 };
 	function incrRes(){ //increments resources from workers at their jobs (make another function to add passive building work - move 'buildingwork' to Buildings function and make it an object like 'make')
 		for(var x in Jobs){
@@ -151,9 +150,9 @@ var Jobs = {
 		newDiv.appendChild(d3);
 		
 
-		document.getElementById("col"+Jobs.nextCol).appendChild(newDiv);
+		document.getElementById("col"+GlobVar.nextCol).appendChild(newDiv);
 
-		Jobs.nextCol = Jobs.nextCol===1 ? 2 : 1;
+		Jobs.GlobVar = Jobs.GlobVar===1 ? 2 : 1;
 
 	};
 
@@ -305,16 +304,24 @@ var GlobVar = {
 	degrade : ["woodcutter","lumberworker"], //which workers lose effectiveness over time (can reset to other)
 	pop : 1, 			//total population to start - used with degrade
 	name : "",			//name player gives to the settlement
+	nextCol:1,			//keeps track of the column in which to add the next job box
 }
 //
 
 //elements to litsen to
 window.onload = function () {//add event listeners after DOM has laoded or you will get null instead of element
 
-	document.body.addEventListener("transitionend", updateTransition);//ends the white flash when food runs out
+	if(localStorage.getItem("Reset")==="yes") {
+		document.body.removeChild(document.getElementById("closeMe"));
+		console.log("intro removed");
+		localStorage.setItem("Reset","no");
+	} else {
+		document.querySelector(".closebtn").addEventListener("click", function(){document.querySelector(".closebtn").parentElement.style.display="none";populate();});
+		document.getElementById("intro").style = "transition:color 4s; color:white;";
+		document.querySelector(".closebtn").style = "color:green; transition-property: color; transition-duration: 4s; transition-delay: 4s;"
+	}
 
-	var closeStory = document.querySelector(".closebtn");
-	closeStory.addEventListener("click", function(){closeStory.parentElement.style.display="none";populate();});
+	document.body.addEventListener("transitionend", updateTransition);//ends the white flash when food runs out
 
 	var cheat = document.getElementById("title");
 	cheat.addEventListener("click",testFunc);
@@ -375,13 +382,15 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	document.getElementById("import").addEventListener("click",openImportWindow);
 	document.getElementById("closeExport").addEventListener("click",closeExport);
 	document.getElementById("closeImport").addEventListener("click",closeImport);
-	document.getElementById("link").addEventListener("click",function(){console.log("link to subreddit at some point")});
+	document.getElementById("reset").addEventListener("click",prestige);
+	document.getElementById("reset").addEventListener("click",function(){console.log("reset clicked")});
 	document.getElementById("tips").addEventListener("click",tips=function(){});
+
+
 }
 
 function populate(){
 	logStatement("You have built a shack and gathered some supplies. Now your attention turns to bigger plans.");	
-	loadGame();
 }
 function panelEvent(e){
 	Panel("pan" + e.currentTarget.id.charAt(e.currentTarget.id.length-1)); //pan0, pan1 strings
@@ -1356,8 +1365,8 @@ function saveGame(){//add in the Jobs object for storage
 		alert('Too bad, no localStorage for us');
 	}
 }
-
 function exportGame(){
+	console.log("exporting");
 	document.getElementById("exportWindow").className = "exportWindowOn";
 	var exportStorage = {X_Stuff:Stuff,X_Buildings:Buildings,X_Jobs:Jobs,X_Research:Research,X_GlobVar:GlobVar};
 	document.getElementById("exportStr").value = JSON.stringify(exportStorage);
@@ -1370,6 +1379,7 @@ function openImportWindow(){
 	document.getElementById("importWindow").className = "exportWindowOn";
 }
 function importGame(){
+	console.log("importing");
 	var importStorage = document.getElementById("importStr").value;
 	Stuff = importStorage.X_Stuff;
 	Buildings = importStorage.X_Buildings;
@@ -1382,17 +1392,16 @@ function closeImport(){
 	importGame();
 	document.getElementById("importWindow").className = "exportWindowOff";
 }
-
-function loadGame(){//oh this is going to be fun 
+function loadGame(){//oh this is going to be fun ***Need to recalculate the costs and worker outputs***
 	
 	console.log("trying to load...");
 	if (storageAvailable("localStorage") && localStorage.getItem("GlobVar") !== null && localStorage.getItem("GlobVar")[0]==="{"){
 
-		var tempCol = Jobs.nextCol;//to make sure the job boxes sow up correctly
+		var tempCol = GlobVar.nextCol;//to make sure the job boxes sow up correctly? not used.
 		//need to check whether these things exist?
 		Stuff = data.get("Stuff");
 		Buildings = data.get("Buildings"); 
-		Jobs = data.get("Jobs"); Jobs.nextCol = 1;
+		Jobs = data.get("Jobs"); GlobVar.nextCol = 1;
 		GlobVar = data.get("GlobVar"); 
 		Research = data.get("Research");
 		console.log("got the objects");
@@ -1404,7 +1413,7 @@ function loadGame(){//oh this is going to be fun
 				if(document.getElementById(i+"Stuff")===null){
 					addResourceLine(i);
 				}
-				document.getElementById(i).innerHTML = Stuff[i]["stored"];
+				document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
 				document.getElementById(i+"Max").innerHTML = Stuff[i]["maxstored"];
 			} else if(document.getElementById(i+"Stuff")) {
 				document.getElementById("stuff").removeChild(document.getElementById(i+"Stuff"));
@@ -1498,13 +1507,17 @@ function loadGame(){//oh this is going to be fun
 		console.log("storage not available or no save in localStorage");
 	}
 }
-
 function prestige(){
 	GlobVar.knowledge += Jobs.freeworker.maxworkers;
 	localStorage.setItem("Knowledge",GlobVar.knowledge);
+	localStorage.setItem("Reset","yes");
 	//do I save knowledge and reload the page or reset the stored amounts of everything to 0 and refreshAmounts()?
 	window.location.reload(false);//seems easiest
+	console.log("can see this?")
+
+	console.log("and this?")
 	GlobVar.knowledge = localStorage.getItem("Knowledge");
+	console.log("knowledge: "+GlobVar.knowledge);
 }
 
 //taken from Alex Grande on stackoverflow, thanks
