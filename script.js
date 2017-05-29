@@ -1466,6 +1466,10 @@ function finishLoad(){//oh this is going to be fun ***Need to recalculate the co
 		}
 	}
 
+	//skip over Camp and freeworkers in the for loop because the box doesn't have the same tooltip formula
+	document.getElementById("freeworkers").innerHTML = Jobs["freeworker"]["workers"];
+	document.getElementById("freeworkersMax").innerHTML = Jobs["freeworker"]["maxworkers"];
+
 	for(var i in Jobs){
 		if(Jobs[i]["unlocked"]&&i!=="freeworker"){
 			if(document.getElementById(i+"Job")===null){
