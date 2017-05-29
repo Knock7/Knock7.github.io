@@ -700,6 +700,7 @@ var Research = {
 };
 	function addResearchButton(research){
 		Research[research]["unlocked"] = true;
+		logStatement(Research[research]["statement"]);
 		var div = document.createElement("div");
 		div.className = "researchButton"
 		div.id = research;
@@ -915,6 +916,8 @@ function doBonus(resUp){
 	    case "Brickmaking":
 			addJobElement("brickmaker");
 			addResourceLine("brick");
+			console.log("updating workshopCosts");
+			document.getElementById("workshopAdds").innerHTML +="<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;space for 2 brickmakers";
 			Buildings.workshop.addworker.brickmaker = 2;
 	        break;
 	    case 6:
@@ -949,6 +952,8 @@ function finishCouncil(index){//some of this can be run in finishBuilding() and 
 	document.getElementById("freeworkers").innerHTML = Jobs.freeworker.workers;
 	GlobVar.buildBuild.splice(index,1);
 	GlobVar.buildConstruct.splice(index,1);
+	setTimeout(20000,logStatement(Research.FarmEquip.statement));
+	setTimeout(40000,logStatement(Research.StoneAxe.statement));
 }
 function isEmpty(object) {
 	for(var i in object) {
