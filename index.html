@@ -71,19 +71,24 @@
 
 </resources>
 
-
-<buttons>
-	<span id="butt1" class="butt none">JOBS</span>
-	<span id="butt2" class="butt none">BUILDINGS</span>
+<div id="tabsBox">
+<div id="tabs1">
+	<span id="butt1" class="buttSelected">JOBS</span>
+	<span id="butt6" class="butt">MAP</span>
+</div>
+<div id="tabs2">
+	<span id="butt2" class="buttSelected">BUILDINGS</span>
 	<span id="butt3" class="butt none">RESEARCH</span>
 	<span id="butt4" class="butt none">TOWN HALL</span>
 	<span id="butt5" class="butt none">Fifth Panel</span>
-</buttons>
+</div>
+<div id="fadeEffect">&nbsp;</div>
+</div>
+
 
 
 <!--///////////////////////////////////jobs tab//////////////////////////////////////////////////////////////////////////-->
 <tabs id="pan1">
-	<h2>Jobs</h2>
 
 	<div id="col1" class="col">
 	<div id="camp" class="JobBox">
@@ -152,17 +157,20 @@
 
 </tabs>
 
+<tabs id="pan6" class="none">
+	<canvas id="mapCanvas" height="500" width="500" style="margin:auto; border:2px solid black"></canvas>
+	<p>map goes here</p>
+</tabs>
+
 
 <!--//////////////////////////////////buildings tab//////////////////////////////////////////////////////////////////////////-->
 <tabs id="pan2">
-	<h2>Buildings</h2>
-
 
 	<div id="shackBuild" class="buildingButton" style="margin:3px 2px 3px 7px;"> 
 		<div class="tooltiptext">
 			<p>Requires (1) worker to build<br>
 				Cost:&nbsp;<span id="shackCosts">25 wood</span><br><br>
-				Adds: space for 1 new settler
+				Adds: <span id="shackAdds">space for 1 new settler</span>
 			</p>
 		</div>
 		<div id="shackprogress" class="buildBar"><p class="buildText">
@@ -170,12 +178,12 @@
 		</div>
 	</div>
 
-	<!-- this is a placeholder to make the buildings stay in 2 columns -->
+	<!-- this is a placeholder to make the buildings stay in 2 or 3 columns -->
 	<div id="buildBlank" class="hide buildingButton">
 		<div class="tooltiptext">
 			<p>Requires (4) workers to build<br>
 			Cost:&nbsp;<span id="labCosts"> </span><br><br>
-			Adds: space for 1 researcher<br>
+			Adds: space for 1 xxxxxx<br>
 			</p></div>
 		<div id="dontneed'" class="buildBar"><p class="buildText">
 		Lab Space [<span id="lab">0</span>]
@@ -185,7 +193,7 @@
 		<div class="tooltiptext">
 			<p>Requires (4) workers to build<br>
 			Cost:&nbsp;<span id="labCosts"> </span><br><br>
-			Adds: space for 1 researcher<br>
+			Adds: space for 1 xxxxxx<br>
 			</p></div>
 		<div id="dontneed2" class="buildBar"><p class="buildText">
 		Lab Space [<span id="lab">0</span>]
@@ -199,7 +207,6 @@
 <!--/////////////////////////////////research tab//////////////////////////////////////////////////////////////////////////-->
 <tabs class="none" id="pan3">
 
-	<h2>Research</h2>
 
 	<div class="researchButton" id="FarmEquip">
 		<div id="FarmEquipresBar" class="resBar">
@@ -229,7 +236,6 @@
 
 <!--/////////////////////////////////council tab//////////////////////////////////////////////////////////////////////////-->
 <tabs class="none" id="pan4">
-	<h2>Town Hall</h2>
 
 
 	<div id="buildCounc" class="council"> 

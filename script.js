@@ -150,9 +150,9 @@ var Jobs = {
 		newDiv.appendChild(d3);
 		
 
-		document.getElementById("col"+GlobVar.nextCol).appendChild(newDiv);
+		document.getElementById("col"+nextCol).appendChild(newDiv);
 
-		GlobVar.nextCol = GlobVar.nextCol===1 ? 2 : 1;
+		nextCol = nextCol===1 ? 2 : 1;
 
 	};
 
@@ -171,9 +171,9 @@ var Jobs = {
 
 		for (var i in Jobs[jobName]["make"]){
 			if(Jobs[jobName]["make"][i]>0){
-				makeStr += Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*5 + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+				makeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 			} else {
-				consumeStr += Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5 + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+				consumeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 			}
 
 			//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
@@ -304,8 +304,9 @@ var GlobVar = {
 	degrade : ["woodcutter","lumberworker"], //which workers lose effectiveness over time (can reset to other)
 	pop : 1, 			//total population to start - used with degrade
 	name : "",			//name player gives to the settlement
-	nextCol:1,			//keeps track of the column in which to add the next job box
+	
 }
+	var nextCol=1;			//keeps track of the column in which to add the next job box
 //
 
 //elements to litsen to
@@ -326,7 +327,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	var cheat = document.getElementById("title");
 	cheat.addEventListener("click",testFunc);
 
-	var setButtons = document.querySelectorAll(".butt");
+	var setButtons = document.querySelectorAll(".butt, .buttSelected, .buttAttn");
 	for (var i=0;i<setButtons.length;i++){
 		setButtons[i].addEventListener("click",panelEvent);
 	}
@@ -444,23 +445,31 @@ function CouncilMessageEvent(e){
 //for switching active panels
 var mark1 = "pan1";
 var mark2 = "pan2";
+
 function Panel(select){
-	tempNum = select.slice(-1);
+	tempNum = select.slice(-1);//tab number
 	if(document.getElementById("butt"+tempNum).className === "buttAttn"){
-		document.getElementById("butt"+tempNum).className = "butt";
+		document.getElementById("butt"+tempNum).className = "buttSelected";
 	}
-    if(select === mark1){
-        //do nothing
-    } else if(select === mark2){
-        mark2 = mark1;
-        mark1 = select;
-        //don't need to change any display settings
-    } else {
-        document.getElementById(mark2).style.display = "none";
-        mark2 = mark1;
-        mark1 = select;
-        document.getElementById(select).style.display = "block";
-    }
+	if(select==="pan1"||select==="pan6"){
+		if(select === mark1){//do nothing
+		} else {
+			document.getElementById(mark1).style.display = "none";
+			document.getElementById("butt"+mark1.slice(-1)).className = "butt"
+			mark1 = select;
+			document.getElementById(mark1).style.display = "inline-block";
+			document.getElementById("butt"+mark1.slice(-1)).className = "buttSelected"
+		}
+	} else {
+		if(select===mark2){//do nothing
+		} else {
+			document.getElementById(mark2).style.display = "none";
+			document.getElementById("butt"+mark2.slice(-1)).className = "butt"
+			mark2 = select;
+			document.getElementById(mark2).style.display = "inline-block";
+			document.getElementById("butt"+mark2.slice(-1)).className = "buttSelected"
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////add and remove workers///////////////////////////////////////////////////////////////////////////////////
@@ -658,7 +667,7 @@ function unlock(unlockkey){
 		var costTxt = " ";
 
 		for(var key in Buildings[unlockkey]["cost"]){//make this output the same as the update cost output from addBuilding()
-			costTxt += Buildings[unlockkey]["cost"][key] + "&nbsp" + key + ",&nbsp";
+			costTxt += Buildings[unlockkey]["cost"][key].toFixed(1) + "&nbsp" + key + ",&nbsp";
 		}
 
 		costTxt = costTxt.slice(0,-6);
@@ -811,8 +820,31 @@ function doBonus(resUp){
 			}
 
 			makeStr = makeStr.slice(0,-4);
-
 			document.getElementById("woodcuttersMake").innerHTML = makeStr+consumeStr;
+
+
+			makeStr = "";
+			consumeStr = "";
+
+			for (var i in Jobs.lumberworker.make){
+				if(Jobs["lumberworker"]["make"][i]>0){
+					makeStr += Jobs["lumberworker"]["make"][i]*Jobs.lumberworker.workbonus*GlobVar.factor*5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				} else {
+					consumeStr += Jobs["lumberworker"]["make"][i]*Jobs.lumberworker.workbonus*GlobVar.factor*-5 + " " + i + " / sec<br>"; //the 5 comes from ticks per second
+				}
+
+				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
+			}
+
+			if(consumeStr!==""){
+				consumeStr = "<br>and consumes:<br>" + consumeStr;	
+			}
+
+			makeStr = makeStr.slice(0,-4);
+
+			document.getElementById("lumberworkersMake").innerHTML = makeStr+consumeStr;
+
+
 
 			//make this show up in town hall instaed of as it does here? need to add a 'add town hall message' sort of function
 			stoneStr = "One of the newest wanderers to join your camp used to supervise mining operations for the Great City. He offers to teach the group how to find ore and smelt it."
@@ -943,7 +975,7 @@ function finishCouncil(index){//some of this can be run in finishBuilding() and 
 	decreeStr = "Council decree posted at Town Hall";
 	document.getElementById("statement").innerHTML = decreeStr; GlobVar.counter1 = 0;
 
-	document.getElementById("butt3").style.display = "inline";	
+	document.getElementById("butt3").style.display = "inline-block";	
 	alertPanel("pan3");
 	unlock("lab");
 	document.getElementById("council1").style.visibility = "visible";
@@ -1130,7 +1162,7 @@ function run(){
 		GlobVar.Token[0]=false;
 		logStatement("The wilderness is beginning to feel less lonely.");
 		GlobVar.name = prompt("What would you like to name your settlement?");
-		if(GlobVar.name===null){
+		if(GlobVar.name===null||GlobVar.name===""){
 			GlobVar.name = "Nullsvale";
 		} else {
 			GlobVar.name = GlobVar.name[0].toUpperCase() + GlobVar.name.slice(1);
@@ -1183,7 +1215,7 @@ function run(){
 	if(!Buildings.hut.unlocked && Buildings.lumberyard.count>0 && Buildings.workshop.count>0){
 		unlock("hut");
 	}
-	//makes panel/tabs buttons visible (inline)
+	//makes townhall button visible (inline-block)
 	if(Buildings.shack.count + Buildings.hut.count>=20 && GlobVar.Token[5]){
 		logStatement("Though it may be premature, you have high hopes for the future growth of your little shanty town and decide to give<br>the settlement a proper name. You also decide it is time to more formally organize, and form a council to govern and make decisions.");
 		document.getElementById("title").innerHTML = "Hamlet of " + GlobVar.name;
@@ -1191,10 +1223,7 @@ function run(){
 
 		//give the town hall button a red color
 		alertPanel("pan4");
-
-		document.getElementById("butt1").style.display = "inline";
-		document.getElementById("butt2").style.display = "inline";
-		document.getElementById("butt4").style.display = "inline";
+		document.getElementById("butt4").style.display = "inline-block";
 	}
 	//increase rock and stone production 
 	if(Research.StoneAxe.completion>350&&GlobVar.Token[6]){
@@ -1240,20 +1269,16 @@ function run(){
 
 		for(var i=0; i<GlobVar.degrade.length; i++){
 			
-			console.log("i = "+i);
 			var jobName = GlobVar.degrade[i];
 			Jobs[jobName]["workbonus"] = bonus;
-			console.log("lowering output of "+jobName);
+
 			var makeStr = "";
 			var consumeStr ="";
 
 			for (var j in Jobs[jobName]["make"]){
-				console.log("j: "+j+", make: "+Jobs[jobName]["make"][j]+" " + Jobs[jobName]["make"]);
 				if(Jobs[jobName]["make"][j]>0){
-					console.log("makestr");
 					makeStr += (Jobs[jobName]["make"][j]*Jobs[jobName]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 				} else {
-					console.log("consumeStr");
 					consumeStr += (Jobs[jobName]["make"][j]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 				}
 
@@ -1268,7 +1293,7 @@ function run(){
 			if(document.getElementById(jobName + "sMake")){
 				document.getElementById(jobName + "sMake").innerHTML = makeStr + consumeStr;
 			}
-		} console.log("degrade.length: "+ GlobVar.degrade.length);
+		}
 	}
 
 //phase 1 done? - phase 2 unlocks from research - more phase 3 unlocks below?//
@@ -1399,13 +1424,18 @@ function openImportWindow(){
 }
 function importGame(){
 	console.log("importing");
-	var importStorage = JSON.parse(document.getElementById("importStr").value);
-	Stuff = importStorage.X_Stuff;
-	Buildings = importStorage.X_Buildings;
-	Jobs = importStorage.X_Jobs;
-	Research = importStorage.X_Research;
-	GlobVar = importStorage.X_GlobVar;
-	finishLoad();
+	try {
+		var importStorage = JSON.parse(document.getElementById("importStr").value);
+		Stuff = importStorage.X_Stuff;
+		Buildings = importStorage.X_Buildings;
+		Jobs = importStorage.X_Jobs;
+		Research = importStorage.X_Research;
+		GlobVar = importStorage.X_GlobVar;
+		finishLoad();
+	}
+	catch(e) {
+		alert("Error loading save string.\n\n"+e);
+	}
 }
 function closeImport(){
 	importGame();
@@ -1427,9 +1457,6 @@ function loadGame(){
 function finishLoad(){//oh this is going to be fun ***Need to recalculate the costs and worker outputs***
 	
 	console.log("trying to load...");
-
-	var tempCol = GlobVar.nextCol;//to make sure the job boxes sow up correctly? not used.
-	//need to check whether these things exist?
 	
 
 	//update to the stored values of all resources, maxes, buildings, costs; and delete anything that isn't unlocked
@@ -1486,9 +1513,9 @@ function finishLoad(){//oh this is going to be fun ***Need to recalculate the co
 	
 				for (var j in Jobs[i]["make"]){
 					if(Jobs[i]["make"][j]>0){
-						makeStr += Jobs[i]["make"][j]*Jobs[i]["workbonus"]*GlobVar.factor*5 + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+						makeStr += (Jobs[i]["make"][j]*Jobs[i]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 					} else {
-						consumeStr += Jobs[i]["make"][j]*Jobs[i]["workbonus"]*GlobVar.factor*-5 + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+						consumeStr += (Jobs[i]["make"][j]*Jobs[i]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 					}
 				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
 				}
@@ -1535,12 +1562,12 @@ function finishLoad(){//oh this is going to be fun ***Need to recalculate the co
 	//if there is a councilhall then show butt4
 	//go through tokens in {if else} to see what else needs to be displayed
 	if(Jobs.freeworker.maxworkers>19){
-		document.getElementById("butt1").style.display = "inline";
-		document.getElementById("butt2").style.display = "inline";
-		document.getElementById("butt4").style.display = "inline";
+		document.getElementById("butt1").style.display = "inline-block";
+		document.getElementById("butt2").style.display = "inline-block";
+		document.getElementById("butt4").style.display = "inline-block";
 	}
 	if(Buildings.councilhall.count>0){
-		document.getElementById("butt3").style.display = "inline";
+		document.getElementById("butt3").style.display = "inline-block";
 		document.getElementById("council1").style.visibility = "visible";
 		document.getElementById("buildCounc").style.display = "none";
 	}
