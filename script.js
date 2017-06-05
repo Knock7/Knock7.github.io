@@ -7,41 +7,41 @@
 var Stuff = { //the production of materials of all kinds
 
 	//add that the buildingwork ammount only gets added if there is at least one worker? or x per worker, x=5 seems good. that is each farmer can collect the passive bonus for 5 farms - can have some buildings with low passive and high worker output and some with high passive and low added worker output (like factories and hydro dams - each added worker only provides a small additional bonus compared to the 'passive' effect of the building)
-	food:{ name:"Food", 	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  color:"rgb(0,0,0)"},
-	wood:{ name:"Wood",		stored:100, 	maxstored:100, 	storebonus:1, unlocked:true, },
-	rock:{ name:"Rock",		stored:20, 		maxstored:100, 	storebonus:1, unlocked:false, },
-	lumber:{name:"Lumber",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, },
-	stone:{	name:"Stone",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, },
-	clay:{  name:"Clay",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, },
-	brick:{ name:"Brick",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, },
-	cu_ore:{name:"Copper Ore",stored:0,		maxstored:50,	storebonus:1, unlocked:false, },//decide where to store this maybe make small storage and need to smelt quickly?
-	copper:{name:"Copper",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, },
-	tin: {	name:"Tin",		stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
+	food:{ name:"Food", 	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  rate:0,  color:"rgb(0,0,0)"},
+	wood:{ name:"Wood",		stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  rate:0,},
+	rock:{ name:"Rock",		stored:20, 		maxstored:100, 	storebonus:1, unlocked:false, rate:0,},
+	lumber:{name:"Lumber",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, rate:0,},
+	stone:{	name:"Stone",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, rate:0,},
+	clay:{  name:"Clay",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
+	brick:{ name:"Brick",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
+	cu_ore:{name:"Copper Ore",stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},//decide where to store this maybe make small storage and need to smelt quickly?
+	copper:{name:"Copper",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
+	tin: {	name:"Tin",		stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},
 	lead:{  name:"Lead"},
 	fe_ore:{name:"Iron Ore"},//Iron ore and coal make steel
 	steel:{ name:"Steel"},
 	mercury:{name:"Mercury"},
 	silver:{name:"Silver"},
-	bronze:{name:"Bronze",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },
-	gold:{	name:"Gold",	stored:0,		maxstored:99999,storebonus:1, unlocked:false, },//no max on gold - don't display max and set arbitrarily high
-	coal:{	name:"Coal",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, },//use coal to improve smelting
+	bronze:{name:"Bronze",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},
+	gold:{	name:"Gold",	stored:0,		maxstored:99999,storebonus:1, unlocked:false, rate:0,},//no max on gold - don't display max and set arbitrarily high
+	coal:{	name:"Coal",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},//use coal to improve smelting
 	steel:{	name:"Steel"},
 	zinc:{  name:"Zinc"},//unlock some metals as you make more mines - trade for others that you don't have in your area
 	brass:{ name:"Brass"},
 
-	research:{name:"Research",stored:0,		maxstored:0,	storebonus:1, unlocked:false, },//think about how this relates to the research object and maybe move it there? or make global variable?
+	research:{name:"Research",stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},//think about how this relates to the research object and maybe move it there? or make global variable?
 
-	spear:{name:"Spears",	stored:0,		maxstored:5,	storebonus:1, unlocked:false },
+	spear:{name:"Spears",	stored:0,		maxstored:5,	storebonus:1, unlocked:false, rate:0,},
 };
 	function addResourceLine(res){
 		Stuff[res]["unlocked"]=true;
-		var p = document.createElement("p");
-		p.id = res+"Stuff";
-		p.innerHTML = " "+ Stuff[res]["name"] + ": <span id='"+res+"'> "+ Stuff[res]["stored"] +" </span> / <span id='"+res+"Max' class='right'>"+Stuff[res]["maxstored"]+"</span></p>";
-		
-		document.getElementById("stuff").appendChild(p);
+		var div = document.createElement("div");
+		div.id = res+"Stuff";
 
-		document.getElementById(res).innnerHTML = Stuff[res]["stored"];
+		div.innerHTML = "<div class='resourceName'> "+ Stuff[res]["name"] + ": </div> <div class='resource' id='"+res+"'> "+ Stuff[res]["stored"] +" </div> / <div class='resourceMax' id='"+res+"Max'>"+Stuff[res]["maxstored"]+"</div> <div class='ratePos' id='"+res+"Rate'>1</div> /sec";
+		
+		document.getElementById("stuff").appendChild(div);
+
 		
 
 		if(res==="gold"||res==="research"){
@@ -83,7 +83,7 @@ var Jobs = {
 	woodcutter:	{box: "forest", 	workers:0, maxworkers:3, 		workbonus:1, unlocked:false, make:{wood:1.6},					},
 	rockcutter:	{box: "hillside", 	workers:0, maxworkers:1, 		workbonus:1, unlocked:false, make:{rock:1},						},
 	farmer:		{box: "fields", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{food:2},						},
-	lumberworker:{box: "forest", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{lumber:1.6,wood:-.8},			},
+	lumberworker:{box: "forest", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{lumber:1.6,wood:-.8},		},
 	mason:		{box: "workshops", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{stone:1,rock:-1.5},			},
 	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:1},					},//this gets skipped too
 	miner:		{box: "hillside", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{cu_ore:.3},					},//will add more metals (and lower copper output) with research
@@ -99,36 +99,75 @@ var Jobs = {
 	
 };
 	function incrRes(){ //increments resources from workers at their jobs (make another function to add passive building work - move 'buildingwork' to Buildings function and make it an object like 'make')
+		var now = Date.now();
+		var deltaTime = (now - GlobVar.previousTime)/1000;//time in seconds since last resource update
+		GlobVar.previousTime = now;
+
+		///////consume food/////////////////////////
+
+
+		for(var i in Stuff){
+			if(Stuff[i]["unlocked"]){
+				Stuff[i]["rate"]=0;
+				document.getElementById(i+"Rate").className = "rateZero";
+			}
+		}
+
+		var eatFood = -(Jobs.freeworker.maxworkers*.6*GlobVar.factor)*deltaTime*5;
+		Stuff.food.stored += eatFood;
+		Stuff.food.rate += -(Jobs.freeworker.maxworkers*.6*GlobVar.factor);
+
 		for(var x in Jobs){
 			if (Jobs[x]["unlocked"]){
-				var make = true;
+				var make1 = true;
 				var make2 = false;
 				for(var u in Jobs[x]["make"]){		
-					var incr = GlobVar.factor*Jobs[x]["make"][u]*(Jobs[x]["workers"]*Jobs[x]["workbonus"]);//add in buildingwork resource generation in another loop before this one - maybe put the passive generation in a new object in Buildings{} so that a given buildings can make more than one resource - somehow need to link back to workers
+					var incr = GlobVar.factor*Jobs[x]["make"][u]*(Jobs[x]["workers"]*Jobs[x]["workbonus"])*deltaTime*5;//add in buildingwork resource generation in another loop before this one - maybe put the passive generation in a new object in Buildings{} so that a given buildings can make more than one resource - somehow need to link back to workers
 					if(Stuff[u]["stored"]+incr<0){
-						make = false; //don't make if it would be less than 0
+						make1 = false; //don't make if it would be less than 0
 					}
-					if(make){//don't make somthing if storage is full
+					if(make1){//don't make somthing if storage is full
 						if(Stuff[u]["stored"]<Stuff[u]["maxstored"] && incr>0){
 							make2 = true;		
 						}
 					}
 				}
-				if(make&&make2) {
+				//also the building progress is un-effected by elapsed time right now.
+				//add in a thrid chack to see whether I need to re-call incrRes() with a different GlobVar.previousTime
+				//now after reloading a previous game-state the resources won't be split properly
+				if(make1&&make2) {//need to make it only use the wood to cap lumber, and then make wood from the rest if it's over the cap.
 					for(var incrKey in Jobs[x]["make"]){
 						incr = GlobVar.factor*Jobs[x]["make"][incrKey]*(Jobs[x]["workers"]*Jobs[x]["workbonus"]);
-						var max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
-						if(Stuff[incrKey]["stored"]+incr>max){
-							Stuff[incrKey]["stored"] = max;
-						} else {
-							Stuff[incrKey]["stored"]+=incr;
-						}
-						document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"].toFixed(1);
+						Stuff[incrKey]["rate"]+=incr;
+						Stuff[incrKey]["stored"]+=incr*deltaTime*5;	
+										
 					}
 				}
 			}
 		}
-	};
+
+
+		for(var i in Stuff){
+			if(Stuff[i]["unlocked"]){
+				var max  =  Stuff[i]["maxstored"]*Stuff[i]["storebonus"];
+				if(Stuff[i]["stored"]>Stuff[i]["maxstored"]){
+					Stuff[i]["stored"] = max;
+				}
+				if(Stuff[i]["rate"]>0){
+					document.getElementById(i+"Rate").className = "ratePos";
+					document.getElementById(i+"Rate").innerHTML = "+"+(Stuff[i]["rate"]*5).toFixed(1);//why do I need the facotr of two here???
+				} else if(Stuff[i]["rate"]===0) {
+					document.getElementById(i+"Rate").className = "rateZero";
+					document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
+				} else {
+					document.getElementById(i+"Rate").className = "rateNeg";
+					document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
+				}	
+				document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
+			
+			}			
+		}		
+	}
 
 	function addJobBox(boxName){
 		GlobVar.JobBoxes.push(boxName);
@@ -271,6 +310,34 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 		document.getElementById("pan2").insertBefore(newBuild, document.getElementById("buildBlank"));
 	};
 
+	function validateBuildings(){
+		for (var i in Buildings){
+			if(Buildings[i]["unlocked"]){
+				var make=true;
+				var makeMax=true;
+				for(var j in Buildings[i]["cost"]){
+					var cost = Math.round(Buildings[i]["cost"][j]*Math.pow(Buildings[i]["costratio"],(Buildings[i]["count"]+Buildings[i]["tempCount"])));
+					if(Stuff[j]["stored"]<cost){
+						make=false;
+					}
+					if(Stuff[j]["maxstored"]<cost){
+						makeMax=false;
+					}
+				}
+				if(make){
+					document.getElementById(i+"Build").className = "buildingButton";
+				} else {
+					document.getElementById(i+"Build").className = "buildingOff";
+				}
+				if(makeMax){
+					document.getElementById(i+"progress").style.color = "white";
+				} else {
+					document.getElementById(i+"progress").style.color = "black";
+				}
+			}
+		}
+	}
+
 /* Ideas for stuff to add
 	ranch:	{unlock:cattle}
 	cabbin: {addworker:{free:3}} and adds children which consume less food but don't do any work
@@ -290,6 +357,7 @@ var GlobVar = {
 	buildWorkers : 0,	//number of free workers to currently used for construction
 	time : 1,			//cheat time to construct a building
 	knowledge : 0,		//the prestige variable
+	resolve : 0,		//late game prestige variable - unplanned story (something good hopefully)
 	JobBoxes : ["camp", "fields",],//keeps track of all the job boxes that have been created (or made visible)
 	factor : 0.5, 		//to alter the speed of resrouces collection (and food consumption). Higher numer collects more resources per tick.
 	statementLog : "",	//to store the log of the game **can make a function to update and call doc.logOut that take the new string as a parameter
@@ -304,22 +372,34 @@ var GlobVar = {
 	degrade : ["woodcutter","lumberworker"], //which workers lose effectiveness over time (can reset to other)
 	pop : 1, 			//total population to start - used with degrade
 	name : "",			//name player gives to the settlement
+	previousTime:0		//time on the last tick
 	
 }
-	var nextCol=1;			//keeps track of the column in which to add the next job box
+	var nextCol=1;			//keeps track of the column in which to add the next job box - should not be adjusted by GlobVar save.
 //
 
 //elements to litsen to
 window.onload = function () {//add event listeners after DOM has laoded or you will get null instead of element
-
-	if(localStorage.getItem("Reset")==="yes") {
+	console.log("localStorage 'Reset' value: "+localStorage.getItem("Reset"));
+	//reset can have three values: 'full' runs the intro text and initial t=0 gamestate (full reset), 'saveLoad' runs the current save in local storage, 'prestige' resets everything but the prestige variables and shows new intro text
+	if(localStorage.getItem("Reset")!==null&&localStorage.getItem("Reset")==="saveLoad") {//don't show intro text
 		document.body.removeChild(document.getElementById("closeMe"));
 		console.log("intro removed");
-		localStorage.setItem("Reset","no");
+		loadGame();
 	} else {
 		document.querySelector(".closebtn").addEventListener("click", function(){document.querySelector(".closebtn").parentElement.style.display="none";populate();});
 		document.getElementById("intro").style = "transition:color 4s; color:white;";
 		document.querySelector(".closebtn").style = "color:green; transition-property: color; transition-duration: 4s; transition-delay: 4s;"
+		if(localStorage.getItem("Reset")==="prestige"){//for presige reset have new intro text
+			document.getElementById("intro").innerHTML = "The settlement has become crowded and stagnent, yet there are still many wanderers who are excluded over conserns for space and resources. You decide to wander down the river for a few months and start again. Informed by some Knowledge of development, you belive you can do better this time. The ongoing conflicts of the Great City still weighs on your mind."
+			console.log("intro changed");
+			GlobVar.knowledge = parseInt(localStorage.getItem("Knowledge"));
+			GlobVar.resolve = parseInt(localStorage.getItem("Resolve"));
+			if (GlobVar.resolve>0){
+				document.getElementById("intro").innerHTML = "You know what has befallen the Great City and set out to rebuild a resistance town with heightened Resolve";
+			}
+		}
+		localStorage.setItem("Reset","saveLoad");
 	}
 
 	document.body.addEventListener("transitionend", updateTransition);//ends the white flash when food runs out
@@ -383,8 +463,8 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	document.getElementById("import").addEventListener("click",openImportWindow);
 	document.getElementById("closeExport").addEventListener("click",closeExport);
 	document.getElementById("closeImport").addEventListener("click",closeImport);
-	document.getElementById("reset").addEventListener("click",prestige);
-	document.getElementById("reset").addEventListener("click",function(){console.log("reset clicked")});
+	document.getElementById("reset").addEventListener("click",resetGame);
+	document.getElementById("prestige").addEventListener("click",prestigeGame);
 	document.getElementById("tips").addEventListener("click",tips=function(){});
 
 
@@ -667,7 +747,7 @@ function unlock(unlockkey){
 		var costTxt = " ";
 
 		for(var key in Buildings[unlockkey]["cost"]){//make this output the same as the update cost output from addBuilding()
-			costTxt += Buildings[unlockkey]["cost"][key].toFixed(1) + "&nbsp" + key + ",&nbsp";
+			costTxt += Buildings[unlockkey]["cost"][key].toFixed(0) + "&nbsp" + key + ",&nbsp";
 		}
 
 		costTxt = costTxt.slice(0,-6);
@@ -754,9 +834,8 @@ function researchIncr(resUp){
 				Research[resUp]["completion"]=Research[resUp]["totalRes"];
 				Research[resUp]["done"] = true;
 
-				logStatement("Research complete: " + Research[resUp]["reward"]);
-
-				document.getElementById(resUp).style.display = "none";
+				document.getElementById(resUp).style.display = "tinyRes";
+				document.getElementById(resUp).
 
 				doBonus(resUp);
 				GlobVar.ActiveRes = " ";
@@ -999,6 +1078,9 @@ function updateTransition(){
 }
 //go through and put this in or just use from now on
 function logStatement(string){
+	if(document.getElementById("statement").innerHTML!=""){
+		console.log("the statements overlap and I need to fix them, statement: "+string);
+	}
 	GlobVar.statementLog = string + "<br><br>" + GlobVar.statementLog;
 	document.getElementById("logOut").innerHTML = GlobVar.statementLog;
 	document.getElementById("statement").className = "orange";
@@ -1317,7 +1399,10 @@ function run(){
 
 	//////increment resources///////////////////
 	incrRes();
-	incrResBuildings();
+
+	//make buildings active or not
+	validateBuildings();
+	//incrResBuildings(); fix this to wrork with delta-time * rate
 	if(GlobVar.cheating){
 		for(var i in Stuff){
 			if(Stuff[i]["unlocked"]){
@@ -1326,9 +1411,7 @@ function run(){
 		}
 	}
 
-	///////consume food/////////////////////////
-	document.getElementById("food").innerHTML = Stuff["food"]["stored"].toFixed(1);
-	Stuff.food.stored=(Stuff.food.stored*10-(Jobs.freeworker.maxworkers*6*GlobVar.factor))/10;
+
 	
 	//panic if there is not enough food
 	if(Stuff.food.stored<1){
@@ -1404,6 +1487,7 @@ function saveGame(){//add in the Jobs object for storage
 		data.set("Jobs", Jobs);
 		data.set("Research", Research);
 		data.set("GlobVar", GlobVar);
+		localStorage.setItem("Reset","saveLoad");
 	}
 	else {
 		alert('Too bad, no localStorage for us');
@@ -1590,17 +1674,20 @@ function finishLoad(){//oh this is going to be fun ***Need to recalculate the co
 	
 } 
 
-function prestige(){
+function resetGame(){
+	localStorage.setItem("Reset","full");
+	console.log("resetting everything");
+	window.location.reload(false);
+}
+deaths=0;//some late game thing that takes a lot of resources to attempt. The deaths of your brethren fuel you fight against the [foreign invaders]. 
+function prestigeGame(){
 	GlobVar.knowledge += Jobs.freeworker.maxworkers;
+	GlobVar.resolve += deaths;
 	localStorage.setItem("Knowledge",GlobVar.knowledge);
-	localStorage.setItem("Reset","yes");
-	//do I save knowledge and reload the page or reset the stored amounts of everything to 0 and refreshAmounts()?
+	localStorage.setItem("Resolve",GlobVar.resolve);
+	localStorage.setItem("Reset","prestige");
 	window.location.reload(false);//seems easiest
-	console.log("can see this?")
-
-	console.log("and this?")
-	GlobVar.knowledge = localStorage.getItem("Knowledge");
-	console.log("knowledge: "+GlobVar.knowledge);
+	console.log("can't see this");
 }
 
 //taken from Alex Grande on stackoverflow, thanks
