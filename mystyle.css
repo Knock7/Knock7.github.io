@@ -620,6 +620,10 @@ body.normal{
 	background-color:grey;
 	border:7px ridge black;
 }
+.tinyRes:hover .tooltoptext{
+	visibility: visible;
+    opacity: 1;
+}
 .resourceName{
 	text-align:left;
 	width:80px;

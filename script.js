@@ -105,14 +105,6 @@ var Jobs = {
 
 		///////consume food/////////////////////////
 
-
-		for(var i in Stuff){
-			if(Stuff[i]["unlocked"]){
-				Stuff[i]["rate"]=0;
-				document.getElementById(i+"Rate").className = "rateZero";
-			}
-		}
-
 		var eatFood = -(Jobs.freeworker.maxworkers*.6*GlobVar.factor)*deltaTime*5;
 		Stuff.food.stored += eatFood;
 		Stuff.food.rate += -(Jobs.freeworker.maxworkers*.6*GlobVar.factor);
@@ -127,7 +119,7 @@ var Jobs = {
 						make1 = false; //don't make if it would be less than 0
 					}
 					if(make1){//don't make somthing if storage is full
-						if(Stuff[u]["stored"]<Stuff[u]["maxstored"] && incr>0){
+						if(Stuff[u]["stored"]<Stuff[u]["maxstored"]*Stuff[u]["storebonus"] && incr>0){
 							make2 = true;		
 						}
 					}
@@ -139,33 +131,19 @@ var Jobs = {
 					for(var incrKey in Jobs[x]["make"]){
 						incr = GlobVar.factor*Jobs[x]["make"][incrKey]*(Jobs[x]["workers"]*Jobs[x]["workbonus"]);
 						Stuff[incrKey]["rate"]+=incr;
-						Stuff[incrKey]["stored"]+=incr*deltaTime*5;	
-										
+						console.log("rate of "+incrKey+": "+incr*deltaTime*5);
+						Stuff[incrKey]["stored"]+=incr*deltaTime*5;										
 					}
 				}
 			}
 		}
-
-
 		for(var i in Stuff){
-			if(Stuff[i]["unlocked"]){
+			if(Stuff[i]["unlocked"] && i!=="research"){
 				var max  =  Stuff[i]["maxstored"]*Stuff[i]["storebonus"];
-				if(Stuff[i]["stored"]>Stuff[i]["maxstored"]){
+				if(Stuff[i]["stored"]>max){
 					Stuff[i]["stored"] = max;
 				}
-				if(Stuff[i]["rate"]>0){
-					document.getElementById(i+"Rate").className = "ratePos";
-					document.getElementById(i+"Rate").innerHTML = "+"+(Stuff[i]["rate"]*5).toFixed(1);//why do I need the facotr of two here???
-				} else if(Stuff[i]["rate"]===0) {
-					document.getElementById(i+"Rate").className = "rateZero";
-					document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
-				} else {
-					document.getElementById(i+"Rate").className = "rateNeg";
-					document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
-				}	
-				document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
-			
-			}			
+			}
 		}		
 	}
 
@@ -312,7 +290,7 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 
 	function validateBuildings(){
 		for (var i in Buildings){
-			if(Buildings[i]["unlocked"]){
+			if(Buildings[i]["unlocked"] && !Buildings[i]["buildOnce"]){
 				var make=true;
 				var makeMax=true;
 				for(var j in Buildings[i]["cost"]){
@@ -439,7 +417,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	//add event listeners for the research buttons
 	var setResearchs = document.querySelectorAll(".researchButton");
 	for (i=0;i<setResearchs.length;i++){
-		//the ids must be "research name" in the HTML file
+		//the ids must be "research_name" in the HTML file
 		setResearchs[i].addEventListener("click",SwapResearchEvent);
 	}
 
@@ -765,8 +743,9 @@ function SwapActiveRes(x){
 	}
 	GlobVar.ActiveRes = x;
 	document.getElementById(x).className = "researchButtonSelected";
-	document.getElementById("research").innerHTML = Research[x]["completion"];
+	//document.getElementById("research").innerHTML = Research[x]["completion"];
 	document.getElementById("researchMax").innerHTML = Research[x]["totalRes"];
+	Stuff.research.maxstored = Research[x]["totalRes"];
 
 	//change the tooltip for researchers
 	consumeStr = "";
@@ -808,13 +787,17 @@ var Research = {
 
 function researchIncr(resUp){
 
+	var now = Date.now();
+	var deltaTime = (now - GlobVar.previousTime)/1000;//time in seconds since last resource update, previousTime gets updated in incrRes function
+
+
 	if(!Research[resUp]["done"]){
 
 		var make = true;
 		
 		for(var resKey in Research[resUp]["resCost"]){
 
-			var incr = Research[resUp]["resCost"][resKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"];
+			var incr = Research[resUp]["resCost"][resKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*deltaTime*5*GlobVar.factor;
 
 			if(Stuff[resKey]["stored"]-incr<0 || !Stuff[resKey]["unlocked"]){//need to check all the required resources before consuming any
 				make = false;
@@ -823,25 +806,27 @@ function researchIncr(resUp){
 
 		if(make) {
 			for(var incrKey in Research[resUp]["resCost"]){
-
-				Stuff[incrKey]["stored"]-= Research[resUp]["resCost"][incrKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"];//dont need to look up Jobs[]*Jobs[] every time this loops
-				document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"];
+				incr = -Research[resUp]["resCost"][incrKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*GlobVar.factor;
+				Stuff[incrKey]["rate"]+=incr;
+				Stuff[incrKey]["stored"]+= incr*deltaTime*5;
+				document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"].toFixed(1);
 			}
-			Research[resUp]["completion"]+= GlobVar.time*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]; //can add research to efficiency which increase researcher output% but doesn't increase materials cost - need to add a new resEfficiency variable
+			Research[resUp]["completion"]+= GlobVar.time*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*deltaTime*5; //can add research to efficiency which increase researcher output% but doesn't increase materials cost - need to add a new resEfficiency variable
+			Stuff.research.rate = Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"];
 
 			document.getElementById(resUp + "resBar").style.width = Research[resUp]["completion"]/Research[resUp]["totalRes"]*100 + "%";
 			if(Research[resUp]["completion"]>=Research[resUp]["totalRes"]){
 				Research[resUp]["completion"]=Research[resUp]["totalRes"];
 				Research[resUp]["done"] = true;
 
-				document.getElementById(resUp).style.display = "tinyRes";
-				document.getElementById(resUp).
+				document.getElementById(resUp).className = "tinyRes";
+				document.getElementById(resUp).removeEventListener("click",SwapResearchEvent);
 
 				doBonus(resUp);
 				GlobVar.ActiveRes = " ";
 			}
-			document.getElementById("research").innerHTML = Research[resUp]["completion"];
-		}
+			Stuff.research.stored = Research[resUp]["completion"];
+		} 
 	}
 }
 
@@ -1382,9 +1367,29 @@ function run(){
 //******************************************
 
 
-	/////////continue the construction of new buildings
+	/////////continue the construction of new buildings - make this use deltaTime too
 	if (GlobVar.buildBuild.length>0){
 		buildUp()
+	}
+
+
+
+	//continue exploring
+	if(GlobVar.exploring){
+		exploreUp();
+	}
+
+
+
+////////////////section to incriment all stuff//////////////////////
+//the rate are updated in the run() function, the functions below this change resource amounts and write to the window
+
+	//reset the 'rate' valuse for this loop to 0
+	for(var i in Stuff){
+		if(Stuff[i]["unlocked"]){
+			Stuff[i]["rate"]=0;
+			document.getElementById(i+"Rate").className = "rateZero";
+		}
 	}
 
 	//////increment research///////////////////
@@ -1392,13 +1397,28 @@ function run(){
 		researchIncr(GlobVar.ActiveRes);
 	}
 
-	//continue exploring
-	if(GlobVar.exploring){
-		exploreUp();
-	}
-
 	//////increment resources///////////////////
 	incrRes();
+
+	//output the rate valuse and the stored amounts
+	for(var i in Stuff){
+		if(Stuff[i]["unlocked"]){
+
+			if(Stuff[i]["rate"]>0){
+				document.getElementById(i+"Rate").className = "ratePos";
+				document.getElementById(i+"Rate").innerHTML = "+"+(Stuff[i]["rate"]*5).toFixed(1);//why do I need the facotr of two here???
+			} else if(Stuff[i]["rate"]===0) {
+				document.getElementById(i+"Rate").className = "rateZero";
+				document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
+			} else {
+				document.getElementById(i+"Rate").className = "rateNeg";
+				document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
+			}	
+			document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
+			
+		}			
+	}
+
 
 	//make buildings active or not
 	validateBuildings();
@@ -1415,26 +1435,31 @@ function run(){
 	
 	//panic if there is not enough food
 	if(Stuff.food.stored<1){
+		console.log("food stored at panic: "+Stuff.food.stored);
+		if(Math.abs(Stuff.food.stored)>10*Stuff.food.maxstored){
+			console.log("assume a re-load error");
+			Stuff.food.stored = Stuff.food.maxstored*Stuff.food.storebonus;
+		} else {
+			document.body.className = "alert2"; //gets set back to class="normal" by a transition listener to make the flash effect
 
-		document.body.className = "alert2"; //gets set back to class="normal" by a transition listener to make the flash effect
+			document.getElementById("statement").innerHTML = "In a food-shortage panic all available workers take to hunting";
+			GlobVar.counter1=55;
+		
+			var tempFood = 0; 
 
-		document.getElementById("statement").innerHTML = "In a food-shortage panic all available workers take to hunting";
-		GlobVar.counter1=55;
-	
-		var tempFood = 0; 
+			for(var i in Jobs){
+				
+				if(Jobs[i]["unlocked"] && i!=="farmer"){
 
-		for(var i in Jobs){
-			
-			if(Jobs[i]["unlocked"] && i!=="farmer"){
-
-				tempFood+=Jobs[i]["workers"];
-				Jobs[i]["workers"] = 0;
-				document.getElementById(i + "s").innerHTML = Jobs[i]["workers"];
+					tempFood+=Jobs[i]["workers"];
+					Jobs[i]["workers"] = 0;
+					document.getElementById(i + "s").innerHTML = Jobs[i]["workers"];
+				}
 			}
+			Jobs.hunter.workers = tempFood;
+			Stuff.food.stored = Stuff.food.maxstored/3;
+			document.getElementById("hunters").innerHTML = Jobs.hunter.workers;
 		}
-		Jobs.hunter.workers = tempFood;
-		Stuff.food.stored = Stuff.food.maxstored/3;
-		document.getElementById("hunters").innerHTML = Jobs.hunter.workers;
 
 	} 
 
