@@ -98,28 +98,41 @@ var Jobs = {
 	//after enough advancement, rename the jobBox and change image: camp -> settlement; workshops -> industrial zone
 	
 };
-	function incrRes(){ //increments resources from workers at their jobs (make another function to add passive building work - move 'buildingwork' to Buildings function and make it an object like 'make')
-		var now = Date.now();
-		var deltaTime = (now - GlobVar.previousTime)/1000;//time in seconds since last resource update
-		GlobVar.previousTime = now;
+function incrRes(){ //increments resources from workers at their jobs (make another function to add passive building work - move 'buildingwork' to Buildings function and make it an object like 'make')
+	var now = Date.now();
+	var deltaTime = (now - GlobVar.previousTime)/1000;//time in seconds since last resource update
+	GlobVar.previousTime = now;
 
-		///////consume food/////////////////////////
+	///////consume food/////////////////////////
+	var eatFood = -(Jobs.freeworker.maxworkers*.6*GlobVar.factor)*deltaTime*5;
+	Stuff.food.stored += eatFood;
+	Stuff.food.rate += -(Jobs.freeworker.maxworkers*.6*GlobVar.factor);
 
-		var eatFood = -(Jobs.freeworker.maxworkers*.6*GlobVar.factor)*deltaTime*5;
-		Stuff.food.stored += eatFood;
-		Stuff.food.rate += -(Jobs.freeworker.maxworkers*.6*GlobVar.factor);
+	var numJobs = 0; //to keep track of jobs that may need to be run in a later loop
+	var lastJobs = 0;
+
+	for(var q in Jobs){
+		if(Jobs[q]["unlocked"] && x!=="freeworker" && q!=="researcher"){//research gets special treatment in its own function
+			Jobs[q]["makeTag"] = false;
+			numJobs++;
+		}
+	}
+
+	while(numJobs!==lastJobs){
+		lastJobs = numJobs;
+		numJobs = 0;
 
 		for(var x in Jobs){
-			if (Jobs[x]["unlocked"] && x!=="researcher"){
+			if (Jobs[x]["unlocked"] && x!=="freeworker" && x!=="researcher" && !Jobs[x]["makeTag"]){
 				var make1 = true;
 				var make2 = false;
 				for(var u in Jobs[x]["make"]){		
 					var incr = GlobVar.factor*Jobs[x]["make"][u]*(Jobs[x]["workers"]*Jobs[x]["workbonus"])*deltaTime*5;//add in buildingwork resource generation in another loop before this one - maybe put the passive generation in a new object in Buildings{} so that a given buildings can make more than one resource - somehow need to link back to workers
-					if(Stuff[u]["stored"]+incr<0){
+					if(Stuff[u]["stored"]+incr<=0){
 						make1 = false; //don't make if it would be less than 0
 					}
 					if(make1){//don't make somthing if storage is full
-						if(Stuff[u]["stored"]<Stuff[u]["maxstored"]*Stuff[u]["storebonus"] && incr>0){
+						if(Stuff[u]["stored"]<Stuff[u]["maxstored"]*Stuff[u]["storebonus"] && incr>=0){
 							make2 = true;		
 						}
 					}
@@ -133,18 +146,24 @@ var Jobs = {
 						Stuff[incrKey]["rate"]+=incr;
 						Stuff[incrKey]["stored"]+=incr*deltaTime*5;										
 					}
+					Jobs[x]["makeTag"] = true;//tag that it won't try again
+				} else {					
+					numJobs++;
+					console.log("try again with "+x);
 				}
 			}
 		}
-		for(var i in Stuff){
-			if(Stuff[i]["unlocked"] && i!=="research"){
-				var max  =  Stuff[i]["maxstored"]*Stuff[i]["storebonus"];
-				if(Stuff[i]["stored"]>max){
-					Stuff[i]["stored"] = max;
-				}
-			}
-		}		
 	}
+
+	for(var i in Stuff){
+		if(Stuff[i]["unlocked"] && i!=="research"){
+			var max  =  Stuff[i]["maxstored"]*Stuff[i]["storebonus"];
+			if(Stuff[i]["stored"]>max){
+				Stuff[i]["stored"] = max;
+			}
+		}
+	}		
+}
 
 	function addJobBox(boxName){
 		GlobVar.JobBoxes.push(boxName);
@@ -1413,7 +1432,7 @@ function run(){
 	//////increment resources///////////////////
 	incrRes();
 
-	//output the rate valuse and the stored amounts
+	//output the rate values and the stored amounts
 	for(var i in Stuff){
 		if(Stuff[i]["unlocked"]){
 
