@@ -85,7 +85,7 @@ var Jobs = {
 	farmer:		{box: "fields", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{food:2},						},
 	lumberworker:{box: "forest", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{lumber:1.6,wood:-.8},		},
 	mason:		{box: "workshops", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{stone:1,rock:-1.5},			},
-	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:0},					},//this gets skipped too
+	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:1},					},//this gets skipped too
 	miner:		{box: "hillside", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{cu_ore:.3},					},//will add more metals (and lower copper output) with research
 	kilnworker:	{box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{copper:.1,cu_ore:-.5},		},//can treat kins specially later (dropdown menu to select which ore (or clay -> brick) and each kiln can do different thing)
 	clayworker: {box: "riverbank",  workers:0, maxworkers:5,		workbonus:1, unlocked:false, make:{clay:2},						},
@@ -97,7 +97,7 @@ var Jobs = {
 
 	//after enough advancement, rename the jobBox and change image: camp -> settlement; workshops -> industrial zone
 	
-};
+}
 function incrRes(){ //increments resources from workers at their jobs (make another function to add passive building work - move 'buildingwork' to Buildings function and make it an object like 'make')
 	var now = Date.now();
 	var deltaTime = (now - GlobVar.previousTime)/1000;//time in seconds since last resource update
@@ -149,7 +149,6 @@ function incrRes(){ //increments resources from workers at their jobs (make anot
 					Jobs[x]["makeTag"] = true;//tag that it won't try again
 				} else {					
 					numJobs++;
-					console.log("try again with "+x);
 				}
 			}
 		}
@@ -165,77 +164,76 @@ function incrRes(){ //increments resources from workers at their jobs (make anot
 	}		
 }
 
-	function addJobBox(boxName){
-		GlobVar.JobBoxes.push(boxName);
+function addJobBox(boxName){
+	GlobVar.JobBoxes.push(boxName);
 
-		var newDiv = document.createElement("div");
-		newDiv.id = boxName;
-		newDiv.className = "JobBox";
+	var newDiv = document.createElement("div");
+	newDiv.id = boxName;
+	newDiv.className = "JobBox";
 
 
-		var d2 = document.createElement("div");
-		d2.className = "bkgrn"
-		d2.innerHTML = "<b>&nbsp;"+ boxName.toUpperCase() +"&nbsp;</b>";
+	var d2 = document.createElement("div");
+	d2.className = "bkgrn"
+	d2.innerHTML = "<b>&nbsp;"+ boxName.toUpperCase() +"&nbsp;</b>";
 
-		var d3 = document.createElement("div");
-		d3.className = "imgBox";
-		d3.style = "background-image: linear-gradient(rgba(250,250,250,0.1),rgba(255,250,250,0.1)), url(images/"+ boxName +".jpg);"
+	var d3 = document.createElement("div");
+	d3.className = "imgBox";
+	d3.style = "background-image: linear-gradient(rgba(250,250,250,0.1),rgba(255,250,250,0.1)), url(images/"+ boxName +".jpg);"
 
-		newDiv.appendChild(d2);
-		newDiv.appendChild(d3);
-		
+	newDiv.appendChild(d2);
+	newDiv.appendChild(d3);
+	
 
-		document.getElementById("col"+nextCol).appendChild(newDiv);
+	document.getElementById("col"+nextCol).appendChild(newDiv);
 
-		nextCol = nextCol===1 ? 2 : 1;
+	nextCol = nextCol===1 ? 2 : 1;
 
-	};
+}
 
-	function addJobElement(jobName){//came move the check whether box exists up to here
+function addJobElement(jobName){//came move the check whether box exists up to here
 
-		Jobs[jobName]["unlocked"] = true;
-		var newBox = Jobs[jobName]["box"];
+	Jobs[jobName]["unlocked"] = true;
+	var newBox = Jobs[jobName]["box"];
 
-		if(document.getElementById(newBox)===null){		
-			addJobBox(newBox);
+	if(document.getElementById(newBox)===null){		
+		addJobBox(newBox);
+	}
+
+	var makeStr = "";
+	var consumeStr ="";
+	
+
+	for (var i in Jobs[jobName]["make"]){
+		if(Jobs[jobName]["make"][i]>0){
+			makeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+		} else {
+			consumeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 		}
 
-		var makeStr = "";
-		var consumeStr ="";
-		
+		//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
+	}
 
-		for (var i in Jobs[jobName]["make"]){
-			if(Jobs[jobName]["make"][i]>0){
-				makeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
-			} else {
-				consumeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
-			}
+	if(consumeStr!==""){
+		consumeStr = "<br>and consumes:<br>" + consumeStr;	
+	}
 
-			//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
-		}
+	makeStr = makeStr.slice(0,-4);
 
-		if(consumeStr!==""){
-			consumeStr = "<br>and consumes:<br>" + consumeStr;	
-		}
-
-		makeStr = makeStr.slice(0,-4);
-
-		indiv = document.createElement("div");
-		indiv.id = jobName.toLowerCase() + "Job";
-		indiv.innerHTML = "<div class='userAdd'><b>&nbsp;"+ jobName.charAt(0).toUpperCase() + jobName.slice(1) +"s: <span id='"+ jobName +"s'>0</span> / <span id='"+ jobName +"sMax'>"+ Jobs[jobName]["maxworkers"] +"</span>&nbsp;</b><div class='tooltiptext'><p>Each "+ jobName +" makes: <br><span id='"+ jobName +"sMake' >"+ makeStr + consumeStr +"</span></p></div></div><div class='userRemove'><b> X </b></div>";
-		indiv.querySelector(".userAdd").addEventListener("click",moveworkerEvent);
-		indiv.querySelector(".userAdd").oncontextmenu = function() {
-  			moveworker(jobName,-1);
-			return false;
-		}
-		indiv.querySelector(".userRemove").addEventListener("click",removeworkerEvent);
-		indiv.querySelector(".userRemove").oncontextmenu = function() {
-  			removeworker(jobName,-1);
-			return false;
-		}
-		document.getElementById(newBox).querySelector(".imgBox").appendChild(indiv);
-	};
-
+	indiv = document.createElement("div");
+	indiv.id = jobName.toLowerCase() + "Job";
+	indiv.innerHTML = "<div class='userAdd'><b>&nbsp;"+ jobName.charAt(0).toUpperCase() + jobName.slice(1) +"s: <span id='"+ jobName +"s'>0</span> / <span id='"+ jobName +"sMax'>"+ Jobs[jobName]["maxworkers"] +"</span>&nbsp;</b><div class='tooltiptext'><p>Each "+ jobName +" makes: <br><span id='"+ jobName +"sMake' >"+ makeStr + consumeStr +"</span></p></div></div><div class='userRemove'><b> X </b></div>";
+	indiv.querySelector(".userAdd").addEventListener("click",moveworkerEvent);
+	indiv.querySelector(".userAdd").oncontextmenu = function() {
+		moveworker(jobName,-1);
+		return false;
+	}
+	indiv.querySelector(".userRemove").addEventListener("click",removeworkerEvent);
+	indiv.querySelector(".userRemove").oncontextmenu = function() {
+		removeworker(jobName,-1);
+		return false;
+	}
+	document.getElementById(newBox).querySelector(".imgBox").appendChild(indiv);
+}
 
 
 
@@ -792,23 +790,23 @@ var Research = {
 	Smelting:	{name:"Smelting",			resCost:{brick:1,lumber:1,stone:1,wood:1},totalRes:2700,completion:0, unlocked:false, done:false, reward:"Figure out a way to smelt ore into usable metal."},
 	Brickmaking:{name:"Brickmaking",		resCost:{wood:1,clay:1},		totalRes:1000,	completion:0, unlocked:false, done:false, reward:"Work out how to turn clay into bricks over wood fires."},
 };
-	function addResearchButton(research){
-		Research[research]["unlocked"] = true;
-		logStatement(Research[research]["statement"]);
-		var div = document.createElement("div");
-		div.className = "researchButton"
-		div.id = research;
-		div.addEventListener("click",SwapResearchEvent);
+function addResearchButton(research){
+	Research[research]["unlocked"] = true;
+	logStatement(Research[research]["statement"]);
+	var div = document.createElement("div");
+	div.className = "researchButton"
+	div.id = research;
+	div.addEventListener("click",SwapResearchEvent);
 
-		var uses = "";
-		for(var i in Research[research]["resCost"]){
-			uses += Research[research]["resCost"][i] + " " + i;
-			uses += " and ";
-		}
-		uses = uses.slice(0,-5);
-		div.innerHTML = "<div id ='"+ research + "resBar' class='resBar'> <p class='resText'>"+Research[research]["name"]+"</p></div><div class='tooltiptext'><br>Takes "+Research[research]["totalRes"]+" research<br>Uses "+uses+" per research<br><br>"+Research[research]["reward"]+"<br><br></div>";
-		document.getElementById("pan3").insertBefore(div,document.getElementById("doneResBox"));
+	var uses = "";
+	for(var i in Research[research]["resCost"]){
+		uses += Research[research]["resCost"][i] + " " + i;
+		uses += " and ";
 	}
+	uses = uses.slice(0,-5);
+	div.innerHTML = "<div id ='"+ research + "resBar' class='resBar'> <p class='resText'>"+Research[research]["name"]+"</p></div><div class='tooltiptext'><br>Takes "+Research[research]["totalRes"]+" research<br>Uses "+uses+" per research<br><br>"+Research[research]["reward"]+"<br><br></div>";
+	document.getElementById("pan3").insertBefore(div,document.getElementById("doneResBox"));
+}
 
 
 function researchIncr(resUp){
@@ -837,8 +835,8 @@ function researchIncr(resUp){
 				Stuff[incrKey]["stored"]+= incr*deltaTime*5;
 				document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"].toFixed(1);
 			}
-			Research[resUp]["completion"]+= GlobVar.time*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*deltaTime*5; //can add research to efficiency which increase researcher output% but doesn't increase materials cost - need to add a new resEfficiency variable
-			Stuff.research.rate = Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"];
+			Research[resUp]["completion"]+= Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*GlobVar.time*deltaTime*5; //can add research to efficiency which increase researcher output% but doesn't increase materials cost - need to add a new resEfficiency variable
+			Stuff.research.rate = Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*GlobVar.factor;
 
 			document.getElementById(resUp + "resBar").style.width = Research[resUp]["completion"]/Research[resUp]["totalRes"]*100 + "%";
 			if(Research[resUp]["completion"]>=Research[resUp]["totalRes"]){
