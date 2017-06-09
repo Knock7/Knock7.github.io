@@ -85,7 +85,7 @@ var Jobs = {
 	farmer:		{box: "fields", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{food:2},						},
 	lumberworker:{box: "forest", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{lumber:1.6,wood:-.8},		},
 	mason:		{box: "workshops", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{stone:1,rock:-1.5},			},
-	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:1},					},//this gets skipped too
+	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:0},					},//this gets skipped too
 	miner:		{box: "hillside", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{cu_ore:.3},					},//will add more metals (and lower copper output) with research
 	kilnworker:	{box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{copper:.1,cu_ore:-.5},		},//can treat kins specially later (dropdown menu to select which ore (or clay -> brick) and each kiln can do different thing)
 	clayworker: {box: "riverbank",  workers:0, maxworkers:5,		workbonus:1, unlocked:false, make:{clay:2},						},
@@ -110,7 +110,7 @@ var Jobs = {
 		Stuff.food.rate += -(Jobs.freeworker.maxworkers*.6*GlobVar.factor);
 
 		for(var x in Jobs){
-			if (Jobs[x]["unlocked"]){
+			if (Jobs[x]["unlocked"] && x!=="researcher"){
 				var make1 = true;
 				var make2 = false;
 				for(var u in Jobs[x]["make"]){		
@@ -131,7 +131,6 @@ var Jobs = {
 					for(var incrKey in Jobs[x]["make"]){
 						incr = GlobVar.factor*Jobs[x]["make"][incrKey]*(Jobs[x]["workers"]*Jobs[x]["workbonus"]);
 						Stuff[incrKey]["rate"]+=incr;
-						console.log("rate of "+incrKey+": "+incr*deltaTime*5);
 						Stuff[incrKey]["stored"]+=incr*deltaTime*5;										
 					}
 				}
@@ -204,7 +203,7 @@ var Jobs = {
 
 		indiv = document.createElement("div");
 		indiv.id = jobName.toLowerCase() + "Job";
-		indiv.innerHTML = "<div class='userAdd'><b>&nbsp;"+ jobName.charAt(0).toUpperCase() + jobName.slice(1) +"s: <span id='"+ jobName +"s'>0</span> / <span id='"+ jobName +"sMax'>"+ Jobs[jobName]["maxworkers"] +"</span>&nbsp;</b><div class='tooltiptext'><p>Each "+ jobName +" makes: <br><span id='"+ jobName +"sMake' >"+ makeStr + consumeStr +"</span></p></div></div><div class='userRemove'><b> X </b></div><p style='font-size:4pt;'> </p>";
+		indiv.innerHTML = "<div class='userAdd'><b>&nbsp;"+ jobName.charAt(0).toUpperCase() + jobName.slice(1) +"s: <span id='"+ jobName +"s'>0</span> / <span id='"+ jobName +"sMax'>"+ Jobs[jobName]["maxworkers"] +"</span>&nbsp;</b><div class='tooltiptext'><p>Each "+ jobName +" makes: <br><span id='"+ jobName +"sMake' >"+ makeStr + consumeStr +"</span></p></div></div><div class='userRemove'><b> X </b></div>";
 		indiv.querySelector(".userAdd").addEventListener("click",moveworkerEvent);
 		indiv.querySelector(".userAdd").oncontextmenu = function() {
   			moveworker(jobName,-1);
@@ -303,12 +302,20 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 					}
 				}
 				if(make){
-					document.getElementById(i+"Build").className = "buildingButton";
+					if(i==="mine"&&GlobVar.Token[10]){
+						//do nothing, this brevents the first mine from showing buildable
+					} else {
+						document.getElementById(i+"Build").className = "buildingButton";
+					}	
 				} else {
 					document.getElementById(i+"Build").className = "buildingOff";
 				}
 				if(makeMax){
-					document.getElementById(i+"progress").style.color = "white";
+					if(i==="mine"&&GlobVar.Token[10]){
+						//do nothing, this brevents the first mine from showing buildable
+					} else {
+						document.getElementById(i+"progress").style.color = "white";
+					}
 				} else {
 					document.getElementById(i+"progress").style.color = "black";
 				}
@@ -369,7 +376,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 		document.getElementById("intro").style = "transition:color 4s; color:white;";
 		document.querySelector(".closebtn").style = "color:green; transition-property: color; transition-duration: 4s; transition-delay: 4s;"
 		if(localStorage.getItem("Reset")==="prestige"){//for presige reset have new intro text
-			document.getElementById("intro").innerHTML = "The settlement has become crowded and stagnent, yet there are still many wanderers who are excluded over conserns for space and resources. You decide to wander down the river for a few months and start again. Informed by some Knowledge of development, you belive you can do better this time. The ongoing conflicts of the Great City still weighs on your mind."
+			document.getElementById("intro").innerHTML = "The settlement has become crowded and stagnent, and there are still many wanderers who are excluded over conserns for space and resources. You decide to travel down the river for a few weeks and start building again. Informed by some Knowledge of development, you belive you can do better this time. The ongoing conflicts of the Great City still weighs on your mind."
 			console.log("intro changed");
 			GlobVar.knowledge = parseInt(localStorage.getItem("Knowledge"));
 			GlobVar.resolve = parseInt(localStorage.getItem("Resolve"));
@@ -763,8 +770,8 @@ var Research = {
 	Metalwork:	{name:"Metalworking",		resCost:{metal:1},				totalRes:3500, 	completion:0, unlocked:false, done:false},
 	Roads:		{name:"Roadbuilding",		resCost:{wood:1,stone:3},		totalRes:5000,	completion:0, unlocked:false, done:false},
 	Barns1:		{name:"Improve Barns",		resCost:{wood:1,lumber:1,rock:1},totalRes:2000,	completion:0, unlocked:false, done:false, reward:"Update plans for barns to increase storage by 20%. Improves current barns and future barns will now require lumber."},
-	Smelting:	{name:"Smelting",			resCost:{brick:1,lumber:1,stone:1,wood:1},totalRes:2700,completion:0, unlocked:false, done:false, reward:"Figure out a way to smelt metal ore into usable metal."},
-	Brickmaking:{name:"Brickmaking",		resCost:{wood:1,clay:1},		totalRes:1000,	completion:0, unlocked:false, done:false, reward:"Learn how to fire the clay into bricks over wood fires."},
+	Smelting:	{name:"Smelting",			resCost:{brick:1,lumber:1,stone:1,wood:1},totalRes:2700,completion:0, unlocked:false, done:false, reward:"Figure out a way to smelt ore into usable metal."},
+	Brickmaking:{name:"Brickmaking",		resCost:{wood:1,clay:1},		totalRes:1000,	completion:0, unlocked:false, done:false, reward:"Work out how to turn clay into bricks over wood fires."},
 };
 	function addResearchButton(research){
 		Research[research]["unlocked"] = true;
@@ -781,7 +788,7 @@ var Research = {
 		}
 		uses = uses.slice(0,-5);
 		div.innerHTML = "<div id ='"+ research + "resBar' class='resBar'> <p class='resText'>"+Research[research]["name"]+"</p></div><div class='tooltiptext'><br>Takes "+Research[research]["totalRes"]+" research<br>Uses "+uses+" per research<br><br>"+Research[research]["reward"]+"<br><br></div>";
-		document.getElementById("pan3").appendChild(div);
+		document.getElementById("pan3").insertBefore(div,document.getElementById("doneResBox"));
 	}
 
 
@@ -819,14 +826,19 @@ function researchIncr(resUp){
 				Research[resUp]["completion"]=Research[resUp]["totalRes"];
 				Research[resUp]["done"] = true;
 
-				document.getElementById(resUp).className = "tinyRes";
-				document.getElementById(resUp).removeEventListener("click",SwapResearchEvent);
+				var resDiv = document.getElementById(resUp);
+				resDiv.className = "tinyRes";
+				resDiv.removeChild(document.getElementById(resUp+"resBar"));
+				resDiv.removeEventListener("click",SwapResearchEvent);
+				resDiv.querySelector(".tooltiptext").innerHTML = Research[resUp]["reward"];
+				resDiv.parentNode.removeChild(resDiv);
+				document.getElementById("doneRes").appendChild(resDiv);
 
 				doBonus(resUp);
 				GlobVar.ActiveRes = " ";
 			}
 			Stuff.research.stored = Research[resUp]["completion"];
-		} 
+		}
 	}
 }
 
@@ -1063,7 +1075,7 @@ function updateTransition(){
 }
 //go through and put this in or just use from now on
 function logStatement(string){
-	if(document.getElementById("statement").innerHTML!=""){
+	if(document.getElementById("statement").innerHTML!="&nbsp;"){
 		console.log("the statements overlap and I need to fix them, statement: "+string);
 	}
 	GlobVar.statementLog = string + "<br><br>" + GlobVar.statementLog;
@@ -1311,6 +1323,7 @@ function run(){
 		if(GlobVar.Token[10]){
 			logStatement("The first mine yielded no usable resources. Another site must be located.")
 			document.getElementById("mineBuild").className = "deadBuilding";
+			console.log("mineBuild class: "+document.getElementById("mineBuild").className);
 		} else {
 			logStatement("The first mine yielded no usable resources. You can try building a mineshaft at the second location.")
 		}
@@ -1381,10 +1394,10 @@ function run(){
 
 
 
-////////////////section to incriment all stuff//////////////////////
+////////////////section to increment all stuff//////////////////////
 //the rate are updated in the run() function, the functions below this change resource amounts and write to the window
 
-	//reset the 'rate' valuse for this loop to 0
+	//reset the 'rate' values for this loop to 0
 	for(var i in Stuff){
 		if(Stuff[i]["unlocked"]){
 			Stuff[i]["rate"]=0;
@@ -1415,10 +1428,8 @@ function run(){
 				document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
 			}	
 			document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
-			
 		}			
 	}
-
 
 	//make buildings active or not
 	validateBuildings();
