@@ -34,7 +34,6 @@ footer {
 .show {
 	visibility: visible;
 }
-
 .butt, .buttSelected, .buttAttn {
 	display:inline-block;
 	color:black;
@@ -59,14 +58,14 @@ footer {
 	border-color: rgb(114,8,8);
 	border-color:grey;
 	border-bottom-color:grey;
-	background: linear-gradient(to bottom, rgb(191,82,82) 0%,rgb(247,187,187) 100%,rgb(249,249,249) 100%);}
+	background: linear-gradient(to bottom, rgb(191,82,82) 0%,rgb(247,187,187) 100%,rgb(249,249,249) 100%);
+}
 .butt:hover, .buttAttn:hover {
 	color:white;
 	background:grey;
 	border-color:grey;
 	cursor:pointer;
 }
-
 resources {
 	display:block;
 	float:left;
@@ -152,7 +151,7 @@ tabs {
 	cursor:pointer;
 }
 #exploreButton {
-	background-image:linear-gradient(rgba(150,150,150,0.3),rgba(250,250,250,.55)),url(images/mapp.png); 
+	background-image:linear-gradient(rgba(150,150,150,0.3),rgba(250,250,250,.55)),url(images/mapp.jpg); 
 	background-size:100% 100%;
 	border:2px solid black;
 	margin:auto;
@@ -169,7 +168,7 @@ tabs {
 
 }
 #exploreButton:hover {
-	background-image:linear-gradient(rgba(10,10,10,0.4),rgba(10,10,10,0.4)),url(images/mapp.png);
+	background-image:linear-gradient(rgba(10,10,10,0.4),rgba(10,10,10,0.4)),url(images/mapp.jpg);
 	color:white;
 	cursor:pointer;
 }
@@ -402,7 +401,7 @@ body.normal{
 }
 .buildingButton:hover {
 	cursor:pointer;
-	border-color:grey;
+	border-color:darkgrey;
 }
 .buildBar {
 	height:35px;
