@@ -215,7 +215,7 @@ function setBlackout(){
 function dragDraw(x,y){
 	MapVars.smallMap.drawImage(MapVars.blackCanvas, x, y, 2*MapVars.zoomLvl, 2*MapVars.zoomLvl, 0, 0, MapVars.smallMapMax, MapVars.smallMapMax);
 }
-function mapZoom(e){
+function mapZoom(e){//need to change to prevent map from locking to bottom when unzoomed with black map top and bottom
 	e.preventDefault();
 	var destinationCanvas = document.getElementById("canvas");
 	var sourceCanvas = MapVars.blackCanvas;

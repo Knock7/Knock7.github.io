@@ -8,30 +8,30 @@
 var Stuff = { //the production of materials of all kinds
 
 	//add that the buildingwork ammount only gets added if there is at least one worker? or x per worker, x=5 seems good. that is each farmer can collect the passive bonus for 5 farms - can have some buildings with low passive and high worker output and some with high passive and low added worker output (like factories and hydro dams - each added worker only provides a small additional bonus compared to the 'passive' effect of the building)
-	food:{ name:"Food", 	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  rate:0,  color:"rgb(0,0,0)"},
-	wood:{ name:"Wood",		stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  rate:0,},
-	rock:{ name:"Rock",		stored:20, 		maxstored:100, 	storebonus:1, unlocked:false, rate:0,},
-	lumber:{name:"Lumber",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, rate:0,},
-	stone:{	name:"Stone",	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, rate:0,},
-	clay:{  name:"Clay",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
-	brick:{ name:"Brick",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
-	cu_ore:{name:"Cu Ore",	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
-	copper:{name:"Copper",	stored:0,		maxstored:5,	storebonus:1, unlocked:false, rate:0,},
-	tin: {	name:"Tin",		stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},
-	lead:{  name:"Lead"},
-	fe_ore:{name:"Iron Ore"},//Iron ore and coal make steel
-	steel:{ name:"Steel"},
-	mercury:{name:"Mercury"},
-	silver:{name:"Silver"},
-	bronze:{name:"Bronze",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},
-	gold:{	name:"Gold",	stored:0,		maxstored:99999,storebonus:1, unlocked:false, rate:0,},//no max on gold - don't display max and set arbitrarily high
-	coal:{	name:"Coal",	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},//use coal to improve smelting
-	zinc:{  name:"Zinc"},//unlock some metals as you make more mines - trade for others that you don't have in your area
-	brass:{ name:"Brass"},
+	food:{ name:"Food", 	rateArray:[],	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  rate:0,  color:"rgb(0,0,0)"},
+	wood:{ name:"Wood",		rateArray:[],	stored:100, 	maxstored:100, 	storebonus:1, unlocked:true,  rate:0,},
+	rock:{ name:"Rock",		rateArray:[],	stored:20, 		maxstored:100, 	storebonus:1, unlocked:false, rate:0,},
+	lumber:{name:"Lumber",	rateArray:[],	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, rate:0,},
+	stone:{	name:"Stone",	rateArray:[],	stored:0, 		maxstored:0, 	storebonus:1, unlocked:false, rate:0,},
+	clay:{  name:"Clay",	rateArray:[],	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
+	brick:{ name:"Brick",	rateArray:[],	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
+	cu_ore:{name:"Cu Ore",	rateArray:[],	stored:0,		maxstored:50,	storebonus:1, unlocked:false, rate:0,},
+	copper:{name:"Copper",	rateArray:[],	stored:0,		maxstored:5,	storebonus:1, unlocked:false, rate:0,},
+	tin: {	name:"Tin",		rateArray:[],	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},
+	lead:{  name:"Lead",	rateArray:[],	},
+	fe_ore:{name:"Iron Ore",rateArray:[],	},//Iron ore and coal make steel
+	steel:{ name:"Steel",	rateArray:[],	},
+	mercury:{name:"Mercury",rateArray:[],	},
+	silver:{name:"Silver",	rateArray:[],	},
+	bronze:{name:"Bronze",	rateArray:[],	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},
+	gold:{	name:"Gold",	rateArray:[],	stored:0,		maxstored:99999,storebonus:1, unlocked:false, rate:0,},//no max on gold - don't display max and set arbitrarily high
+	coal:{	name:"Coal",	rateArray:[],	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},//use coal to improve smelting
+	zinc:{  name:"Zinc",	rateArray:[],	},//unlock some metals as you make more mines - trade for others that you don't have in your area
+	brass:{ name:"Brass",	rateArray:[],	},
 
-	research:{name:"Research",stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},//think about how this relates to the research object and maybe move it there? or make global variable?
+	research:{name:"Research",rateArray:[],	stored:0,		maxstored:0,	storebonus:1, unlocked:false, rate:0,},//think about how this relates to the research object and maybe move it there? or make global variable?
 
-	spear:{name:"Spears",	stored:0,		maxstored:5,	storebonus:1, unlocked:false, rate:0,},
+	spear:{name:"Spears",	rateArray:[],	stored:0,		maxstored:5,	storebonus:1, unlocked:false, rate:0,},
 };
 	function addResourceLine(res){
 		Stuff[res]["unlocked"]=true;
@@ -87,13 +87,12 @@ var Jobs = {
 	mason:		{box: "workshops", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{stone:1,rock:-1.5},			},
 	researcher: {box: "laboratory",	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{research:1},					},//this gets skipped too
 	miner:		{box: "hillside", 	workers:0, maxworkers:0, 		workbonus:1, unlocked:false, make:{cu_ore:.3},					},//will add more metals (and lower copper output) with research
-	kilnworker:	{box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{copper:.1,cu_ore:-.5},		},//can treat kins specially later (dropdown menu to select which ore (or clay -> brick) and each kiln can do different thing)
+	kilnworker:	{box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{copper:.1,cu_ore:-.5,wood:-1},		},//can treat kins specially later (dropdown menu to select which ore (or clay -> brick) and each kiln can do different thing)
 	clayworker: {box: "riverbank",  workers:0, maxworkers:5,		workbonus:1, unlocked:false, make:{clay:2},						},
 	brickmaker: {box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{brick:1,clay:-1,wood:-2},	},
 	smith: 		{box: "workshops",  workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{spear:0.05,wood:-1,copper:-1},	},//the weapon/armor/building_materials toggle will change this 'make' property
 	child:		{box: "camp",		workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{wood:.3},					},//children can help collect some wood
 
-	//change the mine building to some kind of expanding quarry
 	//should there be different mines - how to organize? or one mine that makes many ores for starters - unlock more metals as you add mineshafts (rename current mineshaft)
 	//one smelting factory that can handle a certain amount of several ores - new ores added by research and/or mines
 
@@ -227,7 +226,7 @@ function addJobElement(jobName){//came move the check whether box exists up to h
 	var indiv = document.createElement("div");
 	indiv.id = jobName.toLowerCase() + "Job";
 	var changeName;
-	if(jobName==="child"){//can change how the job names appear in jobboxes
+	if(jobName==="child"){//can change how the job names appear in jobboxes here. if this gets long enough, may want to add a 'name' property to the jobs objects
 		changeName="children";
 	} else {
 		changeName=jobName+"s";
@@ -255,24 +254,24 @@ function addJobElement(jobName){//came move the check whether box exists up to h
 	alertPanel("pan1");
 }
 
-//make it so that the new jobs don't show up until after the first building is made
+//make it so that the new jobs don't show up until after the first building is made? (like no farmers until farm)
 var Buildings = {  //if addWorker property key is "freeworker", it will add free workers     can remove the buildOnce property because just make buy button invis for "true" buildings?
 					//can move the unlockRes and unlockJob functionality to the unlock_conditional section of the run() function
 	shack:	{name: "Shack", 		count:1, buildWorkers:1, buildTime:35, unlocked:true, 	buildingwork:{},									addworker:{freeworker:1}, 	cost:{wood:25}, 							unlockRes:[],			unlockJob:[],			costratio:1.2,		buildOnce:false,	tempCount:0, 	addsText:["space for 1 new settler"],		},
-	shed:	{name: "Woodshed",		count:0, buildWorkers:2, buildTime:25, unlocked:false, 	buildingwork:{},		addstorage:{wood:50}, 		addworker:{woodcutter:1}, 	cost:{wood:30},								unlockRes:[],			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 1 woodcutter", "50 wood storage"],	statement:"It looks like you could use a place to chop and store more wood,<br>so you decide to start building sheds just inside the forest."},
+	shed:	{name: "Woodshed",		count:0, buildWorkers:2, buildTime:25, unlocked:false, 	buildingwork:{},		addstorage:{wood:50}, 		addworker:{woodcutter:1}, 	cost:{wood:30},								unlockRes:[],			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 1 woodcutter", "50 wood storage"],	statement:"It looks like you could use a place to chop and store more wood, so you decide to start building sheds just inside the forest."},
 	expandQ:{name: "Expand Quarry",	count:0, buildWorkers:3, buildTime:25, unlocked:false,	buildingwork:{},		addstorage:{rock:50},		addworker:{rockcutter:1}, 	cost:{wood:30, rock:50},					unlockRes:[],			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 1 rockcutter", "50 rock storage"],	statement:"Clearing access to the quarry will allow for more rock collection and storage."},
-	farm:	{name: "Farm",			count:0, buildWorkers:3, buildTime:40, unlocked:false, 	buildingwork:{},									addworker:{farmer:2},		cost:{wood:100, rock:75},					unlockRes:[],			unlockJob:["farmer"],	costratio:2.5, 		buildOnce:false,	tempCount:0,	addsText:["space for 2 farmers"],						statement:"One of the travelers brought with them fast-growing seeds, and to free up workers<br>from hunting duties you decided to try farming. Some walls and trellices seem to do the trick."},
-	barn:	{name: "Barn",			count:0, buildWorkers:3, buildTime:40, unlocked:false,	buildingwork:{},		addstorage:{wood:100,rock:100,food:100}, 				cost:{wood:300,rock:100},					unlockRes:[],			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["100 food storage", "100 wood storage", "100 rock storage"],	statement:"You will need even more storage to stockpile resources for larger buildings.<br>You can start by constructing simple barns."},
-	lumberyard:{name: "Lumber Yard",count:0, buildWorkers:3, buildTime:50, unlocked:false,	buildingwork:{},		addstorage:{lumber:300}, 	addworker:{lumberworker:3},	cost:{wood:300, rock:50},					unlockRes:["lumber"],	unlockJob:["lumberworker"],costratio:2.5,	buildOnce:false,	tempCount:0,	addsText:["space for 3 lumber workers", "300 lumber storage"],	statement:"One of the newcomers was a carpenter in her old life. She is thankful for the simple<br>shelter you have provided, but obviously wants to lead the construction of better buildings."},
-	workshop:{name:"Stone Yard",	count:0, buildWorkers:3, buildTime:60, unlocked:false,	buildingwork:{},		addstorage:{stone:200},		addworker:{mason:3},		cost:{lumber:200,rock:200},					unlockRes:["stone"],	unlockJob:["mason"],	costratio:2.5,		buildOnce:false,	tempCount:0,	addsText:["space for 3 masons", "200 stone storage"],	statement:"With access to rough-cut boards, several folk decide to contruct an area to shape and store materials. For now the space will<br>be used to cut rock from the quarry into stone slabs for improved buildings, and perhaps later for stone tools."},
-	hut:	{name: "Hut",			count:0, buildWorkers:4, buildTime:40, unlocked:false, 	buildingwork:{},									addworker:{freeworker:1},	cost:{lumber:200,stone:100},				unlockRes:[],			unlockJob:[],			costratio:1.2,		buildOnce:false,	tempCount:0,	addsText:["space for 1 new settler"],					statement:"With boards from the lumberyard and cut stones from the stoneyard, the carpenter plans to start building proper huts.<br>You plan to continue buildings shacks - you are trying to grow the town after all and still need to turn the occasional wanderer away for lack of space."},
+	farm:	{name: "Farm",			count:0, buildWorkers:3, buildTime:40, unlocked:false, 	buildingwork:{},									addworker:{farmer:2},		cost:{wood:100, rock:75},					unlockRes:[],			unlockJob:["farmer"],	costratio:2.5, 		buildOnce:false,	tempCount:0,	addsText:["space for 2 farmers"],						statement:"One of the travelers brought with them fast-growing seeds, and to free up workers from hunting duties you decided to try farming. Some walls and trellices seem to do the trick."},
+	barn:	{name: "Barn",			count:0, buildWorkers:3, buildTime:40, unlocked:false,	buildingwork:{},		addstorage:{wood:100,rock:100,food:100}, 				cost:{wood:300,rock:100},					unlockRes:[],			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["100 food storage", "100 wood storage", "100 rock storage"],	statement:"You will need even more storage to stockpile resources for larger buildings. You can start by constructing simple barns."},
+	lumberyard:{name: "Lumber Yard",count:0, buildWorkers:3, buildTime:50, unlocked:false,	buildingwork:{},		addstorage:{lumber:300}, 	addworker:{lumberworker:3},	cost:{wood:300, rock:50},					unlockRes:["lumber"],	unlockJob:["lumberworker"],costratio:2.5,	buildOnce:false,	tempCount:0,	addsText:["space for 3 lumber workers", "300 lumber storage"],	statement:"One of the newcomers was a carpenter in her old life. She is thankful for the simple shelter you have provided, but obviously wants to lead the construction of better buildings."},
+	workshop:{name:"Stone Yard",	count:0, buildWorkers:3, buildTime:60, unlocked:false,	buildingwork:{},		addstorage:{stone:200},		addworker:{mason:3},		cost:{lumber:200,rock:200},					unlockRes:["stone"],	unlockJob:["mason"],	costratio:2.5,		buildOnce:false,	tempCount:0,	addsText:["space for 3 masons", "200 stone storage"],	statement:"With access to rough-cut boards, several folk decide to contruct an area to shape and store materials. For now the space will be used to cut rock from the quarry into stone slabs for improved buildings, and perhaps later for stone tools."},
+	hut:	{name: "Hut",			count:0, buildWorkers:4, buildTime:40, unlocked:false, 	buildingwork:{},									addworker:{freeworker:1},	cost:{lumber:200,stone:100},				unlockRes:[],			unlockJob:[],			costratio:1.2,		buildOnce:false,	tempCount:0,	addsText:["space for 1 new settler"],					statement:"With boards from the lumberyard and cut stones from the stoneyard, the carpenter plans to start building proper huts. You plan to continue buildings shacks - you are trying to grow the town after all and still need to turn the occasional wanderer away for lack of space."},
 	lab: 	{name: "Laboratory",	count:0, buildWorkers:4, buildTime:80, unlocked:false, 	buildingwork:{},									addworker:{researcher:1},	cost:{wood:100,lumber:300,stone:200},		unlockRes:["research"],	unlockJob:["researcher"],costratio:1.3,		buildOnce:false,	tempCount:0,	addsText:["space for 1 researcher"],					statement:"The Town Hall has been constructed. The first meeting will be held immediately."},
 	mine:	{name: "Mineshaft",		count:0, buildWorkers:5, buildTime:60, unlocked:false,	buildingwork:{},		addstorage:{},				addworker:{},				cost:{lumber:200},							unlockRes:[],			unlockJob:[],			costratio:1.2,		buildOnce:false,	tempCount:0,	addsText:["space for 1 miner"],						statement:"Adding a mineshaft will allow collection of ores."},
 	warehouse:{name:"Warehouse",	count:0, buildWorkers:5, buildTime:50, unlocked:false,	buildingwork:{},		addstorage:{wood:50,rock:50,lumber:50,stone:50,cu_ore:50,brick:50,fe_ore:50,coal:50}, addworker:{},cost:{rock:100,lumber:500,stone:300,brick:150},unlockRes:[],	unlockJob:[],			costratio:1.1,		buildOnce:false,	tempCount:0,	addsText:["50 wood storage","50 rock storage","50 lumber storage","50 stone storage","50 ore storage","50 brick storage"], statement:"More versitile than barns, your warehouses are designed to store many kinds of materials."},
 	kiln:	{name: "Kiln",			count:0, buildWorkers:3, buildTime:30, unlocked:false,	buildingwork:{},		addstorage:{},				addworker:{kilnworker:1},	cost:{brick:200,stone:50},					unlockRes:["copper"],	unlockJob:["kilnworker"],costratio:1.1,		buildOnce:false,	tempCount:0,	addsText:["space for one kilnworker"], statement:"Kilns will let us smelt ore and perhaps do other things later."},
-	silo:	{name: "Silo",			count:0, buildWorkers:3, buildTime:35, unlocked:false,  buildingwork:{},		addstorage:{food:150},		addworker:{},				cost:{wood:100, lumber:100},				unlockRes:{},			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["150 food storage"],							statement:"The settlement can buffer fluctuations in food remand and<br>stockpile more food for exploring parties by constructing silos"},
-	cabin:	{name: "Cabin",			count:0, buildWorkers:5, buildTime:55, unlocked:false,  buildingwork:{},		addstorage:{},				addworker:{freeworker:2,child:2},cost:{lumber:350,stone:150},			unlockRes:{},			unlockJob:["child"],	costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 2 new settlers", "space for 2 children"],statement:"With all the work to do, the settlement needs more residents. Cabins will<br>also allow families to join the town, or lovers to have space for their new children"},
-	forge:	{name: "Forge",			count:0, buildWorkers:6, buildTime:100,unlocked:false,	buildingwork:{},		addstorage:{copper:10},		addworker:{smith:1},		cost:{wood:50,lumber:250,stone:350,brick:200},unlockRes:["spear"],  unlockJob:["smith"],	costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 1 metalsmith","10 copper storage"],					statement:"A forge will allow one metalsmith to begin turning smelted metals into useful tools and weapons",		},
+	silo:	{name: "Silo",			count:0, buildWorkers:3, buildTime:35, unlocked:false,  buildingwork:{},		addstorage:{food:150},		addworker:{},				cost:{wood:100, lumber:100},				unlockRes:{},			unlockJob:[],			costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["150 food storage"],							statement:"The settlement can buffer fluctuations in food demand and stockpile food for exploring parties by constructing silos."},
+	cabin:	{name: "Cabin",			count:0, buildWorkers:5, buildTime:55, unlocked:false,  buildingwork:{},		addstorage:{},				addworker:{freeworker:2,child:2},cost:{lumber:350,stone:150},			unlockRes:{},			unlockJob:["child"],	costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 2 new settlers", "space for 2 children"],statement:"With all the work to do, the settlement needs more residents. Cabins will allow families with children to join the town."},
+	forge:	{name: "Forge",			count:0, buildWorkers:6, buildTime:100,unlocked:false,	buildingwork:{},		addstorage:{copper:10},		addworker:{smith:1},		cost:{wood:50,lumber:250,stone:350,brick:200},unlockRes:["spear"],  unlockJob:["smith"],	costratio:1.5,		buildOnce:false,	tempCount:0,	addsText:["space for 1 metalsmith","10 copper storage"],					statement:"A forge will allow one metalsmith to begin turning smelted metals into useful tools and weapons.",		},
 	
 
 	//give kilns a drop-down menu for picking what to do - turn wood to charcoal, turn clay to brick, turn ore to metal - different recipe based on what is selected. keep track of number of kilns and kilnworkers but treat consumption/generation separately?
@@ -280,11 +279,11 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 	armory:		{name: "Armory",	count:0, buildWorkers:7, buildTime:100,unlocked:false,	buildingwork:{},		addstorage:{spear:15},		addworker:{},				cost:{wood:50,lumber:250,stone:100},		unlockRes:[], 		 	unlockJob:[],			costratio:3,		buildOnce:false,	tempCount:0,	addsText:["15 spear storage"],					statement:"The armory will allow your townsfolk to stockpile weapons to arm explorers and defend the settlement",		},
 	
 };
-	function incrResBuildings(){//add passive resource production
-		for(var x in Buildings){
-			var make1 = true;
-			var make2 = false;
-			for(var y in Buildings[x]["buildingwork"]){
+function incrResBuildings(){//add passive resource production
+	for(var x in Buildings){
+		var make1 = true;
+		var make2 = false;
+		for(var y in Buildings[x]["buildingwork"]){
 				var incr = GlobVar.factor*Buildings[x]["buildingwork"][y]*Buildings[x]["count"];
 				if(Stuff[y]["stored"]+incr<0){
 					make1 = false;
@@ -294,8 +293,8 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 						make2 = true;
 					}
 				}
-			}
-			if(make1 && make2){
+		}
+		if(make1 && make2){
 				for(var incrKey in Buildings[x]["buildingwork"]){
 					incr = GlobVar.factor*Buildings[x]["buildingwork"][y]*Buildings[x]["count"];
 					var max  =  Stuff[incrKey]["maxstored"]*Stuff[incrKey]["storebonus"];
@@ -306,9 +305,9 @@ var Buildings = {  //if addWorker property key is "freeworker", it will add free
 					}
 					document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"].toFixed(1);
 				}
-			}
 		}
-	};
+	}
+};
 
 function addBuildingButton(buildingName){
 
@@ -409,6 +408,36 @@ var GlobVar = {
 	workerChance: .00004,	//fractional chance to attract a new worker each tick
 	mercyChance: 0,		//so that people come eventually
 	space: 1,			//total number of workers that can live in the camp 
+	exploreMessages: ["Your explorers map some areas but find nothing of use.",
+						"The exploration party begins to map the hills to the southeast.",
+						"x-find first mining site",
+						"The hills to the northeast look to have better prospects than down south.",
+						"Who knows how deep this forrest goes? Scouts say to keep looking in the hills for a good mining location.",
+						"x-find 2nd mining site",
+						"These seem to be foothills of a low mountain range to the east.",
+						"The river continues it's course through the woods upriver away from the settlement. What does the land have to offer downriver?",
+						"x- find clay",
+						"Scouts say this trip was especially boring.",
+						"The area seems safe to send workers, and you can continues to expand the settlement southward into the grassland .",
+						"x-all immediate area scouted",
+						"x",//make some exploring time unlock the roadbuilding tech or some other tech?
+						"x-find bears, need to take spears now",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x",
+						"x"],
+	paused: true,
 	
 }
 	var nextCol=1;			//keeps track of the column in which to add the next job box - should not be adjusted by GlobVar save.
@@ -425,7 +454,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 		loadGame();
 	} else {
 		setup();
-		document.querySelector(".closebtn").addEventListener("click", function(){document.querySelector(".closebtn").parentElement.style.display="none";populate();});
+		document.querySelector(".closebtn").addEventListener("click", function(){document.querySelector(".closebtn").parentElement.style.display="none";GlobVar.paused=false;populate();});
 		document.getElementById("intro").style = "transition:color 4s; color:white;";
 		document.querySelector(".closebtn").style = "color:green; transition-property: color; transition-duration: 4s; transition-delay: 4s;"
 		if(localStorage.getItem("Reset")==="prestige"){//for presige reset have new intro text
@@ -506,7 +535,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	document.getElementById("reset").addEventListener("click",resetGame);
 	document.getElementById("prestige").addEventListener("click",prestigeGame);
 
-	document.getElementById("statement").addEventListener("click",closeMessage);
+	document.getElementById("closeMessage").addEventListener("click",closeMessage);
 	//document.getElementById("tips").addEventListener("click",tips=function(){});
 
 	
@@ -515,7 +544,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 function populate(){
 	Stuff.food.stored = 100;
 	document.getElementById("food").innerHTMl = Stuff.food.stored;
-	logStatement("You have built a shack and gathered some supplies. Now your attention turns to bigger plans.<br>(click here to close message)",true,true);	
+	logStatement("You have built a shack and gathered some supplies. Now your attention turns to bigger plans.","regular",true,true);	
 }
 function panelEvent(e){
 	Panel("pan" + e.currentTarget.id.charAt(e.currentTarget.id.length-1)); //pan0, pan1 strings
@@ -523,7 +552,7 @@ function panelEvent(e){
 function moveworkerEvent(e){
 	var num = 1;
 	if (e.shiftKey) {
-		num = 5;//change this to move half the available workers instead of 5
+		num = -2;
 	}
 	if (e.ctrlKey) {
 		num = 10;
@@ -538,7 +567,7 @@ function moveworkerEvent(e){
 function removeworkerEvent(e){
 	var num = 1;
 	if (e.shiftKey) {
-		num = 5;
+		num = -2;
 	}
 	if (e.ctrlKey) {
 		num = 10;
@@ -555,7 +584,7 @@ function removeworkerEvent(e){
 function addBuildingEvent(e){
 	addBuilding(e, e.currentTarget.id.slice(0,-5));
 }
-function SwapResearchEvent(e){
+function SwapResearchEvent(e){//I don't need this stuff this way at all. leftover from learning, should change
 	SwapActiveRes(e.currentTarget.id);
 }
 function CouncilMessageEvent(e){
@@ -563,8 +592,6 @@ function CouncilMessageEvent(e){
 	e.currentTarget.style.display = "none"
 	document.getElementById("council"+ num).style.display = "block";
 }
-
-
 function Panel(select){
 	var tempNum = select.slice(-1);//tab number
 	if(document.getElementById("butt"+tempNum).className === "buttAttn"){
@@ -592,13 +619,38 @@ function Panel(select){
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////add and remove workers///////////////////////////////////////////////////////////////////////////////////
 function moveworker(workkey,num){
+
+	//makes the text flash red if you already have max workers (should this make just the max or just the numbers flash (harder)?)
+	if(Jobs[workkey]["workers"]===Jobs[workkey]["maxworkers"]){
+		let divElement = document.getElementById(workkey+"Job").firstChild;		
+		divElement.style.transition = ".25s";
+		divElement.style.color = "red";
+		setTimeout(function(){divElement.style.color = "black";},250);
+		return;
+
+	} 
+	if(Jobs.freeworker.workers<num){
+		let divElement = document.getElementById("freeworkerJob0");	//if I remove the '0' in the id name there is a problem where save reload removes freeworker box	
+		divElement.style.transition = ".25s";
+		divElement.style.color = "red";
+		setTimeout(function(){divElement.style.color = "black";},250);
+		return;
+	}
+
+	if(document.getElementById(workkey+"Job").firstChild.style){//not sure why this is null sometimes from restart
+		document.getElementById(workkey+"Job").firstChild.style.transition = "0s";//the always runs too soon and prevents the fade out if it's in the above if()
+	}
 
 	if (num === -1){
 		num = Math.min(Jobs[workkey]["maxworkers"]-Jobs[workkey]["workers"],Jobs.freeworker.workers);
 	}
+
+	if (num === -2){
+		num = Math.floor(Math.min(Jobs[workkey]["maxworkers"]-Jobs[workkey]["workers"],Jobs.freeworker.workers)/2);
+	}
+	
 
 	if (Jobs[workkey]["workers"]+num <= Jobs[workkey]["maxworkers"] && Jobs.freeworker.workers >= num){
 		Jobs[workkey]["workers"]+=num;
@@ -608,11 +660,15 @@ function moveworker(workkey,num){
 		document.getElementById("freeworkers").innerHTML = Jobs["freeworker"]["workers"];
 	}
 }
-
 function removeworker(lessworkkey,num){
 	if (num === -1){
 		num = Jobs[lessworkkey]["workers"];
 	}
+
+	if (num === -2){
+		num = Math.floor(Jobs[lessworkkey]["workers"]/2);
+	}
+
 	if (Jobs[lessworkkey]["workers"]-num>=0){
 		Jobs[lessworkkey]["workers"]-=num;
 		Jobs["freeworker"]["workers"]+=num;
@@ -621,7 +677,6 @@ function removeworker(lessworkkey,num){
 		document.getElementById("freeworkers").innerHTML = Jobs["freeworker"]["workers"];
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////add buildings////////////////////////////////////////////////////////////////////////////////
 function addBuilding(ev, buildkey){
@@ -692,7 +747,6 @@ function addBuilding(ev, buildkey){
 	}
 	return(canbuild);
 }
-
 function buildUp(){
 	for(var i=0;i<GlobVar.buildBuild.length;i++){
 		if (GlobVar.buildConstruct[i]<100){
@@ -706,7 +760,6 @@ function buildUp(){
 		}
 	}
 }
-
 function finishBuilding(buildkey,index){
 
 	//re-direct to special building calls
@@ -728,7 +781,7 @@ function finishBuilding(buildkey,index){
 			if(key4 === "freeworker"){
 				console.log("adding to freeworker");
 				GlobVar.space+=Buildings[buildkey]["addworker"][key4];
-				document.getElementById(key4 + "sMax").innerHTML = GlobVar.space;
+				document.getElementById("workerspace").innerHTML = GlobVar.space-Jobs.freeworker.maxworkers;
 			} else if (key4 === "child"){
 				console.log("adding to "+key4+ ", currently "+Jobs[key4]["workers"]);
 				Jobs[key4]["workers"]+=Buildings[buildkey]["addworker"][key4];
@@ -802,7 +855,7 @@ function unlock(unlockkey){
 
 		document.getElementById(unlockkey+"Costs").innerHTML = costTxt;
 
-		logStatement(Buildings[unlockkey]["statement"],true,true);
+		logStatement(Buildings[unlockkey]["statement"],"regular",true,true);
 	}
 }
 
@@ -827,14 +880,13 @@ function SwapActiveRes(x){
 		document.getElementById("researchersMake").innerHTML = Jobs.researcher.make.research*Jobs.researcher.workbonus*5*GlobVar.factor+" research / sec<br>and consumes:<br>"+consumeStr;
 	}
 }
-
 var Research = {
-	FarmEquip:	{name:"Farm Equipment",		resCost:{wood:2,lumber:1}, 		totalRes:1000, 	completion:0, unlocked:true,  done:false, reward:"Improves farmers' food output by 50%", 						statement:"The farmers want to design a wooden plow and other<br>equipment which should improve crop output significantly."},
-	StoneAxe:	{name:"Stone Axes",			resCost:{lumber:1,stone:2}, 	totalRes:1500, 	completion:0, unlocked:true,  done:false, reward:"Resets woodcutter and lumberworker output to 2.5/sec", 		statement:"You notice that the axes that most of your comrads have<br>brought with them, and the few saws and other metal tools,<br>have been dulling and deteriorating to the point of uselessness.<br>It seems that the best course of action is to develope new<br>stone axes for felling trees and shaping them into boards."},
-	StoneChisel:{name:"Stone Chisels",		resCost:{lumber:.5,rock:.5,stone:1},totalRes:1000,completion:0,unlocked:false,done:false, reward:"Increases output of both masons and rockcutters by 30%", 		statement:"The most proficient mason, though he was new to cutting rock when he began,<br>thinks he can improve stone chisel design to increase output of both rock and stone."},
-	FindOre:	{name:"Ore Finding",		resCost:{food:1,lumber:1},		totalRes:500, 	completion:0, unlocked:false, done:false, reward:"Some workers learn how to look for potential mining sites", 	statement:"You decide that is time to start exploring the surroundings area.<br>The scouts may as well be on the lookout for mining sites."},
+	FarmEquip:	{name:"Farm Equipment",		resCost:{wood:2,lumber:1}, 		totalRes:1000, 	completion:0, unlocked:true,  done:false, reward:"Improves farmers' food output by 50%.", 						statement:"The farmers want to design a wooden plow and other<br>equipment which should improve crop output significantly."},
+	StoneAxe:	{name:"Stone Axes",			resCost:{lumber:1,stone:2}, 	totalRes:1500, 	completion:0, unlocked:true,  done:false, reward:"Resets woodcutter and lumberworker output to 2.5/sec.", 		statement:"You notice that the axes that most of your comrads have<br>brought with them, and the few saws and other metal tools,<br>have been dulling and deteriorating to the point of uselessness.<br>It seems that the best course of action is to develope new<br>stone axes for felling trees and shaping them into boards."},
+	StoneChisel:{name:"Stone Chisels",		resCost:{lumber:.5,rock:.5,stone:1},totalRes:1000,completion:0,unlocked:false,done:false, reward:"Increases output of both masons and rockcutters by 30%.", 		statement:"The most proficient mason, though he was new to cutting rock when he began,<br>thinks he can improve stone chisel design to increase output of both rock and stone."},
+	FindOre:	{name:"Ore Finding",		resCost:{food:1,lumber:1},		totalRes:500, 	completion:0, unlocked:false, done:false, reward:"You may begin to explore the surrounding area for resources.", 	statement:"You decide that is almost time to start exploring the surroundings area.<br>Before any scouts leave though, they should be trained to lookout for mining sites."},
 	Smelting:	{name:"Copper Smelting",	resCost:{brick:1,lumber:1,stone:1,wood:1},totalRes:2700,completion:0, unlocked:false, done:false, reward:"Figure out a way to smelt ore into usable metal.", 	statement:"With the right materials, the mining expert can<br>lead the design of kilns for smelting ores."},
-	Brickmaking:{name:"Brickmaking",		resCost:{wood:1,clay:1},		totalRes:1000,	completion:0, unlocked:false, done:false, reward:"Work out how to turn clay into bricks over wood fires.", 		statement:"Clay from the riverbank could be formed into bricks. Exactly how will take some tinkering."},
+	Brickmaking:{name:"Brickmaking",		resCost:{wood:1,clay:1},		totalRes:1000,	completion:0, unlocked:false, done:false, reward:"Learn to turn clay into bricks over wood fires.", 		statement:"Clay from the riverbank could be formed into bricks. Exactly how will take some tinkering."},
 
 	//ideas for furute upgrades (implement above first)
 	Metalwork:	{name:"Metalworking",		resCost:{copper:.1,wood:1},		totalRes:1000, 	completion:0, unlocked:false, done:false, reward:"Can produce copper spears for the armory.", 					statement:"Now that you have access to copper, some folks decide to try smithing.<br>They will start by making crude metal weapons to protect the settlment from wild animals."},
@@ -845,14 +897,15 @@ var Research = {
 
 	IronSmelt:	{name:"Iron Smelting",		resCost:{brick:1,lumber:1,stone:1,wood:1}},
 	Metalwork2: {name:"Metalworking 2"},//create things out of iron like nails and saws - add a resource for construction material (nails, tools, shingles)
-	Roads2:  {name:"Improved roads"},//coblestone roads replace crude dirt roads
+	Roads2:  	{name:"Improved roads"},//coblestone roads replace crude dirt roads
 	Construction:{name:"Construction"},//lets you make buildings with nails and saws
 	Cement:		{name:"Cement"},//more buildings
 	Glass:		{name:"Glassmaking"},//windows and stuff?
 	Overseer:   {name:"Affordable Housing", reward:"Reduces cost ratio of all housing buildings but they<br>will require one additional construction worker<br>and take 20% more time to build", statement:"The council is still not sure why the cost of buildings keeps increasing. They decide the each new housing project will need an overseer to keep track of resource usage."},
 	Contractors:{name:"Contractors", reward:"Reduces building time by 30% but requires an additional<br>worker per building (additional 2 workers for buildings<br>that currently require 5 or more workers)", statement:"Some proficient builders have been identified over the last few<br>months, and the council taps them to lead new construction projects."},
 	Rafts:		{name:"Raftbuilding", reward:"Can make rafts to explore along the river", statement:"The river is wide and too difficult to cross unaided. In order explore accross the river, you decide to construct a few rafts to carry explorers and supplies."},
-	Bridge:		{name:"Bridgebuilding", reward:"Construct a bridge to allow exploring accross the river without needing rafts", statement:"The rafts can only carry so much weight, and the explorers have gone as far as they can using rafts. To allow further exploration accross the river and access to resources, you begin a massive construction project to put in a bridge."},
+//bridge should be it's own unique project like council hall (one time thing). Should be a research to plan it, and afer research button appears in town hall tab to build bridge (lots of resources and workers).
+	Bridge:		{name:"Bridgebuilding", reward:"Can begin contructing a bridge to allow exploring accross the river without needing rafts", statement:"The rafts can only carry so much weight, and the explorers have gone as far as they can using rafts. To allow further exploration accross the river and access to resources, you begin planning a massive construction project to put in a bridge."},
 };
 function addResearchButton(research){
 	Research[research]["unlocked"] = true;
@@ -876,8 +929,24 @@ function addResearchButton(research){
 	document.getElementById("pan3").insertBefore(div,document.getElementById("doneResBox"));
 	alertPanel("pan3");
 }
-
-
+function makeTiny(researchStr){
+	var resDiv = document.getElementById(researchStr);
+	resDiv.className = "tinyRes";
+	resDiv.removeChild(document.getElementById(researchStr+"resBar"));
+	resDiv.removeEventListener("click",SwapResearchEvent);
+	var p = document.createElement("p");
+	p.innerHTML = Research[researchStr]["name"];
+	p.className = "tinyResText";
+	resDiv.appendChild(p); // = Research[resUp]["name"];
+	resDiv.querySelector(".tooltiptext").innerHTML = Research[researchStr]["reward"];
+	resDiv.parentNode.removeChild(resDiv);
+	document.getElementById("doneRes").insertBefore(resDiv,document.getElementById("finishedResSpacer"));
+console.log("trying to put "+ resDiv + " in front of "+document.getElementById("finishedResSpacer"));
+	logStatement("Research complete:<br>"+Research[researchStr]["reward"],"research",true,false);
+	doBonus(researchStr);
+	GlobVar.ActiveRes = " ";
+	Research[researchStr]["done"] = true;
+}
 function researchIncr(resUp){
 
 	var now = Date.now();
@@ -900,7 +969,7 @@ function researchIncr(resUp){
 		if(make) {
 			for(var incrKey in Research[resUp]["resCost"]){
 				incr = -Research[resUp]["resCost"][incrKey]*Jobs["researcher"]["workers"]*Jobs["researcher"]["workbonus"]*GlobVar.factor;
-				Stuff[incrKey]["rate"]+=incr;
+				Stuff[incrKey]["rate"]+=incr;//don't I do the rate thing differently and not need this???
 				Stuff[incrKey]["stored"]+= incr*deltaTime*5;
 				document.getElementById(incrKey).innerHTML = Stuff[incrKey]["stored"].toFixed(1);
 			}
@@ -911,19 +980,9 @@ function researchIncr(resUp){
 
 			if(Research[resUp]["completion"]>=Research[resUp]["totalRes"]){
 				Research[resUp]["completion"]=Research[resUp]["totalRes"];
-				Research[resUp]["done"] = true;
 
-				var resDiv = document.getElementById(resUp);
-				resDiv.className = "tinyRes";
-				resDiv.removeChild(document.getElementById(resUp+"resBar"));
-				resDiv.removeEventListener("click",SwapResearchEvent);
-				resDiv.querySelector(".tooltiptext").innerHTML = Research[resUp]["reward"];
-				resDiv.parentNode.removeChild(resDiv);
-				document.getElementById("doneRes").appendChild(resDiv);
+				makeTiny(resUp);
 
-				GlobVar.pendingStatements.push("Research complete:<br>"+Research[resUp]["reward"]);
-				doBonus(resUp);
-				GlobVar.ActiveRes = " ";
 			}
 			Stuff.research.stored = Research[resUp]["completion"];
 		}
@@ -1006,8 +1065,8 @@ function doBonus(resUp){
 
 
 
-			//make this show up in town hall instaed of as it does here? need to add a 'add town hall message' sort of function
-			var stoneStr = "One of the newest wanderers to join your camp used to supervise mining operations for the Great City. He offers to teach the group how to find ore and smelt it."
+			//make this show up in town hall instead of as it does here? need to add a 'add town hall message' sort of function
+			var stoneStr = "One of the newest wanderers to join your camp used to supervise mining operations for the Great City. He offers to teach the group how to find ore and smelt it. After the training you may begin scouting the surrounding area."
 			GlobVar.statementLog = stoneStr + "<br><br>" + GlobVar.statementLog;
 			document.getElementById("logOut").innerHTML = GlobVar.statementLog;//some statements are logged and displayed in the town hall annoucement instead of the normal statement line
 			//sets the council message
@@ -1158,35 +1217,97 @@ function doBonus(resUp){
 
 ////////////////////////////////////////////////////////////////////////////miscilanious functions working on////////////////////////////////////////////////////////////////////////////////////
 //makes the panel select button turn red if it is not active
-function alertPanel(pan){
+/*function collapseTitle(){
+	if(title is up){
+		collapse (make everything 0px height/hidden except the message line and the 'Messages' number)
+	} else {
+		make it visible again
+	}
+}*/
+
+//add in reasons that some workers in a given job die (explosion, bandits, murder/suicide)
+function killWorkers(deadNum, job){//returns number of workers that couldn't be killed in that job
+	if(job==="random"){//should this be weighted by number of workers in a given job, or are some jobs just more prone to dying? For now don't say where they died from
+		let jobCounter = 0;
+		let jobArray = [];
+		for(let i in Jobs){
+			if(Jobs[i]["unlocked"]&&Jobs[i]["workers"]>0){//stops initially trying to rand for 0-worker jobs but not jobs that fall to 0 during dying. may want to come back and if a job goes to 0 workers, remove it from the jobsArray before the next iteration of the while loop.
+				jobArray[jobCounter]=i;
+				console.log("into the array "+i);
+				jobCounter++;
+			}
+		}
+
+		if(Jobs.freeworker.maxworkers>deadNum){
+			Jobs.freeworker.maxworkers-=deadNum;
+		}else{
+			alert("game over - too many people just died");//want to make sure big kill-offs only occur with moderate to high populations
+		}
+
+		while(deadNum>0){
+			let killJob = jobArray[Math.floor(Math.random()*jobArray.length)];
+			if(Jobs[killJob]["workers"]>0){
+				Jobs[killJob]["workers"]--;
+				document.getElementById(killJob+"s").innerHTML = Jobs[killJob]["workers"];
+				deadNum--;
+				console.log("killed a "+killJob);
+			}//else just try again and eventually you will find a worker you can kill
+		}
+	}else{
+		var jobWorkers = Jobs[job]["workers"];
+		if(jobWorkers<deadNum){
+			deadNum -= jobWorkers;
+			console.log("Not enough workers in this job ("+job+") to kill off, "+deadNum+" not killed");//can kill them all and then call killWorkers again with 'random'; can just kill the number of workers and return the amount not killed (do this for now); etc
+			Jobs[job]["workers"]=0;
+			Jobs.freeworker.maxworkers -= jobWorkers;
+		}else{
+			Jobs[job]["workers"] -= deadNum;
+			Jobs.freeworker.maxworkers -= deadNum;
+			deadNum = 0;
+		}
+		document.getElementById(job+"s").innerHTML = Jobs[job]["workers"];
+	}
+	
+	document.getElementById("freeworkersMax").innerHTML = Jobs.freeworker.maxworkers;
+	document.getElementById("workerspace").innerHTML = GlobVar.space-Jobs.freeworker.maxworkers;
+	return deadNum;
+}
+function alertPanel(pan){//should make this use 'jobs', 'buildings', 'map', etc instead of 'pan1', 'pan5';
 	if(GlobVar.mark1!==pan&&GlobVar.mark2!==pan){
 		document.getElementById("butt"+pan.slice(-1)).className = "buttAttn";
 	}
 }
-
-function tryWorkerJoin(){//need to make buildings stop adding freeworker.workers, instead add GlobVar.space. Does not do anything special for kids - children get added as soon as there is space
+function tryWorkerJoin(){
 	if(Jobs.freeworker.maxworkers<GlobVar.space){
 		GlobVar.mercyChance ++;
-		if(Math.random() <= GlobVar.workerChance + GlobVar.mercyChance*.000001){
+		if((Jobs.freeworker.maxworkers==1&&GlobVar.mercyChance>300)||Jobs.freeworker.maxworkers==2&&GlobVar.mercyChance>500||(Jobs.freeworker.maxworkers>2&& Math.random() <= GlobVar.workerChance + GlobVar.mercyChance*.000001)){
 			Jobs.freeworker.maxworkers ++;
 			Jobs.freeworker.workers ++;
 			GlobVar.mercyChance = 0;
 			document.getElementById("freeworkers").innerHTML = Jobs.freeworker.workers;
+			document.getElementById("freeworkersMax").innerHTML = Jobs.freeworker.maxworkers;
+			document.getElementById("workerspace").innerHTML = GlobVar.space - Jobs.freeworker.maxworkers;
 		}
+		
 	}
 }
-
 function councilListen(e){
 	addBuilding(e, "councilhall");
 }
 function finishCouncil(index){//some of this can be run in finishBuilding() and then break out right after calling finishCouncil() for parts that are different
 	Buildings.councilhall.unlocked = true;
-	document.getElementById("buildCounc").style.display = "none";
+	document.getElementById("buildCounc").style.display = "none";//why not just delete the element? maybe can show it again to 'upgrade town hall' and give new tech/new panel (make exploring manual)
 
 	document.getElementById("butt3").style.display = "inline-block";	
 	alertPanel("pan3");
-	unlock("lab");
-	GlobVar.pendingStatements.push("Council decree posted at Town Hall");
+	unlock("lab");//but want 'Research' to be on top
+	let moveRes = document.getElementById("researchStuff");
+	console.log(moveRes);
+	document.getElementById("stuff").removeChild(moveRes);
+	document.getElementById("stuff").insertBefore(moveRes, document.getElementById("foodStuff"));
+	moveRes.style.color = "green";
+	
+	logStatement("Council decree posted at Town Hall","council",true,false);
 	addResearchButton("Barns1");
 
 	document.getElementById("council1").style.visibility = "visible";
@@ -1195,8 +1316,8 @@ function finishCouncil(index){//some of this can be run in finishBuilding() and 
 	document.getElementById("freeworkers").innerHTML = Jobs.freeworker.workers;
 	GlobVar.buildBuild.splice(index,1);
 	GlobVar.buildConstruct.splice(index,1);
-	logStatement(Research.FarmEquip.statement,false,true);
-	logStatement(Research.StoneAxe.statement,false,true);
+	logStatement(Research.FarmEquip.statement,"research",false,true);
+	logStatement(Research.StoneAxe.statement,"research",false,true);
 }
 function isEmpty(object) {
 	for(var i in object) {
@@ -1210,7 +1331,7 @@ function updateTransition(){
 	document.getElementById("hunterJob").querySelector(".userAdd0").style.color = "black";
 }
 //add a statement to the backlog for showing
-function logStatement(string, display, log){
+function logStatement(string, type, display, log){
 
 	if(log){
 		GlobVar.statementLog = string + "<br><br>" + GlobVar.statementLog;
@@ -1219,23 +1340,24 @@ function logStatement(string, display, log){
 	
 	if(display){
 		GlobVar.pendingStatements.push(string);
-		document.getElementById("statementNum").innerHTML = GlobVar.pendingStatements.length;
+		GlobVar.pendingStatements.push(type+"Msg");
+		document.getElementById("statementNum").innerHTML = GlobVar.pendingStatements.length/2;
 
-		if(GlobVar.pendingStatements.length===1){
-			document.getElementById("statement").innerHTML = GlobVar.pendingStatements[0];
-			document.getElementById("statement").className = "orange";
+		if(GlobVar.pendingStatements.length===2){
+		//	document.getElementById("statement").innerHTML = GlobVar.pendingStatements[0];
+		//	document.getElementById("statement").className = type+"Msg";
 
-			setTimeout(function(){
-				document.getElementById("statement").className = "statementOn";//how to transition to this?
-				console.log("fade to white");
-			},100);	
+			document.getElementById("message").innerHTML = string;//uhhh don't need this twice...
+			document.getElementById("message").className = type+"Msg"; 
+			document.getElementById("messagepop").className = "messagepop";
+			GlobVar.paused=true;
 		}
 	}
 }
 function textAlert(ev, noGoStr){
 	console.log(noGoStr);
-	var y = ev.clientY;
-	var x = ev.clientX;
+	var y = ev.clientY+window.scrollY;
+	var x = ev.clientX+window.scrollX;
 	var div = document.createElement("div");
 	div.innerHTML = noGoStr;
 	div.className = "textAlert";
@@ -1244,8 +1366,6 @@ function textAlert(ev, noGoStr){
 	GlobVar.textAlerts.push(div); 
 	GlobVar.textAlerts.push(Date.now());
 	document.body.appendChild(div);
-
-
 }
 function updateToolTip(kind,name){
 	if(kind==="job"){
@@ -1290,18 +1410,22 @@ function updateToolTip(kind,name){
 	} else {
 		console.log("trying to update a tooltip but no kind specified, or a buildOnce building");
 	}
-};
+}
+function setMessageStyle(){
+	document.getElementById("statement").className = "regularMsg";
+//	document.getElementById("statement").style.color = "yellow";
+}
 
-
-function closeMessage(){
+function closeMessage(){//change event listener
 
 	var n = GlobVar.pendingStatements.length;
+	document.getElementById("statementNum").innerHTML = Math.max(n/2-1,0);//move element into new div for messagespop
+	console.log("n is: "+n);
 
 	if(n>0){
-		document.getElementById("statementNum").innerHTML = n-1;//alternativly make the 'Messages:' dissapear at 0?
-		document.getElementById("statement").className = "statementOff";//begin slow fade to back
+		let msgStyle = GlobVar.pendingStatements[1];
 	
-		if(GlobVar.pendingStatements[0]!=="In a food-shortage panic all available workers take to hunting"){
+		if(msgStyle!=="starveMsg"&&msgStyle!=="councilMsg"&&msgStyle!=="exploreMsg"){// or any other stuff that shouldn't get logged
 			document.getElementById("statementLog").style.borderColor = "orange";//make 'log' flash orange
 			document.getElementById("statementLog").style.color = "orange";
 		
@@ -1310,27 +1434,24 @@ function closeMessage(){
 				document.getElementById("statementLog").style.color = "white";
 			},500);
 		}
+		GlobVar.pendingStatements.shift();
+		GlobVar.pendingStatements.shift();//and the color
 	}
 
-	GlobVar.pendingStatements.shift();//remove the first statement
-
-	if(n>1){
+	if(n>2){
+		document.getElementById("message").className = "black";
 		setTimeout(function(){
-			document.getElementById("statement").innerHTML = GlobVar.pendingStatements[0];
-			document.getElementById("statement").className = "orange";
+			document.getElementById("message").innerHTML = GlobVar.pendingStatements[0];
+			document.getElementById("message").className = GlobVar.pendingStatements[1];
+			console.log("text set to: "+GlobVar.pendingStatements[0]+" and class set to: "+GlobVar.pendingStatements[1]);
 		},500);
-		setTimeout(function(){
-			document.getElementById("statement").className = "statementOn";//how to transition to this?
-		},600);
 	} else {
 		setTimeout(function(){
-			document.getElementById("statement").innerHTML = " ";
-		},500);
-	}
-
-	
+			document.getElementById("messagepop").className = "messageHidden";
+			GlobVar.paused=false;
+		},100);
+	}	
 }
-
 
 ///////////////////////////////////////////////////////////////////////////exploring the land////////////////////////////////////////////////////////////////////////////////////
 function exploreGo(ev){
@@ -1379,7 +1500,7 @@ function exploreGo(ev){
 	}
 }
 function exploreUp(){
-	GlobVar.exploreBar += GlobVar.time*20/(GlobVar.exploreNum);
+	GlobVar.exploreBar += GlobVar.time*1/(GlobVar.exploreNum);
 	if(GlobVar.exploreBar>=100){
 		GlobVar.exploreBar = 0;
 		exploreEnd();
@@ -1390,10 +1511,12 @@ function exploreEnd(){
 	Jobs.freeworker.workers += Math.floor(Math.log(GlobVar.exploreCount)*2)+1;
 	document.getElementById("freeworkers").innerHTML = Jobs.freeworker.workers;
 	GlobVar.exploreCount++;
+	console.log("ExploreCount: "+GlobVar.exploreCount);
 	uncover();
 
+	//discovery messages will still be here for now with 'x' in the array and have index Count#-2 in exploreMessage array
 	if(GlobVar.exploreCount===4){
-		logStatement("The exploring party discovered a potential mining site. You can build a shaft to extract ore",true,true);
+		logStatement("The exploring party discovered a potential mining site. You can build a shaft to extract ore","discovery",true,true);
 		unlock("mine");
 		drawMineSite(1);//am going to need to limit the number of mines somehow so that new mines show up in the right spot on the map. if you have not build mines and a new site opens up, where to place the mine (and when do give access to new ore?)
 		//limit to three shafts at this loction, don't let new ore until all of these three have been built. remove click ability after the third, allows clicks again after discovering new mine sites
@@ -1402,20 +1525,22 @@ function exploreEnd(){
 		GlobVar.Token[10]=false;
 		document.getElementById("mineBuild").className = "buildingButton";
 		document.getElementById("mineBuild").addEventListener("click",addBuildingEvent);
-		logStatement("The exploring party discovered another potential mining site. You can build a shaft to extract ore",true,true);
+		logStatement("The exploring party discovered another potential mining site. You can build a shaft to extract ore","discovery",true,true);
 		drawMineSite(2);
 		Buildings.mine.addworker.miner = 1;
 	} else if(GlobVar.exploreCount===10){
-		logStatement("The exploring party found a site by the river to extract clay.",true,true);
+		logStatement("The exploring party found a site by the river to extract clay.","discovery",true,true);
 		addResourceLine("clay");
 		addJobElement("clayworker");
 		addResearchButton("Brickmaking");
 		
 	} else if(GlobVar.exploreCount===13){
-		logStatement("All the the immediate area around the base camp has been mapped.<br>The next expeditions will need to venture futher along the valley or up the foothills.",true,true);
+		logStatement("All the the immediate area around the base camp has been mapped. The next expeditions will need to venture futher along the valley or up the foothills.","discovery",true,true);
 		addResearchButton("Roads");
 	} else if(GlobVar.exploreCount===15) {
-		logStatement("The last group of explorers barely scared off a wild bearling.<br>They advise that all future exploring missions be armed.",true,true);
+		killWorkers(4,"freeworker");
+		logStatement("The last group of explorers was attacked by a wild animal and 4 explores died. They advise that all future exploring missions be armed.","discovery",true,true);
+		logStatement("You help bury the dead and do what you can to calm the townsfolk. You should start making crude weapons as soon as you are able.","regular",true,true);
 		//need to add a place and mechanic for making and storing weapons (need a few expensive items - should have a making... bar in the armory and only whole numbered items)
 		//spears should be in the Stuff object by the resource line should appear somewhere else (different tab or below a line break in resource pannel)
 		//also need a way to return some of the special items (and lose some of them each trip). for now just lose all of them
@@ -1428,12 +1553,12 @@ function exploreEnd(){
 		tooltipStr = tooltipStr.slice(0,-7);
 		document.getElementById("exploreCosts").innerHTML = tooltipStr;
 	} else if (GlobVar.exploreCount===18) {
-		logStatement("Your explorers find another mining site that should allow coal production.",true,true);
+		logStatement("Your explorers find another mining site that should allow coal production.","discovery",true,true);
 		//make miners select which mine??? have separate coal mines, copper, iron, etc?
 	}
 	
 	 else {
-		GlobVar.pendingStatements.push("Your explorers map some areas but find nothing of use");
+		logStatement(GlobVar.exploreMessages[GlobVar.exploreCount-2],"explore",true,false);//should have an array of messages that get called exploreMsgArray[exploreCount]
 	}
 	//add in an ungrade or building with a small penalty to auto-explore if you have enough stuff?
 	GlobVar.exploring = false;
@@ -1447,6 +1572,7 @@ function exploreEnd(){
 			document.getElementById(x).innerHTML = Stuff[x]["stored"].toFixed(1);//Aslo make an update resource function and replace lines like this with updateRes(resStr)
 		}
 	}
+	alertPanel("pan6");//should really change this to title of panel (jobs, map, buildings) instead of panel number...
 }
 
 ///////////////////////////////////////////////////////////////////////////cheating///////////////////////////////////////////////////////////////////////////////////
@@ -1461,7 +1587,7 @@ function UnCheat(){
 
 ////////////////////////////////////////////////////////////////game loop////////////////////////////////////////////////////////////////////////////////////////
 function run(){ 
-
+	if(!GlobVar.paused){//need anyhting else in a pause/unpause() function
 
 	//transition and remove textAlerts
 	for(var i=0; i<GlobVar.textAlerts.length; i+=2){
@@ -1477,304 +1603,339 @@ function run(){
 		}
 	}
 		
+	//check for events met to unlock new content
 
-//check for events met to unlock new content
+		//win the game for now
+		if(GlobVar.exploreCount>15&&Jobs.freeworker.maxworkers>34&&Stuff.copper.stored>0&&GlobVar.Token[99]&&Buildings.kiln.count>1){
+			GlobVar.Token[99]=false;
+			alert("That's it for now - check back later for more content. Thanks for playing!");
+		}
+		if(Buildings.shack.count===2&&GlobVar.Token[15]){
+			GlobVar.Token[15]=false;
+			alertPanel("pan6");
+		}
+		if(Jobs.freeworker.maxworkers>=2&& GlobVar.Token[1]){
+			logStatement("Eventually another refugee wanders nearby, interested in what you are doing, and you convince him to join you in your work. Over time more people will surely come and stay if you have space to house them.","regular",true,true);
+			GlobVar.Token[1] = false;
+			
+		}
+		//add forest box and woodcutter job
+		if(Buildings.shack.count>=3&&Jobs.freeworker.maxworkers>=2&& GlobVar.Token[2]){
+			
+			Stuff.wood.unlocked=true;
 
-	//win the game for now
-	if(GlobVar.exploreCount>15&&Jobs.freeworker.maxworkers>34&&Stuff.copper.stored>0&&GlobVar.Token[99]&&Buildings.kiln.count>1){
-		GlobVar.Token[99]=false;
-		alert("That's it for now - check back later for more content. Thanks for playing!");
-	}
-
-	if(Buildings.shack.count==2&& GlobVar.Token[1]){
-		logStatement("Eventually another refugee wanders nearby, interested in what you are doing, and you convince<br>him to join you in your work. More will surely come and stay if you have space to house them.",true,true);
-		GlobVar.Token[1] = false;
-	}
-	//add forest box and woodcutter job
-	if(Buildings.shack.count==3&& GlobVar.Token[2]){
-		
-		Stuff.wood.unlocked=true;
-
-		addJobBox("forest");
-		addJobElement("woodcutter");
-		logStatement("Your new companions also carry axes, sharp for the time being. You suggest <br>that you head back into the forest and cut more wood to continue building.",true,true);
-		GlobVar.Token[2] = false;
-	}
-	//statement - buildings cost more as you build them
-	if(Buildings.shack.count==4&& GlobVar.Token[3]){
-		logStatement("As you build more buildings they will require more resources. <br>Why? Because that's what happens in this genre.",true,true);
-		GlobVar.Token[3] = false;
-	}
-	//change name
-	if(Buildings.shack.count===5&& GlobVar.Token[0]){
-		if(GlobVar.cheating){
-			GlobVar.name="Cheating";
-		} else {
-
-			GlobVar.Token[0]=false;
-			logStatement("The wilderness is beginning to feel less lonely.",true,true);
-			GlobVar.name = prompt("What would you like to name your settlement?");
-			if(GlobVar.name===null||GlobVar.name===""||GlobVar.name===" "){
-				GlobVar.name = "再见";
+			addJobBox("forest");
+			addJobElement("woodcutter");
+			logStatement("Your new companions also carry axes, sharp for the time being. You suggest that you head back into the forest and cut more wood to continue building.","regular",true,true);
+			GlobVar.Token[2] = false;
+		}
+		//statement - buildings cost more as you build them
+		if(Buildings.shack.count==4&& GlobVar.Token[3]){
+			logStatement("As you build more buildings they will require more resources. Why? Because that's what happens in this genre.","regular",true,true);
+			GlobVar.Token[3] = false;
+		}
+		//change name
+		if(Buildings.shack.count===5&& GlobVar.Token[0]){
+			if(GlobVar.cheating){
+				GlobVar.name="Cheating";
 			} else {
-				GlobVar.name = GlobVar.name[0].toUpperCase() + GlobVar.name.slice(1);
+
+				GlobVar.Token[0]=false;
+				logStatement("The wilderness is beginning to feel less lonely.","regular",true,true);
+				GlobVar.name = prompt("What would you like to name your settlement?");
+				if(GlobVar.name===null||GlobVar.name===""||GlobVar.name===" "){
+					GlobVar.name = "再见";
+				} else {
+					GlobVar.name = GlobVar.name[0].toUpperCase() + GlobVar.name.slice(1);
+				}
+			}
+			document.getElementById("title").innerHTML = "Camp " + GlobVar.name;
+		}
+		//adds hillside box and rockcutter job
+		if(Buildings.shack.count===6&& GlobVar.Token[4]){
+
+			addJobBox("hillside");
+			console.log("added hillside");
+			addJobElement("rockcutter");
+			addResourceLine("rock");
+			Stuff.rock.unlocked=true;
+			logStatement("While wandering into the hills looking for the nightly firewood, one of the workers finds a small rocky clearing that can be turned into a quarry. The rock may be useful for new structures.","regular",true,true);
+			drawBuilding("expandQ",1);
+			console.log("drew quarry");
+			GlobVar.Token[4] = false;
+		}
+		//unlocks shed (Woodshed)
+		if(Buildings.shack.count===7){
+			unlock("shed");
+		}
+		if(Buildings.shack.count===12&&GlobVar.Token[11]){
+			GlobVar.Token[11]=false;
+			logStatement("As the camp grows and residents becomes more familiar with eachother, some of them begin to discuss their past lives in the Great City.","regular",true,true);
+			logStatement("Most of the refugees did specialized work and are still learning the basic struggle for survival, but they long to rebuild at least part of the society they once knew.","regular",true,true);
+		}
+		//unlocks expandQ (Expand Quarry)
+		if(Buildings.shed.count>0 && Stuff.rock.stored>30) {
+			unlock("expandQ");
+		}
+		//unlocks farm
+		if(Buildings.expandQ.count>0){
+			unlock("farm");
+		}
+		//unlocks barn
+		if(Buildings.shed.count>2 && Buildings.expandQ.count>1){
+			unlock("barn");
+		}
+		//unlocks lumberyard
+		if(GlobVar.Token[14] && Buildings.shack.count>8 && Buildings.shed.count>3 && Buildings.barn.count>0){
+			GlobVar.Token[14]=false;
+			unlock("lumberyard");
+			logStatement("Though you only have fairly simple tools, many showing signs of wear, the carpenter insists on setting up a lumberyard.","regular",true,true);
+		}
+		//unlocks workshop
+		if(Buildings.shack.count>8 && Buildings.expandQ.count>2 && Buildings.lumberyard.count>0){
+			unlock("workshop");
+		}
+		//unlocks hut
+		if(!Buildings.hut.unlocked && Buildings.lumberyard.count>0 && Buildings.workshop.count>0){
+			unlock("hut");
+		}
+		//makes townhall button visible (inline-block)
+		if(Buildings.shack.count + Buildings.hut.count>=20 && GlobVar.Token[5]){
+			logStatement("Though it may be premature, you have high hopes for the future growth of your little shanty town and decide to give the settlement a proper name.","regular",true,true);
+			logStatement("You also decide that it is time to more formally organize, so you form a council to govern and make decisions.","regular",true,true);
+			document.getElementById("title").innerHTML = "Hamlet of " + GlobVar.name;
+			GlobVar.Token[5] = false;
+
+			//give the town hall button a red color
+			alertPanel("pan4");
+			document.getElementById("butt4").style.display = "inline-block";
+		}
+		//increase rock and stone production 
+		if(Research.StoneAxe.completion>350&&GlobVar.Token[6]){
+			GlobVar.Token[6]=false;
+			addResearchButton("StoneChisel");
+			alertPanel("pan3");
+		}
+		//remove the first mine as useless
+		if(Buildings.mine.tempCount===1&&GlobVar.Token[7]){
+			GlobVar.Token[7] = false;
+			if(GlobVar.Token[10]){
+				document.getElementById("mineBuild").removeEventListener("click",addBuildingEvent);
 			}
 		}
-		document.getElementById("title").innerHTML = "Camp " + GlobVar.name;
-	}
-
-	//adds hillside box and rockcutter job
-	if(Buildings.shack.count===6&& GlobVar.Token[4]){
-
-		addJobBox("hillside");
-		console.log("added hillside");
-		addJobElement("rockcutter");
-
-		//change to addResourceLine() call
-		addResourceLine("rock");
-		Stuff.rock.unlocked=true;
-		/////
-		logStatement("While wandering into the hills looking for the nightly firewood, one of the workers finds a<br>small rocky clearing that can be turned into a quarry. The rock may be useful for new structures.",true,true);
-		drawQuarry();
-		console.log("drew quarry");
-		GlobVar.Token[4] = false;
-	}
-	//unlocks shed (Woodshed)
-	if(Buildings.shack.count===7){
-		unlock("shed");
-	}
-	if(Buildings.shack.count===12&&GlobVar.Token[11]){
-		GlobVar.Token[11]=false;
-		logStatement("As the camp grows and residents becomes more familiar with eachother,<br>some of them begin to discuss their past lives in the Great City.",true,true);
-		logStatement("Most of the refugees did specialized work and are still learning the basic struggle for survival,<br>but they long to rebuild at least part of the society they once knew.",true,true);
-	}
-	//unlocks expandQ (Expand Quarry)
-	if(Buildings.shed.count>0 && Stuff.rock.stored>30) {
-		unlock("expandQ");
-	}
-	//unlocks farm
-	if(Buildings.expandQ.count>0){
-		unlock("farm");
-	}
-	//unlocks barn
-	if(Buildings.shed.count>2 && Buildings.expandQ.count>1){
-		unlock("barn");
-	}
-	//unlocks lumberyard
-	if(GlobVar.Token[14] && Buildings.shack.count>8 && Buildings.shed.count>3 && Buildings.barn.count>0){
-		GlobVar.Token[14]=false;
-		unlock("lumberyard");
-		logStatement("Though you only have fairly simple tools, many showing signs of wear,<br>the carpenter insists on setting up a lumberyard.",true,true);
-	}
-	//unlocks workshop
-	if(Buildings.shack.count>8 && Buildings.expandQ.count>2 && Buildings.lumberyard.count>0){
-		unlock("workshop");
-	}
-	//unlocks hut
-	if(!Buildings.hut.unlocked && Buildings.lumberyard.count>0 && Buildings.workshop.count>0){
-		unlock("hut");
-	}
-	//makes townhall button visible (inline-block)
-	if(Buildings.shack.count + Buildings.hut.count>=20 && GlobVar.Token[5]){
-		logStatement("Though it may be premature, you have high hopes for the future growth<br>of your little shanty town and decide to give the settlement a proper name.",true,true);
-		logStatement("You also decide it is time to more formally organize, so you form a council to govern and make decisions.",true,true);
-		document.getElementById("title").innerHTML = "Hamlet of " + GlobVar.name;
-		GlobVar.Token[5] = false;
-
-		//give the town hall button a red color
-		alertPanel("pan4");
-		document.getElementById("butt4").style.display = "inline-block";
-	}
-	//increase rock and stone production 
-	if(Research.StoneAxe.completion>350&&GlobVar.Token[6]){
-		GlobVar.Token[6]=false;
-		addResearchButton("StoneChisel");
-		alertPanel("pan3");
-	}
-	//remove the first mine as useless
-	if(Buildings.mine.tempCount===1&&GlobVar.Token[7]){
-		GlobVar.Token[7] = false;
-		if(GlobVar.Token[10]){
-			document.getElementById("mineBuild").removeEventListener("click",addBuildingEvent);
+		if(Buildings.mine.count===1&&GlobVar.Token[8]){
+			GlobVar.Token[8]=false;
+			if(GlobVar.Token[10]){
+				logStatement("The first mine yielded no usable resources. Another site must be located.",true,true)
+				document.getElementById("mineBuild").className = "deadBuilding";
+				console.log("mineBuild class: "+document.getElementById("mineBuild").className);
+			} else {
+				logStatement("The first mine yielded no usable resources. You can try building a mineshaft at the second location.","regular",true,true)
+			}
 		}
-	}
-	if(Buildings.mine.count===1&&GlobVar.Token[8]){
-		GlobVar.Token[8]=false;
-		if(GlobVar.Token[10]){
-			logStatement("The first mine yielded no usable resources. Another site must be located.",true,true)
-			document.getElementById("mineBuild").className = "deadBuilding";
-			console.log("mineBuild class: "+document.getElementById("mineBuild").className);
-		} else {
-			logStatement("The first mine yielded no usable resources. You can try building a mineshaft at the second location.",true,true)
-		}
-	}
-	if(Buildings.mine.count===2&&GlobVar.Token[9]){
-		GlobVar.Token[9]=false;
-		logStatement("This mine produces copper ore which can be smelted into copper.",true,true)
-		addResourceLine("cu_ore");
-	}
-
-	//adjusts the woodworker and lumberworker output as population grows to account for deteriorating axes. Could rewrite to be more general and re-usable
-	if(!Research.StoneAxe.done&&GlobVar.pop!==Jobs.freeworker.maxworkers&&document.getElementById("forest")){
-		GlobVar.pop = Jobs.freeworker.maxworkers;
-		var bonus = 0;
-
-		for(var i=1;i<=GlobVar.pop;i++){
-			bonus+= Math.pow(0.92,GlobVar.pop-i)/GlobVar.pop;
+		if(Buildings.mine.count===2&&GlobVar.Token[9]){
+			GlobVar.Token[9]=false;
+			logStatement("This mine produces copper ore which can be smelted into copper.","regular",true,true)
+			addResourceLine("cu_ore");
 		}
 
-		for(var i=0; i<GlobVar.degrade.length; i++){
-			
-			var jobName = GlobVar.degrade[i];
-			Jobs[jobName]["workbonus"] = bonus;
+		//adjusts the woodworker and lumberworker output as population grows to account for deteriorating axes. Could rewrite to be more general and re-usable
+		if(!Research.StoneAxe.done&&GlobVar.pop!==Jobs.freeworker.maxworkers&&document.getElementById("forest")){
+			GlobVar.pop = Jobs.freeworker.maxworkers;
+			var bonus = 0;
 
-			var makeStr = "";
-			var consumeStr ="";
+			for(var i=1;i<=GlobVar.pop;i++){
+				bonus+= Math.pow(0.92,GlobVar.pop-i)/GlobVar.pop;
+			}
 
-			for (var j in Jobs[jobName]["make"]){
-				if(Jobs[jobName]["make"][j]>0){
-					makeStr += (Jobs[jobName]["make"][j]*Jobs[jobName]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
-				} else {
-					consumeStr += (Jobs[jobName]["make"][j]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+			for(var i=0; i<GlobVar.degrade.length; i++){
+				
+				var jobName = GlobVar.degrade[i];
+				Jobs[jobName]["workbonus"] = bonus;
+
+				var makeStr = "";
+				var consumeStr ="";
+
+				for (var j in Jobs[jobName]["make"]){
+					if(Jobs[jobName]["make"][j]>0){
+						makeStr += (Jobs[jobName]["make"][j]*Jobs[jobName]["workbonus"]*GlobVar.factor*5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+					} else {
+						consumeStr += (Jobs[jobName]["make"][j]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[j]["name"].charAt(0).toLowerCase() + Stuff[j]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
+					}
+
+					//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
 				}
 
-				//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
-			}
+				if(consumeStr!==""){
+					consumeStr = "<br>and consumes:<br>" + consumeStr;	
+				}
 
-			if(consumeStr!==""){
-				consumeStr = "<br>and consumes:<br>" + consumeStr;	
-			}
-
-			makeStr = makeStr.slice(0,-4);
-			if(document.getElementById(jobName + "sMake")){
-				document.getElementById(jobName + "sMake").innerHTML = makeStr + consumeStr;
+				makeStr = makeStr.slice(0,-4);
+				if(document.getElementById(jobName + "sMake")){
+					document.getElementById(jobName + "sMake").innerHTML = makeStr + consumeStr;
+				}
 			}
 		}
-	}
-	//unlock armory
-	if(Buildings.forge.count>0&&GlobVar.Token[12]){
-		GlobVar.Token[12]=false;
-		unlock("armory");
-	}
-	//rename settlement to Town
-	if(Jobs.freeworker.maxworkers>=50 && GlobVar.Token[13]){
-		logStatement("The town is bustling. You feel a great sense of accomplishment, yet know there is much work to be done.",true,true);
-		document.getElementById("title").innerHTML = "Town of " + GlobVar.name;
-		GlobVar.Token[13] = false;
-	}
-
-//phase 1 done? - phase 2 unlocks from research - more phase 3 unlocks below?//
-//******************************************
-
-
-	/////////continue the construction of new buildings - make this use deltaTime too
-	if (GlobVar.buildBuild.length>0){
-		buildUp()
-	}
-
-
-
-	//continue exploring
-	if(GlobVar.exploring){
-		exploreUp();
-	}
-
-
-
-////////////////section to increment all stuff//////////////////////
-//the rate are updated in the run() function, the functions below this change resource amounts and write to the window
-
-	//reset the 'rate' values for this loop to 0
-	for(var i in Stuff){
-		if(Stuff[i]["unlocked"]){
-			Stuff[i]["rate"]=0;
-			document.getElementById(i+"Rate").className = "rateZero";
+		//unlock armory
+		if(Buildings.forge.count>0&&GlobVar.Token[12]){
+			GlobVar.Token[12]=false;
+			unlock("armory");
 		}
-	}
+		//rename settlement to Town
+		if(Jobs.freeworker.maxworkers>=50 && GlobVar.Token[13]){
+			logStatement("The town is bustling. You feel a great sense of accomplishment, yet know there is much work to be done.","regular",true,true);
+			document.getElementById("title").innerHTML = "Town of " + GlobVar.name;
+			GlobVar.Token[13] = false;
+		}
 
-	//////increment research///////////////////
-	if(GlobVar.ActiveRes != " " && !Research[GlobVar.ActiveRes]["done"]){
-		researchIncr(GlobVar.ActiveRes);
-	}
+	//phase 1 done? - phase 2 unlocks from research - more phase 3 unlocks below?//
+	//******************************************
 
-	///////consume food/////////////////////////
-	Stuff.food.stored -= ((Jobs.freeworker.maxworkers+Jobs.child.maxworkers*.53)*.6*GlobVar.factor)*((Date.now() - GlobVar.previousTime)/1000)*5;//deltaTime
-	Stuff.food.rate -=   (Jobs.freeworker.maxworkers*.6*GlobVar.factor);
 
-	//////increment resources///////////////////
-	incrRes();
+		/////////continue the construction of new buildings - make this use deltaTime too
+		if (GlobVar.buildBuild.length>0){
+			buildUp()
+		}
 
-	//
-	GlobVar.previousTime = Date.now();
 
-	//output the rate values and the stored amounts
-	for(var i in Stuff){
-		if(Stuff[i]["unlocked"]){
 
-			if(Stuff[i]["rate"]>0){
-				document.getElementById(i+"Rate").className = "ratePos";
-				document.getElementById(i+"Rate").innerHTML = "+"+(Stuff[i]["rate"]*5).toFixed(1);//why do I need the facotr of two here???
-			} else if(Stuff[i]["rate"]===0) {
-				document.getElementById(i+"Rate").className = "rateZero";
-				document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
-			} else {
-				document.getElementById(i+"Rate").className = "rateNeg";
-				document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
-			}	
-			document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
-		}			
-	}
+		//continue exploring
+		if(GlobVar.exploring){
+			exploreUp();
+		}
 
-	//make buildings active or not
-	validateBuildings();
-	//incrResBuildings(); fix this to wrork with delta-time * rate
-	if(GlobVar.cheating){
+
+
+	////////////////section to increment all stuff//////////////////////
+	//the rate are updated in the run() function, the functions below this change resource amounts and write to the window
+
+		//reset the 'rate' values for this loop to 0
 		for(var i in Stuff){
 			if(Stuff[i]["unlocked"]){
-				Stuff[i]["stored"]=Stuff[i]["maxstored"];
+				Stuff[i]["rate"]=0;
+				document.getElementById(i+"Rate").className = "rateZero";
 			}
 		}
-	}
 
+		//////increment research///////////////////
+		if(GlobVar.ActiveRes != " " && !Research[GlobVar.ActiveRes]["done"]){
+			researchIncr(GlobVar.ActiveRes);
+		}
 
-	
-	//panic if there is not enough food
-	if(Stuff.food.stored<1){
-		console.log("food stored at panic: "+Stuff.food.stored);
-		if(Math.abs(Stuff.food.stored)>10*Stuff.food.maxstored){
-			console.log("assume a re-load error");
-			Stuff.food.stored = Stuff.food.maxstored*Stuff.food.storebonus;
-		} else {
-			document.body.className = "alert2"; //gets set back to class="normal" by a transition listener to make the flash effect (could make a setTimeout to change back the class...)
-			document.getElementById("hunterJob").querySelector(".userAdd0").style.transition = "color 0s";
-			document.getElementById("hunterJob").querySelector(".userAdd0").style.color = "red";
-			//need to come up with a different way to do this?
-			GlobVar.pendingStatements.unshift("In a food-shortage panic all available workers take to hunting");
-			document.getElementById("statement").innerHTML = GlobVar.pendingStatements[0];
-			document.getElementById("statement").className = "red";
-		
-			var tempFood = 0; 
+		///////consume food/////////////////////////
+		Stuff.food.stored -= ((Jobs.freeworker.maxworkers+Jobs.child.maxworkers*.53)*.6*GlobVar.factor)*((Date.now() - GlobVar.previousTime)/1000)*5;//deltaTime
+		Stuff.food.rate -=   ((Jobs.freeworker.maxworkers+Jobs.child.maxworkers*.53)*.6*GlobVar.factor);
 
-			for(var i in Jobs){
-				
-				if(Jobs[i]["unlocked"] && i!=="farmer" && i!=="child"){
+		//////increment resources///////////////////
+		incrRes();
 
-					tempFood+=Jobs[i]["workers"];
-					Jobs[i]["workers"] = 0;
-					document.getElementById(i + "s").innerHTML = Jobs[i]["workers"];
+		//reset previous time for next cycle
+		GlobVar.previousTime = Date.now();
+
+		//output the rate values and the stored amounts
+		//maybe make it so the rate only updates twice a second?
+		for(var i in Stuff){
+			if(Stuff[i]["unlocked"]){
+
+				if (Stuff[i]["rateArray"].unshift(Stuff[i]["rate"])>15){
+					Stuff[i]["rateArray"].pop();
+				}
+				let avgrate = 0;
+				for (let j = 0; j<Stuff[i]["rateArray"].length;j++){
+					avgrate += Stuff[i]["rateArray"][j];
+				}
+				avgrate = avgrate/Stuff[i]["rateArray"].length;
+
+				if(Math.abs(Stuff[i]["rate"]-avgrate)<0.000001){//the rounding error makes it so I can't compare ===
+
+					if(Stuff[i]["rate"]>0){
+						document.getElementById(i+"Rate").className = "ratePos";
+						document.getElementById(i+"Rate").innerHTML = "+"+(Stuff[i]["rate"]*5).toFixed(1);//why do I need the facotr of two here???
+					} else if(Stuff[i]["rate"]===0) {
+						document.getElementById(i+"Rate").className = "rateZero";
+						document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
+					} else {
+						document.getElementById(i+"Rate").className = "rateNeg";
+						document.getElementById(i+"Rate").innerHTML = (Stuff[i]["rate"]*5).toFixed(1);
+					}	
+				} else {
+					//make it yellow text here
+					document.getElementById(i+"Rate").className = "rateChange";
+					document.getElementById(i+"Rate").innerHTML = (avgrate*5).toFixed(1);
+				}
+				document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
+			}			
+		}
+
+		//make buildings active or not
+		validateBuildings();
+		//incrResBuildings(); fix this to wrork with delta-time * rate
+		if(GlobVar.cheating){
+			for(var i in Stuff){
+				if(Stuff[i]["unlocked"]){
+					Stuff[i]["stored"]=Stuff[i]["maxstored"];
 				}
 			}
-			Jobs.hunter.workers = tempFood;
-			Stuff.food.stored = Stuff.food.maxstored/3;
-			document.getElementById("hunters").innerHTML = Jobs.hunter.workers;
 		}
 
-	} 
 
-	//see if a new worker joins
-	tryWorkerJoin();
+		
+		//If there is not enough food and kill off 25% of workers (leave children alone) and move everyone to hunting
+		if(Stuff.food.stored<1){
+			console.log("food stored at panic: "+Stuff.food.stored);
+			if(Math.abs(Stuff.food.stored)>10*Stuff.food.maxstored){
+				console.log("assume a re-load error");//still not sure why this happens or the best way to handle it but this works for now
+				Stuff.food.stored = Stuff.food.maxstored*Stuff.food.storebonus;
+			} else {
+				let killWorkers = Math.ceil(Jobs.freeworker.maxworkers/4);
 
+				document.body.className = "alert2"; //gets set back to class="normal" by a transition listener to make the flash effect (could make a setTimeout to change back the class...)
+				document.getElementById("hunterJob").querySelector(".userAdd0").style.transition = "color 0s";
+				document.getElementById("hunterJob").querySelector(".userAdd0").style.color = "red";
+				//need to come up with a different way to do this?
+				GlobVar.pendingStatements.unshift("starveMsg");
+				GlobVar.pendingStatements.unshift("In a food-shortage panic all available workers take to hunting.<br>["+killWorkers+"] workers have died of starvation.");
+				document.getElementById("message").innerHTML = GlobVar.pendingStatements[0];
+				document.getElementById("message").className = GlobVar.pendingStatements[1];
+				document.getElementById("messagepop").className = "messagepop";
+				GlobVar.paused=true;
+				document.getElementById("statementNum").innerHTML = +document.getElementById("statementNum").innerHTML + 1;//use that sweet JS type conversion;
+			
+				var tempFood = 0; 
 
+				for(var i in Jobs){
+					
+					if(Jobs[i]["unlocked"] && i!=="farmer" && i!=="child"){//add in any other protected people or food jobs
+
+						tempFood+=Jobs[i]["workers"];
+						Jobs[i]["workers"] = 0;
+						document.getElementById(i + "s").innerHTML = Jobs[i]["workers"];
+					}
+				}
+				Jobs.hunter.workers = tempFood-killWorkers;
+				if(Jobs.hunter.workers<0){alert("starvation bug")}
+				Jobs.freeworker.maxworkers -= killWorkers;
+				Stuff.food.stored = Stuff.food.maxstored/3;
+				document.getElementById("hunters").innerHTML = Jobs.hunter.workers;
+				document.getElementById("freeworkersMax").innerHTML = Jobs.freeworker.maxworkers;
+				document.getElementById("workerspace").innerHTML = GlobVar.space-Jobs.freeworker.maxworkers;
+
+				if(Jobs.freeworker.maxworkers===0){
+					setTimeout(function(){ alert("You have starved to death!  Game Over");
+						resetGame();
+						},1000);
+				}
+			}
+
+		} 
+
+		//see if a new worker joins
+		tryWorkerJoin();
+
+	} else {
+		console.log("game paused");
+		GlobVar.previousTime = Date.now();//so when paused don't build up a big delta time (negative food on message would lead to starvation for example)
+	}
 } setInterval(run,20);//changed from 200 - what is wrong now?
 
 
@@ -1819,11 +1980,23 @@ function saveGame(){//add in the Jobs object for storage
 		data.set("GlobVar", GlobVar);
 		data.set("MapVars",MapVars);
 		localStorage.setItem("Reset","saveLoad");
+
+		//pop-up to show saved game
+		if(document.getElementById("popupID")===null){
+			var popup = document.createElement("div");
+			popup.id = "popupID";
+			popup.className = 'popupStyle'
+			popup.innerHTML = "Game Saved";
+			document.body.appendChild(popup);
+			setTimeout(function(){document.getElementById("popupID").className= "popupTransition";console.log("className switched")},50);
+			setTimeout(function(){document.getElementById("popupID").remove();},6000);
+			
+		}
 	}
 	else {
 		alert('Too bad, no localStorage for us');
 	}
-}
+} setInterval(saveGame, 5*60*1000);
 function exportGame(){
 	console.log("exporting");
 	document.getElementById("exportWindow").className = "exportWindowOn";
@@ -1874,6 +2047,8 @@ function loadGame(){
 	}
 }
 function finishLoad(){
+
+	setup();
 	
 	console.log("trying to load...");
 	
@@ -2016,15 +2191,8 @@ function finishLoad(){
 				addResearchButton(i);
 			}
 			if( Research[i]["done"]){
-				var resDiv = document.getElementById(i);
-				if(resDiv.className!=="tinyRes"){	//don't make small if already small
-					resDiv.className = "tinyRes";
-					console.log("trying to remove resBar of "+i);
-					resDiv.removeChild(document.getElementById(i+"resBar"));
-					resDiv.removeEventListener("click",SwapResearchEvent);
-					resDiv.querySelector(".tooltiptext").innerHTML = Research[i]["reward"];
-					resDiv.parentNode.removeChild(resDiv);
-					document.getElementById("doneRes").appendChild(resDiv);
+				if(document.getElementById(i).className!=="tinyRes"){	//don't make small if already small
+				    makeTiny(i);
 				}
 			}
 		} else if(document.getElementById(i)) {//remove research boxes that are there now but haven't been unlocked in the save
@@ -2071,7 +2239,7 @@ function finishLoad(){
 	GlobVar.pendingStatements = [];//clear all the message here (but they are still logged)
 	GlobVar.counter1 = 0;
 
-	setup();
+
 	document.getElementById("loadingPopUp").style.display = "none";
 
 } 
