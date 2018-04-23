@@ -536,6 +536,7 @@ window.onload = function () {//add event listeners after DOM has laoded or you w
 	document.getElementById("prestige").addEventListener("click",prestigeGame);
 
 	document.getElementById("closeMessage").addEventListener("click",closeMessage);
+	document.getElementById("enterName").addEventListener("click",enterName);
 	//document.getElementById("tips").addEventListener("click",tips=function(){});
 
 	
@@ -1280,7 +1281,7 @@ function alertPanel(pan){//should make this use 'jobs', 'buildings', 'map', etc 
 function tryWorkerJoin(){
 	if(Jobs.freeworker.maxworkers<GlobVar.space){
 		GlobVar.mercyChance ++;
-		if((Jobs.freeworker.maxworkers==1&&GlobVar.mercyChance>300)||Jobs.freeworker.maxworkers==2&&GlobVar.mercyChance>500||(Jobs.freeworker.maxworkers>2&& Math.random() <= GlobVar.workerChance + GlobVar.mercyChance*.000001)){
+		if((Jobs.freeworker.maxworkers==1&&GlobVar.mercyChance>550)||Jobs.freeworker.maxworkers==2&&GlobVar.mercyChance>500||(Jobs.freeworker.maxworkers>2&& Math.random() <= GlobVar.workerChance + GlobVar.mercyChance*.000001)){
 			Jobs.freeworker.maxworkers ++;
 			Jobs.freeworker.workers ++;
 			GlobVar.mercyChance = 0;
@@ -1288,7 +1289,6 @@ function tryWorkerJoin(){
 			document.getElementById("freeworkersMax").innerHTML = Jobs.freeworker.maxworkers;
 			document.getElementById("workerspace").innerHTML = GlobVar.space - Jobs.freeworker.maxworkers;
 		}
-		
 	}
 }
 function councilListen(e){
@@ -1586,9 +1586,9 @@ function UnCheat(){
 }
 
 ////////////////////////////////////////////////////////////////game loop////////////////////////////////////////////////////////////////////////////////////////
-function run(){ 
-	if(!GlobVar.paused){//need anyhting else in a pause/unpause() function
 
+function run(){ 
+	
 	//transition and remove textAlerts
 	for(var i=0; i<GlobVar.textAlerts.length; i+=2){
 		if(Date.now() - GlobVar.textAlerts[i+1]>10){
@@ -1602,6 +1602,8 @@ function run(){
 			div.parentElement.removeChild(div);//should let it get trashed as it is no longer referenced when this loop ends
 		}
 	}
+
+	if(!GlobVar.paused){//need anyhting else in a pause/unpause() function
 		
 	//check for events met to unlock new content
 
@@ -1616,11 +1618,10 @@ function run(){
 		}
 		if(Jobs.freeworker.maxworkers>=2&& GlobVar.Token[1]){
 			logStatement("Eventually another refugee wanders nearby, interested in what you are doing, and you convince him to join you in your work. Over time more people will surely come and stay if you have space to house them.","regular",true,true);
-			GlobVar.Token[1] = false;
-			
+			GlobVar.Token[1] = false;	
 		}
 		//add forest box and woodcutter job
-		if(Buildings.shack.count>=3&&Jobs.freeworker.maxworkers>=2&& GlobVar.Token[2]){
+		if(Buildings.shack.count>=3&&Jobs.freeworker.maxworkers>2&& GlobVar.Token[2]){
 			
 			Stuff.wood.unlocked=true;
 
@@ -1636,20 +1637,14 @@ function run(){
 		}
 		//change name
 		if(Buildings.shack.count===5&& GlobVar.Token[0]){
+			GlobVar.Token[0]=false;
 			if(GlobVar.cheating){
 				GlobVar.name="Cheating";
 			} else {
-
-				GlobVar.Token[0]=false;
 				logStatement("The wilderness is beginning to feel less lonely.","regular",true,true);
-				GlobVar.name = prompt("What would you like to name your settlement?");
-				if(GlobVar.name===null||GlobVar.name===""||GlobVar.name===" "){
-					GlobVar.name = "再见";
-				} else {
-					GlobVar.name = GlobVar.name[0].toUpperCase() + GlobVar.name.slice(1);
-				}
+				document.getElementById("namePrompt").className="messagepop";//special div just for this prompt
+				setTimeout(function(){document.getElementById("nameStr").focus();},100);//not sure why I have to delay the focus, but it doesn't work without setTimeout
 			}
-			document.getElementById("title").innerHTML = "Camp " + GlobVar.name;
 		}
 		//adds hillside box and rockcutter job
 		if(Buildings.shack.count===6&& GlobVar.Token[4]){
@@ -2025,6 +2020,16 @@ function importGame(){
 	catch(e) {
 		alert("Error loading save string.\n\n"+e);
 	}
+}
+function enterName(){
+	GlobVar.name = document.getElementById("nameStr").value;
+	if(GlobVar.name===null||GlobVar.name===""||GlobVar.name===" "){
+		GlobVar.name = "好阵营";
+	} else {
+		GlobVar.name = GlobVar.name[0].toUpperCase() + GlobVar.name.slice(1);
+	}
+	document.getElementById("title").innerHTML = "Camp " + GlobVar.name;
+	document.body.removeChild(document.getElementById("namePrompt"));//no need anymore - can change this to just hide it in case users want to rename later
 }
 function closeImport(){
 	importGame();

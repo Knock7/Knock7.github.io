@@ -599,7 +599,7 @@ how to make the menu disappear? clicking an 'X' button to close*/
 	border-color:darkgrey;
 	cursor:cell;
 }
-#closeMessage{
+#closeMessage, #enterName{
 	cursor:pointer;
 	background-color:rgb(87, 87, 87); 
 	margin:0px; padding:10px; 
@@ -607,8 +607,24 @@ how to make the menu disappear? clicking an 'X' button to close*/
 	bottom:0px;
 	width:100%;
 }
-#closeMessage:hover{
+#closeMessage:hover, #enterName:hover{
 	background-color: grey;
+}
+#nameStr{
+	background-color: black;
+	text-align: center;
+	color:white;
+	margin-top:40px;
+	padding:20px;
+	border-color: black;
+	font-family: 'Times New Roman', Times, serif;
+	resize:none;
+	width:650px;
+	height:150px;
+	overflow: hidden;
+}
+#nameStr:focus{
+	outline-color: black;
 }
 .logOut{
 	width:600px;
@@ -644,7 +660,8 @@ how to make the menu disappear? clicking an 'X' button to close*/
 	display:inline-block;
 	vertical-align:top;
 }
-.messagepop{ 
+.messagepop{
+
 	vertical-align: 50%;
 	left:50%;
 	transform: translateX(-50%);/*not sure if best way to center? thanks Warface from SO*/
