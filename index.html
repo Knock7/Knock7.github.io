@@ -15,7 +15,7 @@
 </head>
 
 
-<body>
+<body style="overflow-x: hidden;overflow-y: scroll;">
 
 <div id="exportWindow" class="exportWindowOff">
 	<div style="height:100%; padding:10px;"><b>Copy the following string:</b><br></div>
@@ -40,8 +40,7 @@
 	<p id="enterName" >Enter Name</p>
 </div>
 
-
-<header id="closeMe" class="alert" style="color:black">
+<header id="closeMe" class="alert" style="color:black; position:absolute;left:0;top:0;z-index:5;transition:ease-in 2s;">
 	<h2 id="intro">Like many others, the turmoil of the War has driven you to start a new life in the unknown and unpopulated lands outside the walls of the Great City. After several years of wandering and living off the land you decide to settle down in a quiet valley.<br><br>You set up camp at the edge of the forest near a river and a field with wild berries and small game you can hunt, and with the few tools in your travel sack you begin work on a more permanent residence.</h2>
 	<h1 class="closebtn"><br><i> continue </i><br></h1>
 </header>
@@ -92,15 +91,15 @@
 
 	<div id="foodStuff">
 		<div class="resourceName"> Food: </div>
-		<div class="resource" id="food"> 100 </div> / 
+		<div class="resource" id="food"> 100.0 </div> / 
 		<div class="resourceMax" id="foodMax" >100</div>
-		<div class="ratePos" id="foodRate">1</div> /sec
+		<div class="rateNeg" id="foodRate">-1.5</div> /sec
 	</div>  
 	<div id="woodStuff">
 		<div class="resourceName"> Wood: </div>
-		<div class="resource" id="wood"> 100 </div> / 
+		<div class="resource" id="wood"> 100.0 </div> / 
 		<div class="resourceMax" id="woodMax" >100</div>
-		<div class="ratePos" id="woodRate">1</div> /sec
+		<div class="rateZero" id="woodRate">0.0</div> /sec
 	</div> 
 
 </resources>
@@ -129,14 +128,19 @@
 		<div class="bkgrn"><b>&nbsp;CAMP&nbsp;</b></div>
 		<div class="imgBox" style="background-image:linear-gradient(rgba(225,250,250,0.1),rgba(255,200,200,0.1)),  url(images/camp.jpg);">
 
-			<div id="freeworkerJob0" class="userAdd" style="width:auto; cursor:default; background-color:rgba(255, 255, 255, .75)">
-				<b>&nbsp;Free Workers: <span id="freeworkers">1</span> / <span id="freeworkersMax">1</span>&nbsp;&nbsp;[<span id="workerspace">0</span>]</b>
-				<div class="tooltiptext">
-					<p>Every worker consumes <br>
-					<span id="freeworkerMake">1.5 food</span> / sec<br><br>
-					The workers required to construct<br> 
-					new buildings meet here at camp</p>
+			<div id="freeworkerJob0" class="userAdd" style="width:220px; cursor:default; background-color:rgba(255, 255, 255, .75)">
+				<div style="display:inline-block">
+					<b>&nbsp;Free Workers: <span id="freeworkers">1</span> / <span id="freeworkersMax">1</span></b>
 				</div>
+				<div style="float:right;">
+					<b>[<span id="workerspace">0</span>]</b>
+				</div>
+					<div class="tooltiptext">
+						<p>Every worker consumes <br>
+						<span id="freeworkerMake">1.5 food</span> / sec<br><br>
+						The workers required to construct<br> 
+						new buildings meet here at camp</p>
+					</div>
 			</div>
 		
 		</div>
@@ -167,7 +171,7 @@
 </tabs>
 
 <tabs id="pan6" class="none">
-	<canvas id="canvas" height="600" width="600" style="margin:auto; border:2px solid black">Your browser does not appear to support Canvas</canvas>
+	<canvas id="canvas" height="600" width="600" style="margin:auto; border:2px solid black; width:100%">Your browser does not appear to support Canvas</canvas>
 
 	<canvas id="bigCanvas" height="5000" width="5000" style="display:none"></canvas>
 	<canvas id="blackedCanvas" height="5000" width="5000" style="display:none"></canvas>
@@ -247,9 +251,9 @@
 		</div>
 	</div>
 
-	<div id="doneResBox" style="font-style:italic; font-size:1.2em;">
+	<div id="doneResBox" style="font-style:italic; font-weight: bold; font-size:1.2em;">
 		Finished Research<br>
-		<div id="doneRes"> 
+		<div id="doneRes" style="font-weight: normal"> 
 			<div class="tinyRes" id="finishedResSpacer">
 				<p class="tinyResText">&nbsp;</p>
 			</div><div class="tinyRes">
@@ -281,7 +285,7 @@
 		</div>
 	</div>
 
-	<div class="hide councilMessage" id="council1"><i>During the first meeting, the Council decideds to begin research and planning to recover lost technologies. As time goes on, and new resources become available, differnt settlers may propose research projects to improve tools, or design new buildings. You can now build laboratories at the back of the Town Hall for researchers.</i>
+	<div class="hide councilMessage" id="council1"><i>During the first meeting, the Council decideds to begin research and planning to recover lost technologies. As time goes on, and new resources become available, different settlers may propose research projects to improve tools, or design new buildings. You can now build laboratories at the back of the Town Hall for researchers.</i>
 	</div>
 
 	<div class="none councilMessage" id="councilDefault">The next meeting will be held after sufficient progress is made</div>
