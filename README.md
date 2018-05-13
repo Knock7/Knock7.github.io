@@ -1,7 +1,7 @@
 # Camp-Carlyhead
 Knock7's first game.
 
-Version 0.1.4?
+Version? No version numbers...
 
 Let me know if you find any bugs or have other suggestions (here on github for now).
 
