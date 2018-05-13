@@ -32,40 +32,29 @@ var Stuff = { //the production of materials of all kinds
 	spear:{name:"Spears",	rateArray:[],	stored:0,		maxstored:5,	storebonus:1, unlocked:false, rate:0,},
 };
 function addResourceLine(res){
-		Stuff[res]["unlocked"]=true;
-		var div = document.createElement("div");
-		div.id = res+"Stuff";
+	Stuff[res]["unlocked"]=true;
+	var div = document.createElement("div");
+	div.id = res+"Stuff";
+	//now do it all!
+	div.innerHTML = "<div class='resourceName'> "+ Stuff[res]["name"] + ": </div> <div class='resNumsOn'> <div class='resource' id='"+res+"'> "+ Stuff[res]["stored"] +" </div> / <div class='resourceMax' id='"+res+"Max'>"+Stuff[res]["maxstored"]+"</div> </div> <div class='resourceBarBoxOff'> <div class='resourceBarBar'> </div> <div class='resourceBarMax'> </div> </div> <div class='ratePos' id='"+res+"Rate'>1</div> /sec";
+	document.getElementById("stuff").appendChild(div);
 
-		div.innerHTML = "<div class='resourceName'> "+ Stuff[res]["name"] + ": </div> <div class='resource' id='"+res+"'> "+ Stuff[res]["stored"] +" </div> / <div class='resourceMax' id='"+res+"Max'>"+Stuff[res]["maxstored"]+"</div> <div class='ratePos' id='"+res+"Rate'>1</div> /sec";
-		
-		document.getElementById("stuff").appendChild(div);
+	//need to determine how to show gold and other 'stuff' on the resource bars setting - for now just all black b/c max is really high
+	if(res==="gold"||res==="research"){//any other special case resources
+		document.getElementById(res+"Max").innerHTML = "X";
+	} else {
+		document.getElementById(res+"Max").innnerHTML = Stuff[res]["maxstored"];
+		document.getElementById(res+"Stuff").querySelector(".resourceBarMax").innerHTML = Stuff[res]["maxstored"];
+	}
+	if(document.getElementById("foodStuff").querySelector(".resourceBarBoxOn")){//check food b/c always food line, will make errors for all the other resources unlocked
+		document.getElementById(res+"Stuff").querySelector(".resourceBarBoxOff").className = "resourceBarBoxOn";
+		document.getElementById(res+"Stuff").querySelector(".resNumsOn").className = "resNumsOff";
+	}
 
-		
-
-		if(res==="gold"||res==="research"){
-			document.getElementById(res+"Max").innerHTML = "X";
-		} else {
-			document.getElementById(res+"Max").innnerHTML = Stuff[res]["maxstored"];
-		}
-
-	};	
-function addSpecialLine(res){
-		var p = document.createElement("p");
-		p.id = res+"Stuff";
-		p.innerHTML = " "+ res.charAt(0).toUpperCase() + res.slice(1) + ": <span id='"+res+"'> "+ Stuff[res]["stored"] +" </span> / <span id='"+res+"Max' class='right'>"+Stuff[res]["maxstored"]+"</span></p>";
-		
-		document.getElementById("stuffSpecial").appendChild(p);
-
-		document.getElementById(res).innnerHTML = Stuff[res]["stored"];
-		
-
-		if(res==="gold"||res==="research"){
-			document.getElementById(res+"Max").innerHTML = "NoMax";
-		} else {
-			document.getElementById(res+"Max").innnerHTML = Stuff[res]["maxstored"];
-		}
-
-	};
+}	
+function addSpecialLine(res){//This isn't used right now - consider later. need to just copy above and re-write whole thing
+	console.log("this function does nothing");
+}
 {	/* Ideas for stuff to add
 	cattle(special increment)
 	gold:{workers:0, buildingwork:0, maxworkers:3, stored:0, maxstored:100, workbonus:1, storebonus:1, unlocked:0},
@@ -87,7 +76,7 @@ var Jobs = {//need to add a name property...
 	clayworker: {box: "riverbank",  workers:0, maxworkers:5,		workbonus:1, unlocked:false, make:{clay:2},						},
 	brickmaker: {box: "workshops",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{brick:1,clay:-1,wood:-2},	},
 	smith: 		{box: "workshops",  workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{spear:0.05,wood:-1,copper:-1},	},//the weapon/armor/building_materials toggle will change this 'make' property
-	child:		{box: "camp",		workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{wood:.3},					},//children can help collect some wood
+	child:		{box: "camp",		workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{wood:.3},					name:"Children",},//children can help collect some wood
 	miner_coal:	{box: "hillside",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{coal:.5},					name:"Coal Miners",},
 	miner_iron:	{box: "hillside",	workers:0, maxworkers:0,		workbonus:1, unlocked:false, make:{iron:.2},					name:"Iron Miners",}
 
@@ -100,7 +89,6 @@ var Jobs = {//need to add a name property...
 function incrRes(){ //increments resources from workers at their jobs (make another function to add passive building work - move 'buildingwork' to Buildings function and make it an object like 'make'). Does not handle consuming food - that is in run()
 	var now = Date.now();
 	var deltaTime = (now - GlobVar.previousTime)/1000;//time in seconds since last resource update
-
 
 	var numJobs = 0; //to keep track of jobs that may need to be run in a later loop
 	var lastJobs = 0;
@@ -131,7 +119,7 @@ function incrRes(){ //increments resources from workers at their jobs (make anot
 						}
 					}
 				}
-				//also the building progress is un-effected by elapsed time right now.
+				//also the building progress is unaffected by elapsed time right now?
 				//now after reloading a previous game-state the resources won't be split properly
 				if(make1&&make2) {//need to make it only use the wood to cap lumber, and then make wood from the rest if it's over the cap.
 					for(var incrKey in Jobs[x]["make"]){
@@ -148,10 +136,16 @@ function incrRes(){ //increments resources from workers at their jobs (make anot
 	}
 
 	for(var i in Stuff){
-		if(Stuff[i]["unlocked"] && i!=="research"){
+		if(Stuff[i]["unlocked"] && i!=="research"){//why not for research too?
 			var max  =  Stuff[i]["maxstored"]*Stuff[i]["storebonus"];
-			if(Stuff[i]["stored"]>max){
+			let barMax = document.getElementById(i+"Stuff").querySelector(".resourceBarMax");
+			if(Stuff[i]["stored"]>=max){
 				Stuff[i]["stored"] = max;
+				barMax.style.color="gold";
+			} else {
+				if (barMax.style.color==="gold"){
+					barMax.style.color="white";
+				}
 			}
 		}
 	}
@@ -208,7 +202,6 @@ function addJobElement(jobName){//came move the check whether box exists up to h
 		} else {
 			consumeStr += (Jobs[jobName]["make"][i]*Jobs[jobName]["workbonus"]*GlobVar.factor*-5).toFixed(1) + " " + Stuff[i]["name"].charAt(0).toLowerCase() + Stuff[i]["name"].slice(1) + " / sec<br>"; //the 5 comes from ticks per second
 		}
-
 		//buildings unlock resources for now, eventually research will, but not jobs - can also unlock resources with research or by building a building check in condistions part of run() loop -  remove buildings unlocking resources and make all Stuff.addResourceLine calls form conditions section otherwise I will need to add to Buildings[building][make] array with research, etc. nevermind, that is ok. let the buildings unlock initial things and unlock more by adjusting make array, is good that way
 	}
 
@@ -221,12 +214,9 @@ function addJobElement(jobName){//came move the check whether box exists up to h
 	var indiv = document.createElement("div");
 	indiv.id = jobName.toLowerCase() + "Job";
 	var changeName;
-	if(Jobs[jobName][name]){
+	if(Jobs[jobName][name]){//only need to give job a name if it's something other than the property name (+'s')
 		changeName = Jobs[jobName][name];
 		console.log("adding "+ Jobs[jobName][name]);
-	}
-	if(jobName==="child"){//can change how the job names appear in jobboxes here. if this gets long enough, may want to add a 'name' property to the jobs objects
-		changeName="children";
 	} else {
 		changeName=jobName+"s";
 	}
@@ -452,8 +442,8 @@ window.onload = function () {//add event listeners after DOM has loaded or you w
 		setup();
 		document.querySelector(".closebtn").addEventListener("click", function(){
 			let introText = document.querySelector(".closebtn").parentElement;
-			introText.style.top="-200%";
-			setTimeout(function(){introText.parentElement.removeChild(introText)},2000);//don't think we need this anyomre after close
+			introText.style.top="-400%";
+			setTimeout(function(){introText.parentElement.removeChild(introText)},2000);//don't think we need this element anyomre after close
 			GlobVar.paused=false;
 			populate();
 		});
@@ -540,7 +530,10 @@ window.onload = function () {//add event listeners after DOM has loaded or you w
 	document.getElementById("closeMessage").addEventListener("click",closeMessage);
 	document.getElementById("enterName").addEventListener("click",enterName);
 	//document.getElementById("tips").addEventListener("click",tips=function(){});
-
+	document.getElementById("settings").addEventListener("click",openSettings);//need to write this html, make a research bars option
+	document.getElementById("closeSettings").addEventListener("click",closeSettings);
+	document.getElementById("settingButton1").addEventListener("click",renameSettlement);
+	document.getElementById("settingButton2").addEventListener("click",turnResourceBars);
 	
 }
 
@@ -771,12 +764,12 @@ function finishBuilding(buildkey,index){
 		finishCouncil(index);
 	} else {
 
-
 		//add storage space
 		for(var keyyy in Buildings[buildkey]["addstorage"]){
 			Stuff[keyyy]["maxstored"]+=Buildings[buildkey]["addstorage"][keyyy];
 			if(Stuff[keyyy]["unlocked"]){
 				document.getElementById(keyyy + "Max").innerHTML = Stuff[keyyy]["maxstored"];
+				document.getElementById(keyyy+"Stuff").querySelector(".resourceBarMax").innerHTML = Stuff[keyyy]["maxstored"];
 			}
 		}
 		//add worker space (and free workers)
@@ -873,7 +866,15 @@ function SwapActiveRes(x){
 		console.log("set research to "+x);
 		document.getElementById(GlobVar.ActiveRes).className = "researchButtonSelected";
 		document.getElementById("research").innerHTML = Research[GlobVar.ActiveRes]["completion"];
+		document.getElementById("researchStuff").querySelector(".resourceBarBar").style.width = (Research[GlobVar.ActiveRes]["completion"]/Research[GlobVar.ActiveRes]["totalRes"]*100)+"%";
+
+		//need to check for 'resource bars on' here too and make resourceNums display:none? no, don't think so
+		Stuff.research.maxstored=Research[x]["totalRes"];
+		Stuff.research.stored=Research[x]["completion"];
+
 		document.getElementById("researchMax").innerHTML = Research[GlobVar.ActiveRes]["totalRes"];
+		document.getElementById("researchStuff").querySelector(".resourceBarMax").innerHTML=Research[GlobVar.ActiveRes]["totalRes"];
+
 		Stuff.research.maxstored = Research[GlobVar.ActiveRes]["totalRes"];
 	
 		//change the tooltip for researchers
@@ -886,7 +887,7 @@ function SwapActiveRes(x){
 }
 var Research = {
 	FarmEquip:	{name:"Farm Equipment",		resCost:{wood:2,lumber:1}, 		totalRes:1000, 	completion:0, unlocked:true,  done:false, reward:"Improves farmers' food output by 20%.", 						statement:"The farmers want to design a wooden plow and other<br>equipment which should improve crop output significantly."},
-	StoneAxe:	{name:"Stone Axes",			resCost:{lumber:1,stone:2}, 	totalRes:1500, 	completion:0, unlocked:true,  done:false, reward:"Resets woodcutter and lumberworker output to 2.5/sec.", 		statement:"You notice that the axes that most of your comrads have<br>brought with them, and the few saws and other metal tools,<br>have been dulling and deteriorating to the point of uselessness.<br>It seems that the best course of action is to develope new<br>stone axes for felling trees and shaping them into boards."},
+	StoneAxe:	{name:"Stone Axes",			resCost:{lumber:1,stone:2}, 	totalRes:1500, 	completion:0, unlocked:true,  done:false, reward:"Resets woodcutter and lumberworker output to 2.5/sec.", 		statement:"You notice that the axes that most of your comrads have<br>brought with them, and the few saws and other metal tools,<br>have been dulling and deteriorating to the point of uselessness.<br>It seems that the best course of action is to develop new<br>stone axes for felling trees and shaping them into boards."},
 	StoneChisel:{name:"Stone Chisels",		resCost:{lumber:.5,rock:.5,stone:1},totalRes:1000,completion:0,unlocked:false,done:false, reward:"Increases output of both masons and rockcutters by 30%.", 		statement:"The most proficient mason, though he was new to cutting rock when he began,<br>thinks he can improve stone chisel design to increase output of both rock and stone."},
 	FindOre:	{name:"Ore Finding",		resCost:{food:1,lumber:1},		totalRes:500, 	completion:0, unlocked:false, done:false, reward:"You may begin to explore the surrounding area for resources.", 	statement:"You decide that is almost time to start exploring the surroundings area.<br>Before any scouts leave though, they should be trained to lookout for mining sites.<br>Requires at least 2 researchers (teacher and pupil)"},
 	Smelting:	{name:"Smelting",			resCost:{brick:1,lumber:1,stone:1,wood:1},totalRes:2700,completion:0, unlocked:false, done:false, reward:"Figure out a way to smelt ore into usable metal.", 	statement:"With the right materials, the mining expert can<br>lead the design of kilns for smelting ores."},
@@ -1073,7 +1074,6 @@ function doBonus(resUp){//what to do when research is completed
 
 			document.getElementById("lumberworkersMake").innerHTML = makeStr+consumeStr;
 
-			//make this show up in town hall instead of as it does here? need to add a 'add town hall message' sort of function
 			var stoneStr = "One of the newest wanderers to join your camp used to supervise mining operations for the Great City. He offers to teach the group how to find ore and smelt it. After the training you may begin scouting the surrounding area."
 			GlobVar.statementLog = stoneStr + "<br><br>" + GlobVar.statementLog;
 			document.getElementById("logOut").innerHTML = GlobVar.statementLog;//some statements are logged and displayed in the town hall annoucement instead of the normal statement line
@@ -1139,8 +1139,10 @@ function doBonus(resUp){//what to do when research is completed
 			div.className = "exploreButton";
 			div.innerHTML = "<div class='tooltiptext' id='exploreTip'><p>Requires (<span id ='exploreWorkers'>1</span>) workers for the exploration party<br>The trip will need <span id='exploreCosts'>30 food</span></p></div><div id='exploreBar' class='buildBar'><p class='buildText' style='padding-top:15px'>Send a party to explore and<br> map the surrounding area</p></div>";
 			div.addEventListener("click",exploreGo);
-			document.getElementById("pan4").appendChild(div);
+			document.getElementById("pan4").insertBefore(div,document.getElementById("#council1"));
 			alertPanel("pan4");
+
+			document.getElementById("council1").innerHTML="<i>In order to map the surrounding land, primarily to uncover new resources, the Council decides to send out survey parties. The parties will meet at camp and carry extra food for their journeys. Trips will take more time and more people the further they roam from the town.</i>"
 			break;
 	    case "Smelting":
 			unlock("kiln");
@@ -1161,7 +1163,7 @@ function doBonus(resUp){//what to do when research is completed
 				Stuff.brick.maxstored+=100;
 			}
 			document.getElementById("brickmakersMax").innerHTML = Jobs.brickmaker.maxworkers;
-			document.getElementById("brickMax").innerHTML = Stuff.brick.maxstored;
+			
 	        break;
 	    case "Metalwork":
 			unlock("forge");
@@ -1184,8 +1186,10 @@ function doBonus(resUp){//what to do when research is completed
 			var addsStr = "";
 			for(var i in Buildings.barn.addstorage){
 				Stuff[i]["maxstored"] += Buildings["barn"]["addstorage"][i]*.2*Buildings.barn.count;
-				Buildings["barn"]["addstorage"][i] *=1.2;
+				Buildings["barn"]["addstorage"][i] *=1.2;//so not a storebonus change, but a change to object parameters, does it matter?
 				document.getElementById(i+"Max").innerHTML = Stuff[i]["maxstored"];
+				document.getElementById(i+"Stuff").querySelector(".resourceBarMax").innerHTML = Stuff[i]["maxstored"];
+
 				addsStr += Buildings["barn"]["addstorage"][i]+ " " + i+ " storage";
 				addsStr +="<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 			}
@@ -1459,9 +1463,61 @@ function enterName(){
 	} else {
 		GlobVar.name = GlobVar.name[0].toUpperCase() + GlobVar.name.slice(1);
 	}
-	document.getElementById("title").innerHTML = "Camp " + GlobVar.name;
-	document.body.removeChild(document.getElementById("namePrompt"));//no need anymore - can change this to just hide it in case users want to rename later
+	//need to take care of 'camp' 'hamlet' etc here (look up/update conditions)
+	let newname = "";
+	if(Jobs.freeworker.maxworkers<=5){
+		newname = "Camp "+GlobVar.name;
+	} else if(Jobs.freeworker.maxworkers<=15) {
+		newname = "Hamlet of "+GlobVar.name;
+	} else if (Jobs.freeworker.maxworkers<=15000){
+		newname = GlobVar.name + " City";
+	} else {
+		"Cheating "+ GlobVar.name;
+	}
+	document.getElementById("title").innerHTML = newname;
+	document.getElementById("namePrompt").style.display="none";//can rename in settings now
 }
+
+function openSettings(){
+	document.getElementById("settingpop").style.display="block";
+	GlobVar.paused=true;
+}
+function closeSettings(){//could just make anonymous
+	document.getElementById("settingpop").style.display = "none";
+	GlobVar.paused=false;
+}
+function turnResourceBars(){
+	
+	if(document.getElementById("foodStuff").querySelector(".resourceBarBoxOff")){//not sure if this is the best way to do things. works for now.
+		document.getElementById("setting2").querySelector(".settingButtonOff").innerHTML="On";
+		document.getElementById("setting2").querySelector(".settingButtonOff").className="settingButtonOn";
+
+		for(let i in Stuff){
+			if(Stuff[i]["unlocked"]){
+				//hide numbers, show bars
+				document.getElementById(i+"Stuff").querySelector(".resNumsOn").className = "resNumsOff";
+				document.getElementById(i+"Stuff").querySelector(".resourceBarBoxOff").className = "resourceBarBoxOn";
+			}
+		}
+	} else {
+		document.getElementById("setting2").querySelector(".settingButtonOn").innerHTML="Off";
+		document.getElementById("setting2").querySelector(".settingButtonOn").className="settingButtonOff";
+
+		for(let i in Stuff){
+			if(Stuff[i]["unlocked"]){
+				//hide bars, show numbers
+				document.getElementById(i+"Stuff").querySelector(".resNumsOff").className = "resNumsOn";
+				document.getElementById(i+"Stuff").querySelector(".resourceBarBoxOn").className = "resourceBarBoxOff";
+			}
+		}
+	}
+}
+function renameSettlement(){
+	document.getElementById("namePrompt").style.display="block";//special div just for this prompt
+	document.getElementById("nameStr").value="";
+	setTimeout(function(){document.getElementById("nameStr").focus();},100);
+}
+
 
 //////////////////////////////////////////////////////////////////////////exploring the land////////////////////////////////////////////////////////////////////////////////////
 function exploreGo(ev){
@@ -1651,12 +1707,12 @@ function run(){
 				GlobVar.name="Cheating";
 			} else {
 				logStatement("The wilderness is beginning to feel less lonely.","regular",true,true);
-				document.getElementById("namePrompt").className="messagepop";//special div just for this prompt
+				document.getElementById("namePrompt").style.display="block";//special div just for this prompt
 				setTimeout(function(){document.getElementById("nameStr").focus();},100);//not sure why I have to delay the focus, but it doesn't work without setTimeout
 			}
 		}
 		//adds hillside box and rockcutter job
-		if(Buildings.shack.count===6&& GlobVar.Token[4]){
+		if(Jobs.freeworker.maxworkers>=6&& GlobVar.Token[4]){
 
 			addJobBox("hillside");
 			console.log("added hillside");
@@ -1868,6 +1924,8 @@ function run(){
 					document.getElementById(i+"Rate").innerHTML = (avgrate*5).toFixed(1);
 				}
 				document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
+				//this is fine, just make Stuff.research.maxstored get updated properly
+				document.getElementById(i+"Stuff").querySelector(".resourceBarBar").style.width = (Stuff[i]["stored"]/Stuff[i]["maxstored"]*100)+"%";
 			}			
 		}
 
@@ -1945,12 +2003,6 @@ function run(){
 
 //button to test a function
 function testFunc(){
-	for(var x in Stuff){
-    
-		Stuff[x]["stored"] = Stuff[x]["maxstored"];
-	
-	}
-
 }
 
 /////////////////////////////////////////local storage to save the game?///////////////
@@ -1997,7 +2049,7 @@ function exportGame(){
 	console.log("exporting");
 	document.getElementById("exportWindow").className = "exportWindowOn";
 	var exportStorage = {X_Stuff:Stuff,X_Buildings:Buildings,X_Jobs:Jobs,X_Research:Research,X_GlobVar:GlobVar,X_MapVars:MapVars};
-	document.getElementById("exportStr").value = JSON.stringify(exportStorage);
+	document.getElementById("exportStr").value = Base64.encode(JSON.stringify(exportStorage));
 	document.getElementById("exportStr").select();
 }
 function closeExport(){
@@ -2008,8 +2060,8 @@ function openImportWindow(){
 }
 function importGame(){
 	console.log("importing");
-	try {
-		var importStorage = JSON.parse(document.getElementById("importStr").value);
+	try { 
+		var importStorage = JSON.parse(Base64.decode(document.getElementById("importStr").value));
 		Stuff = importStorage.X_Stuff;
 		Buildings = importStorage.X_Buildings;
 		Jobs = importStorage.X_Jobs;
@@ -2043,7 +2095,7 @@ function loadGame(){//relaces the global objects with data in localstorage
 	}
 }
 function finishLoad(){//redoes boxes, researchs, messages, etc.
-
+	GlobVar.paused=true;
 	setup();//draws the map (in drawMap.js)
 	
 	console.log("trying to load...");
@@ -2067,16 +2119,6 @@ function finishLoad(){//redoes boxes, researchs, messages, etc.
 	document.getElementById(GlobVar.mark2).style.display = "inline-block";
 	document.getElementById("butt"+GlobVar.mark2.slice(-1)).className = "buttSelected";
 
-	//show opened messages (for now only paused when there are messages, may need to change later)
-	if(GlobVar.paused){
-		document.getElementById("messagepop").className="messagepop";
-		document.getElementById("message").className=GlobVar.pendingStatements[1];
-		console.log("set class to :"+GlobVar.pendingStatements[1]);
-	} else {
-		document.getElementById("messagepop").className="messageHidden";
-		document.getElementById("message").className="black";
-	}
-
 	var now = Date.now();
 	var loadtime = GlobVar.previousTime;
 
@@ -2087,19 +2129,10 @@ function finishLoad(){//redoes boxes, researchs, messages, etc.
 	
 	console.log("now: "+now+" loadtime: "+loadtime+" difference in second: "+(now-loadtime)/1000);
 
-	for(var i=0;i<delta;i++){
-		var numJobsMaking = incrRes();
-		document.getElementById("wood").innerHTML = Stuff.wood.stored;//why is this line here?
-		if(numJobsMaking===0){
-			console.log("break!");
-			break;
-		}
-	}
-	
-
 	//update to the stored values of all resources, maxes, buildings, costs; and delete anything that isn't unlocked
 	for (var i in Stuff){
 		if (Stuff[i]["unlocked"]){
+			console.log("added resource "+i);
 			//if the html element does not exist, make it
 			if(document.getElementById(i+"Stuff")===null){
 				addResourceLine(i);
@@ -2107,6 +2140,7 @@ function finishLoad(){//redoes boxes, researchs, messages, etc.
 			//update the numbers
 			document.getElementById(i).innerHTML = Stuff[i]["stored"].toFixed(1);
 			document.getElementById(i+"Max").innerHTML = Stuff[i]["maxstored"].toFixed(0);
+			document.getElementById(i+"Stuff").querySelector(".resourceBarMax").innerHTML = Stuff[i]["maxstored"];
 		//if the element shouldn't exist but does, delete it
 		} else if(document.getElementById(i+"Stuff")) {
 			document.getElementById("stuff").removeChild(document.getElementById(i+"Stuff"));
@@ -2196,6 +2230,16 @@ function finishLoad(){//redoes boxes, researchs, messages, etc.
 		}
 	}
 
+	//gain resources for the time lost (test - could be factor of 5 low right now)
+	for(var i=0;i<delta;i++){
+		var numJobsMaking = incrRes();
+		document.getElementById("wood").innerHTML = Stuff.wood.stored;//why is this line here?
+		if(numJobsMaking===0){
+			console.log("break!");
+			break;
+		}
+	}
+
 	//make the active and finished research elements
 	for (var i in Research){
 		if (Research[i]["unlocked"]){
@@ -2250,7 +2294,19 @@ function finishLoad(){//redoes boxes, researchs, messages, etc.
 	}
 
 	document.getElementById("loadingPopUp").style.display = "none";
+	document.getElementById("logOut").innerHTML = GlobVar.statementLog;
 
+	//show opened messages (for now only paused when there are messages, may need to change later)
+	if(GlobVar.pendingStatements.length>0){
+		document.getElementById("messagepop").className="messagepop";
+		document.getElementById("message").className=GlobVar.pendingStatements[1];
+		console.log("set class to :"+GlobVar.pendingStatements[1]);
+	} else {
+		document.getElementById("messagepop").className="messageHidden";
+		document.getElementById("message").className="black";
+		GlobVar.paused=false;
+		console.log("unpaused at end of load");
+	}
 } 
 function resetGame(){
 	localStorage.setItem("Reset","full");
@@ -2291,10 +2347,117 @@ var data = {
   }
 }
 
-function hash(string){
-	JSON.hash(string);
-	JSON.hash()
+//the following object was taken entirely from http://www.webtoolkit.info/javascript-base64.html according to their creative commons license
+//it encodes and decodes strings and is used in importing and exporting saves
+var Base64 = {
+    // private property
+    _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+    // public method for encoding
+    encode : function (input) {
+        var output = "";
+        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+        var i = 0;
+        input = Base64._utf8_encode(input);
+
+        while (i < input.length) {
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
+
+            if (isNaN(chr2)) {
+                enc3 = enc4 = 64;
+            } else if (isNaN(chr3)) {
+                enc4 = 64;
+            }
+            output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+        }
+        return output;
+    },
+
+    // public method for decoding
+    decode : function (input) {
+        var output = "";
+        var chr1, chr2, chr3;
+        var enc1, enc2, enc3, enc4;
+        var i = 0;
+        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+        while (i < input.length) {
+            enc1 = this._keyStr.indexOf(input.charAt(i++));
+            enc2 = this._keyStr.indexOf(input.charAt(i++));
+            enc3 = this._keyStr.indexOf(input.charAt(i++));
+            enc4 = this._keyStr.indexOf(input.charAt(i++));
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+            output = output + String.fromCharCode(chr1);
+            if (enc3 != 64) {
+                output = output + String.fromCharCode(chr2);
+            }
+            if (enc4 != 64) {
+                output = output + String.fromCharCode(chr3);
+            }
+        }
+        output = Base64._utf8_decode(output);
+        return output;
+    },
+
+    // private method for UTF-8 encoding
+    _utf8_encode : function (string) {
+        string = string.replace(/\r\n/g,"\n");
+        var utftext = "";
+        for (var n = 0; n < string.length; n++) {
+            var c = string.charCodeAt(n);
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            }
+            else if((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+            else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+        }
+        return utftext;
+    },
+
+    // private method for UTF-8 decoding
+    _utf8_decode : function (utftext) {
+        var string = "";
+        var i = 0;
+		var c = 0;
+		var c1 = 0;
+		var c2 = 0;
+        while ( i < utftext.length ) {
+            c = utftext.charCodeAt(i);
+            if (c < 128) {
+                string += String.fromCharCode(c);
+                i++;
+            }
+            else if((c > 191) && (c < 224)) {
+                c2 = utftext.charCodeAt(i+1);
+                string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                i += 2;
+            }
+            else {
+                c2 = utftext.charCodeAt(i+1);
+                c3 = utftext.charCodeAt(i+2);
+                string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                i += 3;
+            }
+        }
+        return string;
+    }
 }
+
 
 {/* Story ideas
 
